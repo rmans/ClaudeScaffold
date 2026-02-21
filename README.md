@@ -1,0 +1,3 @@
+# ClaudeScaffold
+
+<!-- Project description here. -->
