@@ -14,6 +14,8 @@
 | 3 | [inputs/action-map.md](inputs/action-map.md) | Canon — canonical action IDs |
 | 3 | [inputs/default-bindings-kbm.md](inputs/default-bindings-kbm.md) | Canon — keyboard/mouse bindings |
 | 3 | [inputs/default-bindings-gamepad.md](inputs/default-bindings-gamepad.md) | Canon — gamepad bindings |
+| 3 | [inputs/ui-navigation.md](inputs/ui-navigation.md) | Canon — focus flow and navigation |
+| 3 | [inputs/input-philosophy.md](inputs/input-philosophy.md) | Canon — input design principles |
 | 4 | [design/interfaces.md](design/interfaces.md) | Canon — system interface contracts |
 | 4 | [design/authority.md](design/authority.md) | Canon — data authority table |
 | 5 | design/systems/SYS-### | Canon — individual system designs |

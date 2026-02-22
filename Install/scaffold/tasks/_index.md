@@ -1,7 +1,7 @@
 # Tasks — Index
 
 > **Layer:** Execution — Executable implementation steps.
-> **Authority:** Rank 8
+> **Authority:** Rank 9
 > **Conforms to:** [specs/](../specs/_index.md), [phases/](../phases/_index.md)
 
 ## Registered Tasks

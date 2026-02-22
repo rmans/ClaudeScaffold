@@ -17,7 +17,7 @@ cp Install/CLAUDE.md /path/to/your/project/
 ```
 
 This gives your project:
-- `.claude/skills/` — 27 scaffold skills for design, seeding, review, planning, and editing
+- `.claude/skills/` — 26 scaffold skills for design, seeding, review, planning, and editing
 - `scaffold/` — the full document pipeline with templates and indexes
 - `CLAUDE.md` — instructions that tell Claude Code how to use the scaffold
 
@@ -75,6 +75,10 @@ Key directories:
 5. Run `/scaffold-bulk-seed-references` to populate companion docs.
 6. Run `/scaffold-bulk-seed-engine` to select your engine and seed engine docs.
 7. Use review skills to audit everything.
+8. Run `/scaffold-new-roadmap` to create the project roadmap.
+9. Use `/scaffold-new-phase` → `/scaffold-new-slice` → `/scaffold-new-spec` → `/scaffold-new-task` to plan and build.
+
+See `scaffold/WORKFLOW.md` for the full 24-step recipe.
 
 ## Customization
 

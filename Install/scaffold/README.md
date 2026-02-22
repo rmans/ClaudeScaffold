@@ -1,6 +1,6 @@
 # Scaffold Usage Guide
 
-This scaffold provides a document-driven pipeline for building a Godot 4 game. Every design decision, implementation constraint, and behavioral spec lives in a structured document with clear authority rules.
+This scaffold provides a document-driven pipeline for building a game. Every design decision, implementation constraint, and behavioral spec lives in a structured document with clear authority rules.
 
 ## Quick Start
 
@@ -28,7 +28,7 @@ This scaffold provides a document-driven pipeline for building a Godot 4 game. E
 | Directory | What goes here |
 |-----------|---------------|
 | `design/` | Game vision, style, colors, UI kit, interfaces, system designs |
-| `engine/` | Godot 4 best practices and implementation constraints |
+| `engine/` | Engine-specific best practices and implementation constraints |
 | `inputs/` | Action map, key bindings, input philosophy |
 | `theory/` | Reference material (never canonical) |
 | `phases/` | Phase scope gates and milestones |

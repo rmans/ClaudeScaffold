@@ -1,7 +1,7 @@
 # Specs — Index
 
 > **Layer:** Behavior — Atomic behavior definitions.
-> **Authority:** Rank 7
+> **Authority:** Rank 8
 > **Conforms to:** [design/](../design/_index.md), [phases/](../phases/_index.md)
 
 ## Registered Specs

@@ -14,7 +14,7 @@ Everything inside the `Install/` directory is the scaffold. Copy or overlay its 
 
 ```
 Install/
-├── .claude/skills/       ← Claude Code skills (14 skills)
+├── .claude/skills/       ← Claude Code skills (26 skills)
 ├── scaffold/             ← Document pipeline (see below)
 ├── CLAUDE.md             ← Install-specific instructions for Claude Code
 └── README.md             ← Installation instructions
@@ -100,7 +100,7 @@ When documents conflict, the higher-ranked document wins. Lower documents must c
 
 ### Skills
 
-The scaffold includes 27 Claude Code skills organized by workflow:
+The scaffold includes 26 Claude Code skills organized by workflow:
 
 **Create:**
 
@@ -157,6 +157,10 @@ The scaffold includes 27 Claude Code skills organized by workflow:
 5. `/scaffold-bulk-seed-references` — populate all companion docs
 6. `/scaffold-bulk-seed-engine` — select engine and seed engine docs
 7. Review skills — audit everything
+8. `/scaffold-new-roadmap` — create the project roadmap
+9. `/scaffold-new-phase` → `/scaffold-new-slice` → `/scaffold-new-spec` → `/scaffold-new-task` — plan and build
+
+See `scaffold/WORKFLOW.md` for the full 24-step recipe.
 
 ### Token-Efficient Retrieval
 
