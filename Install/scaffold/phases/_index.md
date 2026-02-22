@@ -1,7 +1,7 @@
 # Phases — Index
 
 > **Layer:** Scope — Phase gates and milestones.
-> **Authority:** Rank 6
+> **Authority:** Rank 7
 > **Conforms to:** [design/design-doc.md](../design/design-doc.md)
 
 ## Registered Phases

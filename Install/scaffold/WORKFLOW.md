@@ -172,37 +172,71 @@ To review a single engine doc in detail:
 
 ## Planning
 
-### Step 16 — Define phases
+### Step 16 — Create the roadmap
 
-Create `phases/P#-###.md` files using `templates/phase-template.md` — scope gates and milestones.
+```
+/scaffold-new-roadmap
+```
 
-### Step 17 — Write specs
+Reads the design doc, systems, and known issues to define the full project arc from start to ship. Creates the living roadmap in `phases/roadmap.md` with phases, goals, and key deliverables. This roadmap is updated after every phase completion.
 
-Create `specs/SPEC-###.md` files using `templates/spec-template.md` — atomic behavior definitions derived from system designs.
+### Step 17 — Create phases
 
-### Step 18 — Write tasks
+```
+/scaffold-new-phase [phase-name]
+```
 
-Create `tasks/TASK-###.md` files using `templates/task-template.md` — executable implementation steps, each tied to a spec.
+Creates a phase scope gate in `phases/P#-###-name.md`. Reads the roadmap, all existing ADRs, and known issues. Each phase has a mandatory ADR impact analysis — no phase is created without checking what prior decisions affect its scope.
 
-### Step 19 — Define slices
+### Step 18 — Define slices
 
-Create `slices/SLICE-###.md` files using `templates/slice-template.md` — vertical slice contracts that bundle related tasks.
+```
+/scaffold-new-slice [slice-name]
+```
+
+Defines a vertical slice within a phase — a playable end-to-end chunk that proves systems work together. Reads interfaces and ADRs to scope what the slice must demonstrate. Slices determine the order of implementation.
+
+### Step 19 — Write specs
+
+```
+/scaffold-new-spec [spec-name]
+```
+
+Creates an atomic behavior spec for a slice. Pre-fills from system designs. Describes BEHAVIOR, not implementation — no engine constructs. Each spec checks ADRs for impacts on the behavior being defined.
+
+### Step 20 — Write tasks
+
+```
+/scaffold-new-task [task-name]
+```
+
+Creates an implementation task tied to a spec. Reads engine docs and ADRs. This is where engine constructs belong — tasks describe HOW to implement the spec's behavior in the target engine.
 
 ---
 
 ## Building
 
-### Step 20 — Implement tasks
+### Step 21 — Implement tasks
 
 For each task, read the task doc, its linked spec, relevant system designs, and engine constraints, then write code.
 
-### Step 21 — Record decisions
+### Step 22 — Record decisions
 
-When a conflict or ambiguity arises during implementation, create `decisions/ADR-###.md` using `templates/decision-template.md`. ADRs are permanent records.
+When a conflict or ambiguity arises during implementation, create `decisions/ADR-###.md` using `templates/decision-template.md`. ADRs are permanent records that feed back into upcoming phases, specs, and tasks.
 
-### Step 22 — Repeat
+### Step 23 — Update the roadmap
 
-Continue the implement → ADR cycle for each task until the slice is complete. Then move to the next slice.
+After completing a phase, follow the Phase Transition Protocol in `phases/roadmap.md`:
+
+1. Review all ADRs filed during the phase.
+2. Update the ADR Feedback Log with each ADR's impact.
+3. Move the phase to Completed Phases with delivery notes.
+4. Re-scope the next phase based on ADR impacts and lessons learned.
+5. Update the Phase Overview and set the new Current Phase.
+
+### Step 24 — Repeat
+
+Continue the implement → ADR → update cycle for each task until the slice is complete. Then move to the next slice. After completing all slices in a phase, run the Phase Transition Protocol (Step 23) before starting the next phase.
 
 ---
 
@@ -230,4 +264,9 @@ Continue the implement → ADR cycle for each task until the slice is complete. 
 | `/scaffold-bulk-review-references` | Audit all reference docs + cross-doc consistency |
 | `/scaffold-bulk-review-engine` | Audit all engine docs + cross-doc consistency |
 | `/scaffold-bulk-review-input` | Audit all input docs + cross-doc consistency |
+| `/scaffold-new-roadmap` | Create the project roadmap with phases from start to ship |
+| `/scaffold-new-phase` | Create a phase scope gate with ADR impact analysis |
+| `/scaffold-new-slice` | Define a vertical slice within a phase |
+| `/scaffold-new-spec` | Create an atomic behavior spec for a slice |
+| `/scaffold-new-task` | Create an implementation task tied to a spec |
 | `/scaffold-update-doc` | Add, remove, or modify entries in any scaffold doc |

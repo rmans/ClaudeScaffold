@@ -22,7 +22,7 @@
 | 7 | phases/P#-### | Scope — phase gates |
 | 8 | specs/SPEC-### | Behavior — atomic specs |
 | 9 | tasks/TASK-### | Execution — implementation steps |
-| 10 | engine/* | Implementation — Godot 4 constraints |
+| 10 | engine/* | Implementation — engine constraints |
 | 11 | theory/* | Reference only — never canonical |
 
 ## Rules

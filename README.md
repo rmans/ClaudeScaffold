@@ -100,7 +100,7 @@ When documents conflict, the higher-ranked document wins. Lower documents must c
 
 ### Skills
 
-The scaffold includes 21 Claude Code skills organized by workflow:
+The scaffold includes 27 Claude Code skills organized by workflow:
 
 **Create:**
 
@@ -111,6 +111,11 @@ The scaffold includes 21 Claude Code skills organized by workflow:
 | `/scaffold-new-system` | Create a system — pre-fills from design doc if available, blank template if not |
 | `/scaffold-new-reference` | Seed one reference doc from system designs |
 | `/scaffold-new-engine` | Fill out one engine doc interactively |
+| `/scaffold-new-roadmap` | Create the project roadmap with phases from start to ship |
+| `/scaffold-new-phase` | Create a phase scope gate, consuming ADRs from prior work |
+| `/scaffold-new-slice` | Define a vertical slice within a phase |
+| `/scaffold-new-spec` | Create an atomic behavior spec for a slice |
+| `/scaffold-new-task` | Create an implementation task tied to a spec |
 
 **Bulk create:**
 
