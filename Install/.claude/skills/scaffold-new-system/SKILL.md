@@ -1,5 +1,5 @@
 ---
-name: new-system
+name: scaffold-new-system
 description: Scaffold a new system design file from the template. Use when adding a new game system to the design.
 argument-hint: [system-name]
 allowed-tools: Read, Edit, Write, Grep, Glob

@@ -1,5 +1,5 @@
 ---
-name: design-review
+name: scaffold-design-review
 description: Review the design document for completeness and consistency. Use to audit unfilled sections, check system index sync, and validate cross-references.
 allowed-tools: Read, Grep, Glob
 ---
