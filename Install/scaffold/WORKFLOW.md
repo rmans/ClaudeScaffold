@@ -214,3 +214,4 @@ Continue the implement → ADR cycle for each task until the slice is complete. 
 | `/scaffold-bulk-review-systems` | Audit all systems + cross-system consistency |
 | `/scaffold-bulk-review-references` | Audit all reference docs + cross-doc consistency |
 | `/scaffold-bulk-review-engine` | Audit all engine docs + cross-doc consistency |
+| `/scaffold-update-doc` | Add, remove, or modify entries in any scaffold doc |
