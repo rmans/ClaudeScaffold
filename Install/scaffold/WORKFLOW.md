@@ -126,33 +126,51 @@ Fill in the input documents manually:
 
 ### Step 12 — Seed engine docs
 
-Seed engine-specific docs from the templates in `templates/`. Replace `[Engine]` with your engine name and fill in engine-specific conventions:
+```
+/scaffold-bulk-seed-engine
+```
 
-- `engine/[engine]-coding-best-practices.md`
-- `engine/[engine]-ui-best-practices.md`
-- `engine/[engine]-input-system.md`
-- `engine/[engine]-scene-architecture.md`
-- `engine/[engine]-performance-budget.md`
+Asks which engine you're using (Godot 4, Unity, Unreal 5, etc.), then creates all 5 engine docs from templates with engine-specific conventions pre-filled. Use the **Project Overrides** table at the bottom of each doc for project-specific deviations.
 
-Use the **Project Overrides** table at the bottom of each doc for project-specific deviations.
+### Step 13 — Fill in remaining engine sections
+
+For any sections the bulk seed couldn't pre-fill, fill them interactively:
+
+```
+/scaffold-new-engine [coding|ui|input|scene-architecture|performance]
+```
+
+### Step 14 — Review all engine docs
+
+```
+/scaffold-bulk-review-engine
+```
+
+Audits all engine docs for completeness and cross-doc consistency (coding ↔ scene architecture, UI ↔ input, performance ↔ everything).
+
+To review a single engine doc in detail:
+
+```
+/scaffold-review-engine [coding|ui|input|scene-architecture|performance]
+```
 
 ---
 
 ## Planning
 
-### Step 13 — Define phases
+### Step 15 — Define phases
 
 Create `phases/P#-###.md` files using `templates/phase-template.md` — scope gates and milestones.
 
-### Step 14 — Write specs
+### Step 16 — Write specs
 
 Create `specs/SPEC-###.md` files using `templates/spec-template.md` — atomic behavior definitions derived from system designs.
 
-### Step 15 — Write tasks
+### Step 17 — Write tasks
 
 Create `tasks/TASK-###.md` files using `templates/task-template.md` — executable implementation steps, each tied to a spec.
 
-### Step 16 — Define slices
+### Step 18 — Define slices
 
 Create `slices/SLICE-###.md` files using `templates/slice-template.md` — vertical slice contracts that bundle related tasks.
 
@@ -160,15 +178,15 @@ Create `slices/SLICE-###.md` files using `templates/slice-template.md` — verti
 
 ## Building
 
-### Step 17 — Implement tasks
+### Step 19 — Implement tasks
 
 For each task, read the task doc, its linked spec, relevant system designs, and engine constraints, then write code.
 
-### Step 18 — Record decisions
+### Step 20 — Record decisions
 
 When a conflict or ambiguity arises during implementation, create `decisions/ADR-###.md` using `templates/decision-template.md`. ADRs are permanent records.
 
-### Step 19 — Repeat
+### Step 21 — Repeat
 
 Continue the implement → ADR cycle for each task until the slice is complete. Then move to the next slice.
 
@@ -182,13 +200,17 @@ Continue the implement → ADR cycle for each task until the slice is complete. 
 | `/scaffold-new-style` | Fill out a style doc (style-guide, color-system, or ui-kit) |
 | `/scaffold-new-system` | Create a system design |
 | `/scaffold-new-reference` | Seed one reference doc from system designs |
+| `/scaffold-new-engine` | Fill out one engine doc interactively |
 | `/scaffold-bulk-seed-style` | Seed all style docs from design doc |
 | `/scaffold-bulk-seed-systems` | Glossary + all system stubs from design doc |
 | `/scaffold-bulk-seed-references` | All reference docs from system designs |
+| `/scaffold-bulk-seed-engine` | Select engine, then seed all 5 engine docs |
 | `/scaffold-review-design` | Audit design doc completeness |
 | `/scaffold-review-style` | Audit one Rank 2 style doc |
 | `/scaffold-review-system` | Audit one system's quality |
 | `/scaffold-review-reference` | Audit one reference doc |
+| `/scaffold-review-engine` | Audit one engine doc |
 | `/scaffold-bulk-review-style` | Audit all Rank 2 docs + cross-doc consistency |
 | `/scaffold-bulk-review-systems` | Audit all systems + cross-system consistency |
 | `/scaffold-bulk-review-references` | Audit all reference docs + cross-doc consistency |
+| `/scaffold-bulk-review-engine` | Audit all engine docs + cross-doc consistency |

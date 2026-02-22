@@ -17,7 +17,7 @@ cp Install/CLAUDE.md /path/to/your/project/
 ```
 
 This gives your project:
-- `.claude/skills/` — 14 scaffold skills for design, seeding, and review
+- `.claude/skills/` — 18 scaffold skills for design, seeding, and review
 - `scaffold/` — the full document pipeline with templates and indexes
 - `CLAUDE.md` — instructions that tell Claude Code how to use the scaffold
 
@@ -31,16 +31,20 @@ This gives your project:
 | `/scaffold-new-style` | Fill out a style doc interactively (style-guide, color-system, or ui-kit) |
 | `/scaffold-new-system` | Create a system — pre-fills from design doc if available |
 | `/scaffold-new-reference` | Seed one reference doc from system designs |
+| `/scaffold-new-engine` | Fill out one engine doc interactively |
 | `/scaffold-bulk-seed-style` | Seed style-guide, color-system, and ui-kit from design doc |
 | `/scaffold-bulk-seed-systems` | Glossary + all system stubs from design doc |
 | `/scaffold-bulk-seed-references` | All companion docs from system designs |
+| `/scaffold-bulk-seed-engine` | Select engine, then seed all 5 engine docs from templates |
 | `/scaffold-review-design` | Audit design doc completeness |
 | `/scaffold-review-style` | Audit one Rank 2 style doc for completeness and quality |
 | `/scaffold-review-system` | Audit one system's quality |
 | `/scaffold-review-reference` | Audit one reference doc against system designs |
+| `/scaffold-review-engine` | Audit one engine doc for completeness and quality |
 | `/scaffold-bulk-review-style` | Audit all Rank 2 docs + cross-doc consistency |
 | `/scaffold-bulk-review-systems` | Audit all systems + cross-system consistency |
 | `/scaffold-bulk-review-references` | Audit all reference docs + cross-doc consistency |
+| `/scaffold-bulk-review-engine` | Audit all engine docs + cross-doc consistency |
 
 ### Scaffold (`scaffold/`)
 
@@ -61,7 +65,8 @@ Key directories:
 3. Run `/scaffold-bulk-seed-systems` to create system stubs from your design.
 4. Fill in each system design.
 5. Run `/scaffold-bulk-seed-references` to populate companion docs.
-6. Use review skills to audit: `/scaffold-review-design`, `/scaffold-bulk-review-style`, `/scaffold-bulk-review-systems`.
+6. Run `/scaffold-bulk-seed-engine` to select your engine and seed engine docs.
+7. Use review skills to audit everything.
 
 ## Customization
 

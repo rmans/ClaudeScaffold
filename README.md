@@ -100,7 +100,7 @@ When documents conflict, the higher-ranked document wins. Lower documents must c
 
 ### Skills
 
-The scaffold includes 14 Claude Code skills organized by workflow:
+The scaffold includes 18 Claude Code skills organized by workflow:
 
 **Create:**
 
@@ -110,6 +110,7 @@ The scaffold includes 14 Claude Code skills organized by workflow:
 | `/scaffold-new-style` | Fill out a style doc interactively (style-guide, color-system, or ui-kit) |
 | `/scaffold-new-system` | Create a system — pre-fills from design doc if available, blank template if not |
 | `/scaffold-new-reference` | Seed one reference doc from system designs |
+| `/scaffold-new-engine` | Fill out one engine doc interactively |
 
 **Bulk create:**
 
@@ -118,6 +119,7 @@ The scaffold includes 14 Claude Code skills organized by workflow:
 | `/scaffold-bulk-seed-style` | Seed style-guide, color-system, and ui-kit from design doc |
 | `/scaffold-bulk-seed-systems` | Glossary + all system stubs from design doc |
 | `/scaffold-bulk-seed-references` | All companion docs from system designs |
+| `/scaffold-bulk-seed-engine` | Select engine, then seed all 5 engine docs from templates |
 
 **Review:**
 
@@ -127,9 +129,11 @@ The scaffold includes 14 Claude Code skills organized by workflow:
 | `/scaffold-review-style` | Audit one Rank 2 style doc for completeness and quality |
 | `/scaffold-review-system` | Audit one system's completeness and quality |
 | `/scaffold-review-reference` | Audit one reference doc against system designs |
+| `/scaffold-review-engine` | Audit one engine doc for completeness and quality |
 | `/scaffold-bulk-review-style` | Audit all Rank 2 docs + cross-doc consistency |
 | `/scaffold-bulk-review-systems` | Audit all systems + cross-system consistency |
 | `/scaffold-bulk-review-references` | Audit all reference docs + cross-doc consistency |
+| `/scaffold-bulk-review-engine` | Audit all engine docs + cross-doc consistency |
 
 **Recommended workflow:**
 
@@ -138,7 +142,8 @@ The scaffold includes 14 Claude Code skills organized by workflow:
 3. `/scaffold-bulk-seed-systems` — glossary + system stubs from design doc
 4. Fill in each system design manually
 5. `/scaffold-bulk-seed-references` — populate all companion docs
-6. `/scaffold-review-design` + `/scaffold-bulk-review-style` + `/scaffold-bulk-review-systems` — audit everything
+6. `/scaffold-bulk-seed-engine` — select engine and seed engine docs
+7. Review skills — audit everything
 
 ### Token-Efficient Retrieval
 
