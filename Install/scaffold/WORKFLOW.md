@@ -1,226 +1,194 @@
 # Workflow — Step-by-Step
 
-> **What this is:** A numbered recipe. Start at Step 1, follow in order. Each step is one command and one sentence of context.
+> **What this is:** A numbered recipe. Start at Step 1, follow in order. Each step is one skill command and one sentence of context.
 
 ---
 
-## Design
+## Design Document
 
 ### Step 1 — Create the design document
 
 ```
-/create-design
+/scaffold-new-design [game-name]
 ```
 
-Fills in `design/design-doc.md` with core vision, pillars, and non-negotiables. This is the highest-authority document — everything else flows from it.
+Fills in `design/design-doc.md` with core vision, pillars, loops, mechanics, and scope. This is the highest-authority document — everything else flows from it.
 
-### Step 2 — Iterate on the design document
-
-```
-/iterate-design design/design-doc.md
-```
-
-Refine through AI-assisted conversation until you're satisfied.
-
-### Step 3 — Auto-review the design document
+### Step 2 — Review the design document
 
 ```
-/auto-review scaffold/design/design-doc.md --iterations 3
+/scaffold-review-design
 ```
 
-Runs the two-loop Claude+OpenAI review (`doc-review.py`). Fix anything it flags, then move on.
+Audits completeness, system index sync, and cross-references. Fix anything it flags before moving on.
 
-### Step 4 — Create the style guide
+---
 
-```
-/create-design style-guide
-```
+## Style Documents
 
-Fills in `design/style-guide.md` — visual identity, tone, art direction.
-
-### Step 5 — Create the color system
+### Step 3 — Seed style docs from design doc
 
 ```
-/create-design color-system
+/scaffold-bulk-seed-style
 ```
 
-Fills in `design/color-system.md` — palette, usage rules, accessibility.
+Reads the design doc and pre-fills `design/style-guide.md`, `design/color-system.md`, and `design/ui-kit.md`. Phases are sequential: style-guide informs color-system, which informs ui-kit.
 
-### Step 6 — Create the UI kit
+### Step 4 — Fill in remaining style sections
 
-```
-/create-design ui-kit
-```
-
-Fills in `design/ui-kit.md` — components, layout rules, interaction patterns.
-
-### Step 7 — Iterate and review each design document
-
-Repeat the iterate → review cycle for each document created in Steps 4–6:
+For any sections the bulk seed couldn't derive, fill them interactively:
 
 ```
-/iterate-design design/<document>.md
-/auto-review scaffold/design/<document>.md --iterations 3
+/scaffold-new-style style-guide
+/scaffold-new-style color-system
+/scaffold-new-style ui-kit
+```
+
+### Step 5 — Review all style docs
+
+```
+/scaffold-bulk-review-style
+```
+
+Audits all Rank 2 docs for completeness and cross-doc consistency (style ↔ colors ↔ UI kit ↔ glossary ↔ design doc).
+
+---
+
+## Systems
+
+### Step 6 — Seed systems from design doc
+
+```
+/scaffold-bulk-seed-systems
+```
+
+Extracts terms for the glossary and creates system stubs from the design doc's Player Verbs, Core Loop, and Content Structure.
+
+### Step 7 — Fill in each system design
+
+Open each `design/systems/SYS-###-*.md` file and fill in all sections. To create additional systems not caught by the bulk seed:
+
+```
+/scaffold-new-system [system-name]
+```
+
+### Step 8 — Review all systems
+
+```
+/scaffold-bulk-review-systems
+```
+
+Audits all systems for completeness, quality, cross-system consistency (dependency symmetry, authority conflicts, orphan systems, glossary compliance).
+
+---
+
+## Reference Documents
+
+### Step 9 — Seed reference docs from systems
+
+```
+/scaffold-bulk-seed-references
+```
+
+Reads all system designs and bulk-populates: authority table, state transitions, entity components, resource definitions, signal registry, and balance parameters. Works in 6 sequential phases.
+
+### Step 10 — Review all reference docs
+
+```
+/scaffold-bulk-review-references
+```
+
+Audits all reference docs for cross-doc consistency (authority ↔ entities, signals ↔ systems, resources ↔ balance, states ↔ entities, glossary compliance).
+
+To review a single reference doc in detail:
+
+```
+/scaffold-review-reference [authority|states|entities|resources|signals|balance]
 ```
 
 ---
 
 ## Inputs
 
-### Step 8 — Create the action map
+### Step 11 — Fill in input documents
 
-```
-/create-design action-map
-```
+Fill in the input documents manually:
 
-Fills in `inputs/action-map.md` — every player action with a unique name.
-
-### Step 9 — Create the default bindings
-
-```
-/create-design bindings
-```
-
-Fills in `inputs/default-bindings-kbm.md` and `inputs/default-bindings-gamepad.md`.
-
-### Step 10 — Create the input philosophy
-
-```
-/create-design input-philosophy
-```
-
-Fills in `inputs/input-philosophy.md` — responsiveness targets, dead zones, buffering.
-
-### Step 11 — Iterate and review input documents
-
-```
-/iterate-design inputs/<document>.md
-/auto-review scaffold/inputs/<document>.md --iterations 3
-```
-
----
-
-## Interfaces & Systems
-
-### Step 12 — Create the interfaces document
-
-```
-/create-design interfaces
-```
-
-Fills in `design/interfaces.md` — system boundaries, signals, data contracts.
-
-### Step 13 — Create system documents
-
-For each system in your game, create a system design doc:
-
-```
-/create-design system
-```
-
-Each run creates a new `design/systems/SYS-###.md` with that system's responsibilities, interfaces, and constraints.
-
-### Step 14 — Iterate and review interfaces and systems
-
-```
-/iterate-design design/interfaces.md
-/iterate-design design/systems/SYS-###.md
-/auto-review scaffold/design/interfaces.md --iterations 3
-/auto-review scaffold/design/systems/SYS-###.md --iterations 3
-```
+- `inputs/action-map.md` — every player action with a unique name
+- `inputs/default-bindings-kbm.md` — keyboard/mouse defaults
+- `inputs/default-bindings-gamepad.md` — gamepad defaults
+- `inputs/input-philosophy.md` — responsiveness targets, dead zones, buffering
+- `inputs/ui-navigation.md` — focus flow and navigation
 
 ---
 
 ## Engine
 
-### Step 15 — Review engine best practices
+### Step 12 — Seed engine docs
 
-Read the documents in `engine/` and update them for your project's needs:
+Seed engine-specific docs from the templates in `templates/`. Replace `[Engine]` with your engine name and fill in engine-specific conventions:
 
-```
-/iterate-design engine/godot4-coding-best-practices.md
-/iterate-design engine/godot4-scene-architecture.md
-```
+- `engine/[engine]-coding-best-practices.md`
+- `engine/[engine]-ui-best-practices.md`
+- `engine/[engine]-input-system.md`
+- `engine/[engine]-scene-architecture.md`
+- `engine/[engine]-performance-budget.md`
 
-These constrain *how* code gets written — review them before implementation begins.
+Use the **Project Overrides** table at the bottom of each doc for project-specific deviations.
 
 ---
 
 ## Planning
 
-### Step 16 — Define phases
+### Step 13 — Define phases
 
-```
-/create-design phase
-```
+Create `phases/P#-###.md` files using `templates/phase-template.md` — scope gates and milestones.
 
-Creates `phases/P#-###.md` — scope gates and milestones for your project.
+### Step 14 — Write specs
 
-### Step 17 — Write specs
+Create `specs/SPEC-###.md` files using `templates/spec-template.md` — atomic behavior definitions derived from system designs.
 
-```
-/create-design spec
-```
+### Step 15 — Write tasks
 
-Creates `specs/SPEC-###.md` — atomic behavior definitions derived from system designs.
+Create `tasks/TASK-###.md` files using `templates/task-template.md` — executable implementation steps, each tied to a spec.
 
-### Step 18 — Write tasks
+### Step 16 — Define slices
 
-```
-/create-design task
-```
-
-Creates `tasks/TASK-###.md` — executable implementation steps, each tied to a spec.
-
-### Step 19 — Define slices
-
-```
-/create-design slice
-```
-
-Creates `slices/SLICE-###.md` — vertical slice contracts that bundle related tasks.
-
-### Step 20 — Iterate and review planning documents
-
-```
-/iterate-design <document>.md
-/auto-review scaffold/<document>.md --iterations 3
-```
+Create `slices/SLICE-###.md` files using `templates/slice-template.md` — vertical slice contracts that bundle related tasks.
 
 ---
 
 ## Building
 
-### Step 21 — Implement a task
+### Step 17 — Implement tasks
 
-```
-/implement TASK-###
-```
+For each task, read the task doc, its linked spec, relevant system designs, and engine constraints, then write code.
 
-Builds the code for one task. The skill reads the task, its linked spec, relevant system docs, and engine constraints, then writes code.
+### Step 18 — Record decisions
 
-### Step 22 — Record decisions
+When a conflict or ambiguity arises during implementation, create `decisions/ADR-###.md` using `templates/decision-template.md`. ADRs are permanent records.
 
-When a conflict or ambiguity arises during implementation:
+### Step 19 — Repeat
 
-```
-/write-adr
-```
-
-Creates `decisions/ADR-###.md` — captures the decision, alternatives considered, and rationale. ADRs are permanent records.
-
-### Step 23 — Repeat
-
-Continue the implement → ADR cycle (`Steps 21–22`) for each task until the slice is complete. Then move to the next slice.
+Continue the implement → ADR cycle for each task until the slice is complete. Then move to the next slice.
 
 ---
 
-## Reference
+## Quick Reference
 
-| Command | What it does |
-|---------|-------------|
-| `/create-design` | Create or fill in a design document |
-| `/iterate-design <path>` | Refine a document through conversation |
-| `/auto-review <path>` | Run two-loop AI review (doc-review.py) |
-| `/implement TASK-###` | Build code for a task |
-| `/write-adr` | Record an architecture decision |
+| Skill | What it does |
+|-------|-------------|
+| `/scaffold-new-design` | Fill out the design doc interactively |
+| `/scaffold-new-style` | Fill out a style doc (style-guide, color-system, or ui-kit) |
+| `/scaffold-new-system` | Create a system design |
+| `/scaffold-new-reference` | Seed one reference doc from system designs |
+| `/scaffold-bulk-seed-style` | Seed all style docs from design doc |
+| `/scaffold-bulk-seed-systems` | Glossary + all system stubs from design doc |
+| `/scaffold-bulk-seed-references` | All reference docs from system designs |
+| `/scaffold-review-design` | Audit design doc completeness |
+| `/scaffold-review-style` | Audit one Rank 2 style doc |
+| `/scaffold-review-system` | Audit one system's quality |
+| `/scaffold-review-reference` | Audit one reference doc |
+| `/scaffold-bulk-review-style` | Audit all Rank 2 docs + cross-doc consistency |
+| `/scaffold-bulk-review-systems` | Audit all systems + cross-system consistency |
+| `/scaffold-bulk-review-references` | Audit all reference docs + cross-doc consistency |
