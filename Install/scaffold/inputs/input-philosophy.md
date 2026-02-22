@@ -21,6 +21,33 @@ High-level principles that guide all input design decisions. Why we make the inp
 
 *TODO: Define input design principles.*
 
+## Responsiveness
+
+<!-- Targets for how inputs should feel. Examples:
+
+- **Input-to-action latency:** ≤ 2 frames (33 ms at 60 fps).
+- **Input buffering window:** 100 ms — queued inputs execute on the next valid frame.
+- **Coyote time:** 80 ms — jump still registers briefly after leaving a ledge.
+- **Cancel window:** Actions with wind-up can be cancelled within the first X ms.
+
+-->
+
+*TODO: Define responsiveness targets.*
+
+## Accessibility
+
+<!-- Input accessibility requirements. Examples:
+
+- All actions support remapping, including UI navigation.
+- No actions require simultaneous button presses (chords).
+- Hold-to-activate actions offer a toggle alternative.
+- Color-coded input prompts have a text/icon fallback.
+- Stick sensitivity and deadzone are player-adjustable.
+
+-->
+
+*TODO: Define accessibility requirements.*
+
 ## Constraints
 
 <!-- Hard rules that apply to all input decisions. -->

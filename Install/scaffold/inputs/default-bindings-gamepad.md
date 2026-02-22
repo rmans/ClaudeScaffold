@@ -28,4 +28,4 @@ Default gamepad bindings for all actions. These are the out-of-the-box defaults 
 
 1. Every action in [action-map.md](action-map.md) must have a binding here.
 2. Use generic button names (South, East, etc.) where possible.
-3. Stick deadzones are defined in [engine/godot4-input-system.md](../engine/godot4-input-system.md).
+3. Stick deadzones are defined in the engine input system doc (`engine/[engine]-input-system.md`).

@@ -17,4 +17,4 @@
 
 - Action IDs in [action-map.md](action-map.md) are canonical and stable.
 - Binding docs define *defaults* — players may remap at runtime.
-- Implementation details live in [engine/godot4-input-system.md](../engine/godot4-input-system.md).
+- Implementation details live in the engine input system doc (`engine/[engine]-input-system.md`).
