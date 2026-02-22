@@ -47,7 +47,7 @@ Key directories:
 - **`inputs/`** — Canon layer: action maps, bindings, navigation
 - **`reference/`** — Data tables: signals, entities, resources, balance params
 - **`decisions/`** — ADRs, known issues, design debt
-- **`engine/`** — Godot 4 implementation constraints (replace for other engines)
+- **`engine/`** — Engine-specific implementation constraints (seeded from templates)
 - **`templates/`** — Templates for systems, specs, tasks, phases, decisions, slices
 
 ## After Installing
@@ -60,9 +60,9 @@ Key directories:
 
 ## Customization
 
-- **Engine layer:** The `scaffold/engine/` directory ships with Godot 4 docs. Replace them with your engine's constraints.
+- **Engine layer:** The `scaffold/engine/` directory is seeded from templates based on your selected engine.
 - **Design doc:** All sections are prompts with TODO markers. Fill in what applies, skip what doesn't.
-- **Templates:** Edit `scaffold/templates/` to match your project's conventions.
+- **Templates:** Edit `scaffold/templates/` to match your project's conventions. Engine templates are seeded by skill based on your selected engine.
 
 ## Troubleshooting
 

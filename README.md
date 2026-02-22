@@ -6,7 +6,7 @@ A document-driven pipeline scaffold for game development with Claude Code. Insta
 
 ClaudeScaffold provides a structured document pipeline where every design decision, implementation constraint, and behavioral spec lives in a versioned markdown file with clear authority rules. Instead of ad-hoc prompting, Claude Code reads canonical documents, follows a strict precedence chain, and operates within a defined pipeline.
 
-The design layer is genre-agnostic — the design doc template works for any game, any genre. The engine layer ships with Godot 4 constraints but can be replaced for any engine.
+The design layer is genre-agnostic — the design doc template works for any game, any genre. The engine layer is seeded from templates based on the selected engine.
 
 ## How It Works
 
@@ -62,9 +62,9 @@ scaffold/
 ├── specs/                           # Atomic behavior specs (rank 8)
 ├── tasks/                           # Implementation steps (rank 9)
 ├── slices/                          # Vertical slice contracts
-├── engine/                          # Godot 4 constraints (rank 10)
+├── engine/                          # Engine-specific constraints (rank 10, seeded from templates)
 ├── theory/                          # Advisory only — no authority (rank 11)
-├── templates/                       # Document templates for all types
+├── templates/                       # Document templates for all types + engine docs
 └── tools/                           # Scripts and utilities
 ```
 

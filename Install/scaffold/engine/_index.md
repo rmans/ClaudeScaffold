@@ -5,16 +5,30 @@
 
 ## Documents
 
+Engine docs are seeded by a skill based on the selected engine. Once seeded, this directory contains:
+
 | File | Topic |
 |------|-------|
-| [godot4-coding-best-practices.md](godot4-coding-best-practices.md) | GDScript patterns, code organization |
-| [godot4-ui-best-practices.md](godot4-ui-best-practices.md) | UI implementation in Godot 4 |
-| [godot4-input-system.md](godot4-input-system.md) | InputMap, action handling |
-| [godot4-scene-architecture.md](godot4-scene-architecture.md) | Scene tree design, node patterns |
-| [godot4-performance-budget.md](godot4-performance-budget.md) | Frame budget, optimization targets |
+| `[engine]-coding-best-practices.md` | Language conventions, code organization |
+| `[engine]-ui-best-practices.md` | UI implementation patterns |
+| `[engine]-input-system.md` | Input system configuration, action handling |
+| `[engine]-scene-architecture.md` | Scene tree design, object patterns |
+| `[engine]-performance-budget.md` | Frame budget, optimization targets |
+
+## Templates
+
+Engine templates live in [templates/](../templates/_index.md):
+
+| Template | Seeds |
+|----------|-------|
+| `engine-coding-template.md` | Coding best practices |
+| `engine-ui-template.md` | UI best practices |
+| `engine-input-template.md` | Input system |
+| `engine-scene-architecture-template.md` | Scene architecture |
+| `engine-performance-template.md` | Performance budget |
 
 ## Rules
 
 - Engine docs describe *how* to implement, never *what* to implement.
-- If a Godot 4 constraint conflicts with design intent, file an ADR — do not silently work around the design.
-- These docs should reflect Godot 4.x stable conventions.
+- If an engine constraint conflicts with design intent, file an ADR — do not silently work around the design.
+- Each doc has a **Project Overrides** section at the bottom for project-specific deviations from engine defaults.
