@@ -103,6 +103,18 @@
 
 *TODO: Define world rules.*
 
+### Tone
+
+<!-- What is the emotional tone of this game? Dark and grim? Cozy? Tense? Absurdist? Lighthearted? This affects writing, art, sound, UI — everything. Tone is broader than visual style. -->
+
+*TODO: Define the game's tone.*
+
+### Camera / Perspective
+
+<!-- First-person? Third-person? Top-down? Isometric? Side-scrolling? Fixed? Player-controlled? This is one of the most fundamental decisions — it determines what mechanics are even possible. -->
+
+*TODO: Define camera and perspective.*
+
 ### Aesthetic Pillars
 
 <!-- 3-5 words that describe how everything should look and feel. Art direction starts here. -->
@@ -155,6 +167,12 @@
 
 *TODO: Define input feel.*
 
+### AI / NPC Behavior Philosophy
+
+<!-- For games with NPCs or enemies: how smart should they be? Predictable and readable, or adaptive and surprising? Should the player be able to learn and exploit patterns, or should AI feel lifelike? If not applicable, state so. -->
+
+*TODO: Define AI behavior philosophy.*
+
 ---
 
 ## Progression & Motivation
@@ -182,6 +200,12 @@
 <!-- Levels? Open world? Procedural? Branching? Linear with hubs? How is the game organized? -->
 
 *TODO: Define content structure.*
+
+### Save / Session Structure
+
+<!-- How does the player save? Autosave, manual save, checkpoints, permadeath? How long is a typical play session — 10 minutes or 4 hours? Can the player leave and return easily, or does the game demand sustained attention? This shapes pacing, failure states, and content structure. -->
+
+*TODO: Define save and session structure.*
 
 ### Target Length
 
@@ -247,13 +271,37 @@
 
 <!-- How do players find each other, interact, and form relationships? -->
 
+*TODO: Define social loop.*
+
 ### Competitive Balance
 
 <!-- Skill-based? Loadout variety? Asymmetric? -->
 
+*TODO: Define competitive balance.*
+
 ### Community & Modding
 
 <!-- Are players consumers or creators? What's the UGC strategy? -->
+
+*TODO: Define community and modding strategy.*
+
+---
+
+## Accessibility
+
+<!-- Is accessibility a design pillar or an afterthought? Even a brief statement here sets the standard for the entire project. -->
+
+### Accessibility Philosophy
+
+<!-- What's our commitment? Minimum compliance, best-in-class, or somewhere between? -->
+
+*TODO: Define accessibility philosophy.*
+
+### Accessibility Targets
+
+<!-- Which of these do we commit to? Colorblind support, difficulty options, input remapping, subtitle support, screen reader compatibility, one-handed play, adjustable UI scale, etc. -->
+
+*TODO: Define accessibility targets.*
 
 ---
 

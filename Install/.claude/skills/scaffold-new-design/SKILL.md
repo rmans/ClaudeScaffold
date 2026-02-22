@@ -38,47 +38,53 @@ Work through the design doc in this order. Each section is a conversation with t
 
 10. **Place & Time** — Ask: *"Where and when does this take place?"*
 11. **Rules of the World** — Ask: *"What's possible? What's impossible? What's the internal logic?"*
-12. **Aesthetic Pillars** — Ask: *"Give me 3-5 words that describe how everything should look and feel."*
-13. **Audio Identity** — Ask: *"What does this game sound like?"*
-14. **Lore Delivery** — Ask: *"How does the player learn about the world? Explicit or environmental? Delivered or discovered?"*
+12. **Tone** — Ask: *"What's the emotional tone? Dark and grim? Cozy? Tense? Absurdist? Lighthearted?"*
+13. **Camera / Perspective** — Ask: *"What's the camera? First-person, third-person, top-down, isometric, side-scrolling? Player-controlled or fixed?"*
+14. **Aesthetic Pillars** — Ask: *"Give me 3-5 words that describe how everything should look and feel."*
+15. **Audio Identity** — Ask: *"What does this game sound like?"*
+16. **Lore Delivery** — Ask: *"How does the player learn about the world? Explicit or environmental? Delivered or discovered?"*
 
 ### Pass 4 — Depth (how it plays and progresses)
 
-15. **Primary Skill** — Ask: *"What skill does the player get better at?"*
-16. **Difficulty Philosophy** — Ask: *"How does difficulty work?"*
-17. **Failure States** — Ask: *"What happens when the player fails? How punishing is it?"*
-18. **Input Feel** — Ask: *"How should the controls feel? Snappy, weighty, precise?"*
-19. **What the Player Earns** — Ask: *"What does the player unlock or become?"*
-20. **Pacing** — Ask: *"How often do you reward? What's the rhythm?"*
-21. **Player Identity / Build** — Ask: *"What choices does the player make about who they are in this game?"*
-22. **Target Length** — Ask: *"How long is the main path? Completionist path? Why?"*
+17. **Primary Skill** — Ask: *"What skill does the player get better at?"*
+18. **Difficulty Philosophy** — Ask: *"How does difficulty work?"*
+19. **Failure States** — Ask: *"What happens when the player fails? How punishing is it?"*
+20. **Input Feel** — Ask: *"How should the controls feel? Snappy, weighty, precise?"*
+21. **AI / NPC Behavior** — Ask: *"How smart should NPCs or enemies be? Predictable and readable, or adaptive and surprising? If not applicable, skip."*
+22. **What the Player Earns** — Ask: *"What does the player unlock or become?"*
+23. **Pacing** — Ask: *"How often do you reward? What's the rhythm?"*
+24. **Player Identity / Build** — Ask: *"What choices does the player make about who they are in this game?"*
+25. **Save / Session Structure** — Ask: *"How does the player save? How long is a typical play session?"*
+26. **Target Length** — Ask: *"How long is the main path? Completionist path? Why?"*
 
 ### Pass 5 — Narrative
 
-23. **Central Conflict** — Ask: *"What drives the game forward?"*
-24. **Player Character** — Ask: *"Who is the player? Defined personality, blank slate, or something in between?"*
-25. **Story Delivery** — Ask: *"How is story delivered?"*
-26. **Player Choice & Consequence** — Ask: *"Does the player make choices? How meaningful are the consequences?"*
+27. **Central Conflict** — Ask: *"What drives the game forward?"*
+28. **Player Character** — Ask: *"Who is the player? Defined personality, blank slate, or something in between?"*
+29. **Story Delivery** — Ask: *"How is story delivered?"*
+30. **Player Choice & Consequence** — Ask: *"Does the player make choices? How meaningful are the consequences?"*
 
 ### Pass 6 — Practical
 
-27. **First Session** — Ask: *"What does the first 5 minutes feel like? The first hour?"*
-28. **The Moment** — Ask: *"What's the thing the player tells a friend about?"*
-29. **Emotional Arc** — Ask: *"When does the player feel powerful? Vulnerable? Curious?"*
-30. **What Fun Means Here** — Ask: *"What kind of fun is this? Mastery, discovery, expression, tension?"*
+31. **First Session** — Ask: *"What does the first 5 minutes feel like? The first hour?"*
+32. **The Moment** — Ask: *"What's the thing the player tells a friend about?"*
+33. **Emotional Arc** — Ask: *"When does the player feel powerful? Vulnerable? Curious?"*
+34. **What Fun Means Here** — Ask: *"What kind of fun is this? Mastery, discovery, expression, tension?"*
 
-### Pass 7 — Scope & Business (can be deferred)
+### Pass 7 — Accessibility & Scope (can be deferred)
 
-31. **Multiplayer & Social** — Ask: *"Solo, co-op, competitive, or combination? If solo, why?"*
-32. **Target Platforms** — Ask: *"What platforms? What are the performance targets?"*
-33. **Biggest Technical Risk** — Ask: *"What's the hardest thing to build? What if it doesn't work?"*
-34. **Scope Reality Check** — Ask: *"Is this buildable? What gets cut first?"*
-35. **Vertical Slice** — Ask: *"What single chunk of the game proves the whole thing works?"*
-36. **Target Audience** — Ask: *"Who is this for?"*
-37. **Content Lifecycle** — Ask: *"Ship and done, or ongoing updates?"*
-38. **Monetization** — Ask: *"What's the business model?"*
-39. **Success Metrics** — Ask: *"What does success look like? Be concrete."*
-40. **Scope Boundaries** — Ask: *"What is this game NOT? What trends are you sitting out?"*
+35. **Accessibility Philosophy** — Ask: *"What's our accessibility commitment? Minimum compliance, best-in-class, or somewhere between?"*
+36. **Accessibility Targets** — Ask: *"Which accessibility features do we commit to? Colorblind support, difficulty options, input remapping, subtitles, UI scaling?"*
+37. **Multiplayer & Social** — Ask: *"Solo, co-op, competitive, or combination? If solo, why?"*
+38. **Target Platforms** — Ask: *"What platforms? What are the performance targets?"*
+39. **Biggest Technical Risk** — Ask: *"What's the hardest thing to build? What if it doesn't work?"*
+40. **Scope Reality Check** — Ask: *"Is this buildable? What gets cut first?"*
+41. **Vertical Slice** — Ask: *"What single chunk of the game proves the whole thing works?"*
+42. **Target Audience** — Ask: *"Who is this for?"*
+43. **Content Lifecycle** — Ask: *"Ship and done, or ongoing updates?"*
+44. **Monetization** — Ask: *"What's the business model?"*
+45. **Success Metrics** — Ask: *"What does success look like? Be concrete."*
+46. **Scope Boundaries** — Ask: *"What is this game NOT? What trends are you sitting out?"*
 
 ## Rules
 
