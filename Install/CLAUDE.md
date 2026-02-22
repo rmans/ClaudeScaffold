@@ -1,14 +1,16 @@
 # CLAUDE.md
 
-This project uses ClaudeScaffold — a document-driven pipeline for game development.
+This project uses ClaudeScaffold — a document-driven pipeline for game development. Every design decision, system behavior, and implementation constraint lives in `scaffold/` as a versioned markdown file with a clear authority rank.
 
-## Scaffold Rules
+## Rules
 
 1. **Document authority is law.** When documents conflict, the higher-ranked document wins. Code must never "work around" higher-level intent. If an implementation would violate a design document, the implementation is wrong — file an ADR to change the document instead.
-2. **Design layer defines WHAT, never HOW.** Documents in `scaffold/design/` describe what the game is. Documents in `scaffold/engine/` describe how to build it. Never mix layers.
+2. **Design defines WHAT, engine defines HOW.** Documents in `scaffold/design/` describe what the game is. Documents in `scaffold/engine/` describe how to build it. Never mix layers.
 3. **Single writer per variable.** Every piece of game data has exactly one owning system defined in `scaffold/design/authority.md`. No system may write to another system's data without an ADR.
 4. **Use canonical terminology.** Terms defined in `scaffold/design/glossary.md` are mandatory. Use the exact term — never synonyms from the NOT column.
 5. **Systems are behavior, not implementation.** System designs in `scaffold/design/systems/` describe player-visible behavior. No signals, methods, nodes, or class names in system docs.
+6. **Theory informs, never dictates.** Documents in `scaffold/theory/` provide advisory context. Read them when creating or reviewing, but they carry no authority.
+7. **ADRs are the feedback mechanism.** When implementation conflicts with design, file an ADR. ADRs feed back into upcoming phases, specs, and tasks. Never silently deviate from the plan.
 
 ## Retrieval Protocol
 
@@ -24,7 +26,7 @@ Never load entire directories. Follow this protocol:
 | Rank | Document | Layer |
 |------|----------|-------|
 | 1 | `design/design-doc.md` | Canon — core vision |
-| 2 | `design/style-guide.md`, `design/color-system.md`, `design/ui-kit.md`, `design/glossary.md` | Canon — visual style, colors, UI, terminology |
+| 2 | `design/style-guide.md`, `color-system.md`, `ui-kit.md`, `glossary.md` | Canon — visual style, colors, UI, terminology |
 | 3 | `inputs/*` | Canon — input actions and bindings |
 | 4 | `design/interfaces.md`, `design/authority.md` | Canon — contracts, data ownership |
 | 5 | `design/systems/SYS-###`, `design/state-transitions.md` | Canon — systems, states |
@@ -37,11 +39,16 @@ Never load entire directories. Follow this protocol:
 
 ## Key Directories
 
-- `scaffold/design/` — What the game is (vision, style, colors, UI, glossary, systems, interfaces, authority, states)
-- `scaffold/inputs/` — Player input definitions (action maps, bindings)
-- `scaffold/reference/` — Canonical data tables (signals, entities, resources, balance)
+- `scaffold/design/` — What the game is: vision, style, colors, UI, glossary, systems, interfaces, authority, states
+- `scaffold/inputs/` — Player input definitions: action maps, bindings, navigation, input philosophy
+- `scaffold/reference/` — Canonical data tables: signals, entities, resources, balance
 - `scaffold/decisions/` — ADRs, known issues, design debt
-- `scaffold/engine/` — Engine-specific implementation constraints (seeded from templates)
+- `scaffold/phases/` — Roadmap and phase scope gates
+- `scaffold/specs/` — Atomic behavior specs tied to slices
+- `scaffold/tasks/` — Implementation tasks tied to specs
+- `scaffold/slices/` — Vertical slice contracts within phases
+- `scaffold/engine/` — Engine-specific constraints (seeded from templates)
+- `scaffold/theory/` — Advisory reference: game design, UX, architecture patterns (no authority)
 - `scaffold/templates/` — Templates for all document types and engine docs
 
 ## When Creating or Modifying Systems
@@ -51,9 +58,17 @@ Never load entire directories. Follow this protocol:
 - Register in both `scaffold/design/systems/_index.md` AND the System Design Index in `scaffold/design/design-doc.md`.
 - Write in player-visible behavior only. Technical contracts belong in `scaffold/design/interfaces.md` and `scaffold/reference/signal-registry.md`.
 
+## When Planning (Phases, Slices, Specs, Tasks)
+
+- Follow the order: Roadmap → Phases → Slices → Specs → Tasks.
+- Before creating a phase, spec, or task, read all ADRs filed during prior work. ADRs may change scope.
+- Slices define vertical end-to-end chunks within a phase. Specs define behavior within a slice. Tasks implement specs.
+- Specs describe BEHAVIOR (what it does). Tasks describe IMPLEMENTATION (how to build it in the engine).
+- After completing a phase, follow the Phase Transition Protocol in `scaffold/phases/roadmap.md` to update the roadmap.
+
 ## Workflow
 
-Follow the step-by-step recipe in `scaffold/WORKFLOW.md` for the full pipeline from design doc to implementation.
+Follow the step-by-step recipe in `scaffold/WORKFLOW.md` for the full 24-step pipeline from design doc to implementation.
 
 ## When Resolving Conflicts
 
