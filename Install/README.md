@@ -47,12 +47,12 @@ This gives your project:
 A structured document pipeline with 11 authority ranks. Start at `scaffold/_index.md` — it's the master entry point.
 
 Key directories:
-- **`design/`** — Canon layer: design doc, glossary, style, systems, interfaces, authority, states
+- **`design/`** — Canon layer: design doc, style-guide, color-system, ui-kit, glossary, systems, interfaces, authority, states
 - **`inputs/`** — Canon layer: action maps, bindings, navigation
 - **`reference/`** — Data tables: signals, entities, resources, balance params
 - **`decisions/`** — ADRs, known issues, design debt
 - **`engine/`** — Engine-specific implementation constraints (seeded from templates)
-- **`templates/`** — Templates for systems, specs, tasks, phases, decisions, slices
+- **`templates/`** — Templates for systems, specs, tasks, phases, decisions, slices, and engine docs
 
 ## After Installing
 
