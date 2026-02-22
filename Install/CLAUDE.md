@@ -1,16 +1,59 @@
-# Install
+# CLAUDE.md
 
-This directory contains the installation resources for ClaudeScaffold.
+This project uses ClaudeScaffold — a document-driven pipeline for game development.
 
-## Contents
+## Scaffold Rules
 
-- `.claude/skills/` — Claude Code skills
-- `scaffold/` — Document-driven pipeline for Godot 4 game development
-- `README.md` — Installation instructions
+1. **Document authority is law.** When documents conflict, the higher-ranked document wins. Code must never "work around" higher-level intent. If an implementation would violate a design document, the implementation is wrong — file an ADR to change the document instead.
+2. **Design layer defines WHAT, never HOW.** Documents in `scaffold/design/` describe what the game is. Documents in `scaffold/engine/` describe how to build it. Never mix layers.
+3. **Single writer per variable.** Every piece of game data has exactly one owning system defined in `scaffold/design/authority.md`. No system may write to another system's data without an ADR.
+4. **Use canonical terminology.** Terms defined in `scaffold/design/glossary.md` are mandatory. Use the exact term — never synonyms from the NOT column.
+5. **Systems are behavior, not implementation.** System designs in `scaffold/design/systems/` describe player-visible behavior. No signals, methods, nodes, or class names in system docs.
 
-## Scaffold Retrieval Protocol
+## Retrieval Protocol
+
+Never load entire directories. Follow this protocol:
 
 1. Start at `scaffold/_index.md` to locate the correct directory.
 2. Open the directory's `_index.md` to find the specific document.
-3. Read only the document(s) you need — avoid loading entire directories.
+3. Read only the document(s) you need.
 4. If two documents conflict, the higher-authority document wins (see `scaffold/doc-authority.md`).
+
+## Authority Chain (highest wins)
+
+| Rank | Document | Layer |
+|------|----------|-------|
+| 1 | `design/design-doc.md` | Canon — core vision |
+| 2 | `design/style-guide.md`, `color-system.md`, `ui-kit.md`, `glossary.md` | Canon — style, terminology |
+| 3 | `inputs/*` | Canon — input actions and bindings |
+| 4 | `design/interfaces.md`, `design/authority.md` | Canon — contracts, data ownership |
+| 5 | `design/systems/SYS-###`, `design/state-transitions.md` | Canon — systems, states |
+| 6 | `reference/*` | Reference — data tables |
+| 7 | `phases/P#-###` | Scope — phase gates |
+| 8 | `specs/SPEC-###` | Behavior — atomic specs |
+| 9 | `tasks/TASK-###` | Execution — implementation steps |
+| 10 | `engine/*` | Implementation — engine constraints |
+| 11 | `theory/*` | Advisory — no authority |
+
+## Key Directories
+
+- `scaffold/design/` — What the game is (vision, systems, glossary, interfaces, authority, states)
+- `scaffold/inputs/` — Player input definitions (action maps, bindings)
+- `scaffold/reference/` — Canonical data tables (signals, entities, resources, balance)
+- `scaffold/decisions/` — ADRs, known issues, design debt
+- `scaffold/engine/` — Engine-specific implementation constraints
+- `scaffold/templates/` — Templates for all document types
+
+## When Creating or Modifying Systems
+
+- Use the template at `scaffold/templates/system-template.md`.
+- Assign sequential SYS-### IDs — never skip or reuse.
+- Register in both `scaffold/design/systems/_index.md` AND the System Design Index in `scaffold/design/design-doc.md`.
+- Write in player-visible behavior only. Technical contracts belong in `scaffold/design/interfaces.md` and `scaffold/reference/signal-registry.md`.
+
+## When Resolving Conflicts
+
+- Higher-ranked document always wins.
+- File an ADR in `scaffold/decisions/` to change a higher-authority document.
+- Log unresolved questions in `scaffold/decisions/known-issues.md`.
+- Log intentional compromises in `scaffold/decisions/design-debt.md`.
