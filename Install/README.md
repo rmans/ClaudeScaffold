@@ -17,7 +17,7 @@ cp Install/CLAUDE.md /path/to/your/project/
 ```
 
 This gives your project:
-- `.claude/skills/` — 8 scaffold skills for design, seeding, and review
+- `.claude/skills/` — 10 scaffold skills for design, seeding, and review
 - `scaffold/` — the full document pipeline with templates and indexes
 - `CLAUDE.md` — instructions that tell Claude Code how to use the scaffold
 
@@ -34,7 +34,9 @@ This gives your project:
 | `/scaffold-bulk-seed-references` | All companion docs from system designs |
 | `/scaffold-review-design` | Audit design doc completeness |
 | `/scaffold-review-system` | Audit one system's quality |
+| `/scaffold-review-reference` | Audit one reference doc against system designs |
 | `/scaffold-bulk-review-systems` | Audit all systems + cross-system consistency |
+| `/scaffold-bulk-review-references` | Audit all reference docs + cross-doc consistency |
 
 ### Scaffold (`scaffold/`)
 
