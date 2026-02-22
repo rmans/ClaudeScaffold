@@ -17,7 +17,7 @@ cp Install/CLAUDE.md /path/to/your/project/
 ```
 
 This gives your project:
-- `.claude/skills/` — 10 scaffold skills for design, seeding, and review
+- `.claude/skills/` — 14 scaffold skills for design, seeding, and review
 - `scaffold/` — the full document pipeline with templates and indexes
 - `CLAUDE.md` — instructions that tell Claude Code how to use the scaffold
 
@@ -28,13 +28,17 @@ This gives your project:
 | Skill | What it does |
 |-------|-------------|
 | `/scaffold-new-design` | Walk through the design doc section by section |
+| `/scaffold-new-style` | Fill out a style doc interactively (style-guide, color-system, or ui-kit) |
 | `/scaffold-new-system` | Create a system — pre-fills from design doc if available |
 | `/scaffold-new-reference` | Seed one reference doc from system designs |
+| `/scaffold-bulk-seed-style` | Seed style-guide, color-system, and ui-kit from design doc |
 | `/scaffold-bulk-seed-systems` | Glossary + all system stubs from design doc |
 | `/scaffold-bulk-seed-references` | All companion docs from system designs |
 | `/scaffold-review-design` | Audit design doc completeness |
+| `/scaffold-review-style` | Audit one Rank 2 style doc for completeness and quality |
 | `/scaffold-review-system` | Audit one system's quality |
 | `/scaffold-review-reference` | Audit one reference doc against system designs |
+| `/scaffold-bulk-review-style` | Audit all Rank 2 docs + cross-doc consistency |
 | `/scaffold-bulk-review-systems` | Audit all systems + cross-system consistency |
 | `/scaffold-bulk-review-references` | Audit all reference docs + cross-doc consistency |
 
@@ -53,10 +57,11 @@ Key directories:
 ## After Installing
 
 1. Run `/scaffold-new-design` to fill out your design doc.
-2. Run `/scaffold-bulk-seed-systems` to create system stubs from your design.
-3. Fill in each system design.
-4. Run `/scaffold-bulk-seed-references` to populate companion docs.
-5. Use `/scaffold-review-design` and `/scaffold-bulk-review-systems` to audit.
+2. Run `/scaffold-bulk-seed-style` to seed style-guide, color-system, and ui-kit.
+3. Run `/scaffold-bulk-seed-systems` to create system stubs from your design.
+4. Fill in each system design.
+5. Run `/scaffold-bulk-seed-references` to populate companion docs.
+6. Use review skills to audit: `/scaffold-review-design`, `/scaffold-bulk-review-style`, `/scaffold-bulk-review-systems`.
 
 ## Customization
 

@@ -88,13 +88,14 @@ When documents conflict, the higher-ranked document wins. Lower documents must c
 
 ### Skills
 
-The scaffold includes 10 Claude Code skills organized by workflow:
+The scaffold includes 14 Claude Code skills organized by workflow:
 
 **Create:**
 
 | Skill | Purpose |
 |-------|---------|
 | `/scaffold-new-design` | Fill out the design doc interactively, section by section |
+| `/scaffold-new-style` | Fill out a style doc interactively (style-guide, color-system, or ui-kit) |
 | `/scaffold-new-system` | Create a system — pre-fills from design doc if available, blank template if not |
 | `/scaffold-new-reference` | Seed one reference doc from system designs |
 
@@ -102,6 +103,7 @@ The scaffold includes 10 Claude Code skills organized by workflow:
 
 | Skill | Purpose |
 |-------|---------|
+| `/scaffold-bulk-seed-style` | Seed style-guide, color-system, and ui-kit from design doc |
 | `/scaffold-bulk-seed-systems` | Glossary + all system stubs from design doc |
 | `/scaffold-bulk-seed-references` | All companion docs from system designs |
 
@@ -110,18 +112,21 @@ The scaffold includes 10 Claude Code skills organized by workflow:
 | Skill | Purpose |
 |-------|---------|
 | `/scaffold-review-design` | Audit design doc completeness and index consistency |
+| `/scaffold-review-style` | Audit one Rank 2 style doc for completeness and quality |
 | `/scaffold-review-system` | Audit one system's completeness and quality |
 | `/scaffold-review-reference` | Audit one reference doc against system designs |
+| `/scaffold-bulk-review-style` | Audit all Rank 2 docs + cross-doc consistency |
 | `/scaffold-bulk-review-systems` | Audit all systems + cross-system consistency |
 | `/scaffold-bulk-review-references` | Audit all reference docs + cross-doc consistency |
 
 **Recommended workflow:**
 
 1. `/scaffold-new-design` — fill out the design doc
-2. `/scaffold-bulk-seed-systems` — glossary + system stubs from design doc
-3. Fill in each system design manually
-4. `/scaffold-bulk-seed-references` — populate all companion docs
-5. `/scaffold-review-design` + `/scaffold-bulk-review-systems` — audit everything
+2. `/scaffold-bulk-seed-style` — seed style-guide, color-system, ui-kit from design doc
+3. `/scaffold-bulk-seed-systems` — glossary + system stubs from design doc
+4. Fill in each system design manually
+5. `/scaffold-bulk-seed-references` — populate all companion docs
+6. `/scaffold-review-design` + `/scaffold-bulk-review-style` + `/scaffold-bulk-review-systems` — audit everything
 
 ### Token-Efficient Retrieval
 
@@ -142,7 +147,7 @@ Every growable directory has an `_index.md`. Claude Code follows a simple protoc
 | Phases | Scope gates and milestones | `phases/` |
 | Specs | Atomic behavior definitions | `specs/` |
 | Tasks | Executable implementation steps | `tasks/` |
-| Engine | How we implement in Godot 4 | `engine/` |
+| Engine | How we implement in the target engine | `engine/` |
 | Theory | Advisory reference only | `theory/` |
 
 No document may mix layers.
