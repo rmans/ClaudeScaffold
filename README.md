@@ -49,7 +49,8 @@ scaffold/
 ├── tasks/                    # Executable steps (TASK-###, rank 8)
 ├── decisions/                # Architecture Decision Records (ADR-###)
 ├── slices/                   # Vertical slice contracts (SLICE-###)
-└── templates/                # Document templates for all ID'd types
+├── templates/                # Document templates for all ID'd types
+└── tools/                    # Scripts and utilities for the pipeline
 ```
 
 ### Document Authority
@@ -89,6 +90,17 @@ Every growable directory has an `_index.md`. Claude Code follows a simple protoc
 | Decisions | Architectural history | `decisions/` |
 
 No document may mix layers.
+
+### Tools
+
+The `tools/` directory contains scripts that support the pipeline:
+
+- **`doc-review.py`** — Two-loop AI document review process. Claude and OpenAI discuss a document, reach agreement on changes, and apply them. Runs 1 outer-loop iteration by default; use `--iterations N` for more.
+
+```
+python doc-review.py <document-path>
+python doc-review.py <document-path> --iterations 3
+```
 
 ## Getting Started
 
