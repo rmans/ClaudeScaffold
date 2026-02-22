@@ -23,6 +23,7 @@
 | [decisions/](decisions/_index.md) | History | Architecture Decision Records |
 | [slices/](slices/_index.md) | Integration | Vertical slice contracts |
 | [templates/](templates/_index.md) | Meta | Document templates for all ID'd types |
+| [tools/](tools/_index.md) | Tooling | Scripts and utilities for the pipeline |
 
 ## Key Files
 
