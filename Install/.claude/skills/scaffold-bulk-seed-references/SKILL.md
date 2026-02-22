@@ -118,8 +118,9 @@ Flag any gaps:
 
 Remind the user of next steps:
 - Review and refine each reference doc
-- Run `/scaffold-review-design` to check overall consistency
-- Run `/scaffold-review-system` on individual systems to check quality
+- Run `/scaffold-bulk-review-references` to audit all reference docs for cross-doc consistency
+- Run `/scaffold-review-reference` on individual docs for detailed review
+- Run `/scaffold-review-design` to check overall design consistency
 
 ## Rules
 

@@ -95,3 +95,4 @@ Work through the design doc in this order. Each section is a conversation with t
 - **If the user gives a short answer**, that's fine. Short and clear beats long and vague.
 - **After completing a pass**, summarize what was captured and ask if they want to continue to the next pass or stop for now.
 - **At the end**, report how many sections are now filled vs. remaining TODOs.
+- **Remind the user** to run `/scaffold-review-design` when done to audit completeness.

@@ -68,7 +68,7 @@ Write confirmed entries into the target doc, preserving existing content and for
 
 ### 7. Report
 
-Show what was added and flag any gaps (systems that didn't contribute entries, orphaned references).
+Show what was added and flag any gaps (systems that didn't contribute entries, orphaned references). Remind the user to run `/scaffold-review-reference` to audit the doc's completeness.
 
 ## Rules
 

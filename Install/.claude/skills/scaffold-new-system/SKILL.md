@@ -68,6 +68,7 @@ Show the user:
 - Whether Purpose/Player Intent were pre-filled or left blank (and why)
 - Any glossary terms added
 - Reminder to fill in the remaining sections
+- Reminder to run `/scaffold-review-system` when the system design is complete
 
 ## Rules
 
