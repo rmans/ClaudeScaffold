@@ -10,8 +10,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ```
 /
-├── .claude/skills/       ← Claude Code skills
-├── scaffold/             ← Templates, conventions, tools
+├── Install/
+│   ├── .claude/skills/   ← Claude Code skills
+│   ├── scaffold/         ← Templates, conventions, tools
+│   ├── CLAUDE.md         ← Install-specific instructions
+│   └── README.md         ← Installation instructions
 ├── CLAUDE.md
 ├── README.md
 ├── .gitignore
