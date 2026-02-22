@@ -27,6 +27,7 @@
 
 ## Key Files
 
+- [WORKFLOW.md](WORKFLOW.md) — Step-by-step recipe for the full pipeline
 - [doc-authority.md](doc-authority.md) — Precedence rules (read when conflicts arise)
 - [README.md](README.md) — How to use this scaffold
 

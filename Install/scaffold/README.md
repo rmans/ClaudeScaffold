@@ -6,7 +6,7 @@ This scaffold provides a document-driven pipeline for building a Godot 4 game. E
 
 1. Read [_index.md](_index.md) — master index and retrieval protocol.
 2. Read [doc-authority.md](doc-authority.md) — understand which documents take precedence.
-3. Fill in `design/design-doc.md` first — it is the highest-authority document.
+3. Follow [WORKFLOW.md](WORKFLOW.md) — step-by-step recipe from design through implementation.
 4. Use templates from `templates/` to create new documents in their respective directories.
 
 ## Principles
