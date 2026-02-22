@@ -90,7 +90,7 @@ Audits all systems for completeness, quality, cross-system consistency (dependen
 /scaffold-bulk-seed-references
 ```
 
-Reads all system designs and bulk-populates: authority table, state transitions, entity components, resource definitions, signal registry, and balance parameters. Works in 6 sequential phases.
+Reads all system designs and bulk-populates: authority table, interface contracts, state transitions, entity components, resource definitions, signal registry, and balance parameters. Works in 8 sequential phases.
 
 ### Step 10 — Review all reference docs
 
@@ -98,12 +98,12 @@ Reads all system designs and bulk-populates: authority table, state transitions,
 /scaffold-bulk-review-references
 ```
 
-Audits all reference docs for cross-doc consistency (authority ↔ entities, signals ↔ systems, resources ↔ balance, states ↔ entities, glossary compliance).
+Audits all reference docs for cross-doc consistency (authority ↔ entities, interfaces ↔ signals ↔ systems, resources ↔ balance, states ↔ entities, glossary compliance).
 
 To review a single reference doc in detail:
 
 ```
-/scaffold-review-reference [authority|states|entities|resources|signals|balance]
+/scaffold-review-reference [authority|interfaces|states|entities|resources|signals|balance]
 ```
 
 ---
