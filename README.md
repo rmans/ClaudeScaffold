@@ -21,7 +21,7 @@ Every design decision, visual style rule, system behavior, interface contract, a
 - **Genre-agnostic design, engine-specific implementation.** The design layer works for any game. The engine layer adapts to Godot, Unity, Unreal, or anything else.
 - **ADR feedback loop.** When implementation reality conflicts with the plan, Architecture Decision Records capture why and feed back into upcoming phases, specs, and tasks.
 - **Token-efficient retrieval.** Index files in every directory let Claude find what it needs without loading entire folders.
-- **38 skills automate the pipeline.** Create, seed, review, and edit documents with slash commands — no manual file wrangling.
+- **39 skills automate the pipeline.** Create, seed, review, iterate, and edit documents with slash commands — no manual file wrangling.
 
 ## How It Works
 
@@ -101,7 +101,7 @@ cp Install/CLAUDE.md /path/to/your/project/
 This gives your project:
 
 ```
-.claude/skills/       ← 38 Claude Code skills
+.claude/skills/       ← 39 Claude Code skills
 scaffold/             ← Document pipeline with templates and indexes
 CLAUDE.md             ← Instructions that tell Claude Code how to use the scaffold
 ```
@@ -110,13 +110,15 @@ See [Install/README.md](Install/README.md) for full installation details.
 
 ## Skills
 
-38 slash commands organized by workflow:
+39 slash commands organized by workflow:
 
 **Create (10):** `/scaffold-new-design`, `/scaffold-new-style`, `/scaffold-new-system`, `/scaffold-new-reference`, `/scaffold-new-engine`, `/scaffold-new-roadmap`, `/scaffold-new-phase`, `/scaffold-new-slice`, `/scaffold-new-spec`, `/scaffold-new-task`
 
 **Bulk seed (7):** `/scaffold-bulk-seed-style`, `/scaffold-bulk-seed-systems`, `/scaffold-bulk-seed-references`, `/scaffold-bulk-seed-engine`, `/scaffold-bulk-seed-slices`, `/scaffold-bulk-seed-specs`, `/scaffold-bulk-seed-tasks`
 
 **Review (20):** `/scaffold-review-design`, `/scaffold-review-style`, `/scaffold-review-system`, `/scaffold-review-reference`, `/scaffold-review-engine`, `/scaffold-review-input`, `/scaffold-review-roadmap`, `/scaffold-review-phase`, `/scaffold-review-slice`, `/scaffold-review-spec`, `/scaffold-review-task`, `/scaffold-bulk-review-style`, `/scaffold-bulk-review-systems`, `/scaffold-bulk-review-references`, `/scaffold-bulk-review-engine`, `/scaffold-bulk-review-input`, `/scaffold-bulk-review-phases`, `/scaffold-bulk-review-slices`, `/scaffold-bulk-review-specs`, `/scaffold-bulk-review-tasks`
+
+**Iterate (1):** `/scaffold-iterate`
 
 **Edit (1):** `/scaffold-update-doc`
 
@@ -178,6 +180,7 @@ scaffold/
 ├── slices/                          # Vertical slice contracts
 ├── engine/                          # Engine-specific constraints (rank 10)
 ├── theory/                          # Advisory only — no authority (rank 11)
+├── reviews/                         # Adversarial review logs from /scaffold-iterate
 ├── templates/                       # Document + engine templates
 └── tools/                           # Scripts and utilities
 ```

@@ -22,6 +22,8 @@ Fills in `design/design-doc.md` with core vision, pillars, loops, mechanics, and
 
 Audits completeness, system index sync, and cross-references. Fix anything it flags before moving on.
 
+> **Optional:** Run `/scaffold-iterate design/design-doc.md` for adversarial review by an external LLM. Catches blind spots self-review misses.
+
 ---
 
 ## Style Documents
@@ -52,6 +54,8 @@ For any sections the bulk seed couldn't derive, fill them interactively:
 
 Audits all Rank 2 docs for completeness and cross-doc consistency (style ↔ colors ↔ UI kit ↔ glossary ↔ design doc).
 
+> **Optional:** Run `/scaffold-iterate` on individual style docs for adversarial review.
+
 ---
 
 ## Systems
@@ -80,6 +84,8 @@ Open each `design/systems/SYS-###-*.md` file and fill in all sections. To create
 
 Audits all systems for completeness, quality, cross-system consistency (dependency symmetry, authority conflicts, orphan systems, glossary compliance).
 
+> **Optional:** Run `/scaffold-iterate` on individual system designs for adversarial review.
+
 ---
 
 ## Reference Documents
@@ -105,6 +111,8 @@ To review a single reference doc in detail:
 ```
 /scaffold-review-reference [authority|interfaces|states|entities|resources|signals|balance]
 ```
+
+> **Optional:** Run `/scaffold-iterate` on individual reference docs for adversarial review (uses Lint tier — lightweight accuracy check).
 
 ---
 
@@ -133,6 +141,8 @@ To review a single input doc in detail:
 ```
 /scaffold-review-input [action-map|bindings-kbm|bindings-gamepad|ui-navigation|input-philosophy]
 ```
+
+> **Optional:** Run `/scaffold-iterate` on individual input docs for adversarial review.
 
 ---
 
@@ -167,6 +177,8 @@ To review a single engine doc in detail:
 ```
 /scaffold-review-engine [coding|ui|input|scene-architecture|performance]
 ```
+
+> **Optional:** Run `/scaffold-iterate` on individual engine docs for adversarial review.
 
 ---
 
@@ -299,3 +311,4 @@ Continue the implement → ADR → update cycle for each task until the slice is
 | `/scaffold-bulk-seed-specs` | Seed spec stubs from slices + system designs + state transitions |
 | `/scaffold-bulk-seed-tasks` | Seed task stubs from specs + engine docs + signal registry |
 | `/scaffold-update-doc` | Add, remove, or modify entries in any scaffold doc |
+| `/scaffold-iterate` | Adversarial review of any doc via external LLM (`--focus`, `--iterations`) |

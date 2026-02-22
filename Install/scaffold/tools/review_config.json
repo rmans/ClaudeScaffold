@@ -1,0 +1,13 @@
+{
+  "provider": "openai",
+  "openai": {
+    "model": "gpt-4o",
+    "api_key_env": "OPENAI_API_KEY"
+  },
+  "anthropic": {
+    "model": "claude-sonnet-4-20250514",
+    "api_key_env": "ANTHROPIC_API_KEY"
+  },
+  "temperature": 0.3,
+  "max_tokens": 16384
+}
