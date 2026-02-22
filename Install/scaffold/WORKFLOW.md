@@ -180,6 +180,8 @@ To review a single engine doc in detail:
 
 Reads the design doc, systems, and known issues to define the full project arc from start to ship. Creates the living roadmap in `phases/roadmap.md` with phases, goals, and key deliverables. This roadmap is updated after every phase completion.
 
+> **Review:** Run `/scaffold-review-roadmap` to audit the roadmap for completeness, phase coverage, ADR feedback currency, and vision alignment.
+
 ### Step 17 — Create phases
 
 ```
@@ -187,6 +189,9 @@ Reads the design doc, systems, and known issues to define the full project arc f
 ```
 
 Creates a phase scope gate in `phases/P#-###-name.md`. Reads the roadmap, all existing ADRs, and known issues. Each phase has a mandatory ADR impact analysis — no phase is created without checking what prior decisions affect its scope.
+
+> **Review:** Run `/scaffold-bulk-review-phases` to audit all phases for roadmap alignment, entry/exit chains, scope coverage, and ADR absorption.
+> **Alternative:** Run `/scaffold-review-phase [P#-###]` to audit a single phase.
 
 ### Step 18 — Define slices
 
@@ -196,6 +201,10 @@ Creates a phase scope gate in `phases/P#-###-name.md`. Reads the roadmap, all ex
 
 Defines a vertical slice within a phase — a playable end-to-end chunk that proves systems work together. Reads interfaces and ADRs to scope what the slice must demonstrate. Slices determine the order of implementation.
 
+> **Bulk seed:** Run `/scaffold-bulk-seed-slices` to generate slice stubs for all phases at once from phase scopes and interfaces.
+> **Review:** Run `/scaffold-bulk-review-slices` to audit all slices for phase coverage, spec overlap, and interface coverage.
+> **Alternative:** Run `/scaffold-review-slice [SLICE-###]` to audit a single slice.
+
 ### Step 19 — Write specs
 
 ```
@@ -204,6 +213,10 @@ Defines a vertical slice within a phase — a playable end-to-end chunk that pro
 
 Creates an atomic behavior spec for a slice. Pre-fills from system designs. Describes BEHAVIOR, not implementation — no engine constructs. Each spec checks ADRs for impacts on the behavior being defined.
 
+> **Bulk seed:** Run `/scaffold-bulk-seed-specs` to generate spec stubs for all slices at once from system designs and state transitions.
+> **Review:** Run `/scaffold-bulk-review-specs` to audit all specs for slice coverage, system coverage, and state machine alignment.
+> **Alternative:** Run `/scaffold-review-spec [SPEC-###]` to audit a single spec.
+
 ### Step 20 — Write tasks
 
 ```
@@ -211,6 +224,10 @@ Creates an atomic behavior spec for a slice. Pre-fills from system designs. Desc
 ```
 
 Creates an implementation task tied to a spec. Reads engine docs and ADRs. This is where engine constructs belong — tasks describe HOW to implement the spec's behavior in the target engine.
+
+> **Bulk seed:** Run `/scaffold-bulk-seed-tasks` to generate task stubs for all specs at once from engine docs and the signal registry.
+> **Review:** Run `/scaffold-bulk-review-tasks` to audit all tasks for spec coverage, engine consistency, and file conflicts.
+> **Alternative:** Run `/scaffold-review-task [TASK-###]` to audit a single task.
 
 ---
 
@@ -269,4 +286,16 @@ Continue the implement → ADR → update cycle for each task until the slice is
 | `/scaffold-new-slice` | Define a vertical slice within a phase |
 | `/scaffold-new-spec` | Create an atomic behavior spec for a slice |
 | `/scaffold-new-task` | Create an implementation task tied to a spec |
+| `/scaffold-review-roadmap` | Audit roadmap completeness, phase coverage, ADR currency |
+| `/scaffold-review-phase` | Audit one phase's quality and system alignment |
+| `/scaffold-review-slice` | Audit one slice's vertical coverage and spec completeness |
+| `/scaffold-review-spec` | Audit one spec's behavioral clarity and system alignment |
+| `/scaffold-review-task` | Audit one task's implementation completeness and engine compliance |
+| `/scaffold-bulk-review-phases` | Audit all phases + entry/exit chains + scope coverage |
+| `/scaffold-bulk-review-slices` | Audit all slices + phase coverage + interface coverage |
+| `/scaffold-bulk-review-specs` | Audit all specs + system coverage + state machine alignment |
+| `/scaffold-bulk-review-tasks` | Audit all tasks + file conflicts + ordering sanity |
+| `/scaffold-bulk-seed-slices` | Seed slice stubs from phases + systems + interfaces |
+| `/scaffold-bulk-seed-specs` | Seed spec stubs from slices + system designs + state transitions |
+| `/scaffold-bulk-seed-tasks` | Seed task stubs from specs + engine docs + signal registry |
 | `/scaffold-update-doc` | Add, remove, or modify entries in any scaffold doc |

@@ -1,12 +1,12 @@
 # ClaudeScaffold — Installation
 
-This is the installable overlay. Copy its contents into any game project to give Claude Code a structured document pipeline, strict design authority, and 26 skills that automate the workflow from concept to code.
+This is the installable overlay. Copy its contents into any game project to give Claude Code a structured document pipeline, strict design authority, and 38 skills that automate the workflow from concept to code.
 
 ## What Gets Installed
 
 ```
 your-project/
-├── .claude/skills/       ← 26 slash commands (create, seed, review, edit)
+├── .claude/skills/       ← 38 slash commands (create, seed, review, edit)
 ├── scaffold/             ← Document pipeline with indexes and templates
 └── CLAUDE.md             ← Rules that tell Claude Code how to use the scaffold
 ```
@@ -15,7 +15,7 @@ your-project/
 
 **`scaffold/`** — A structured document hierarchy with 11 authority ranks. Every design decision, style rule, system behavior, interface contract, and implementation constraint has a home. Start at `scaffold/_index.md` — it's the master entry point.
 
-**`.claude/skills/`** — 26 slash commands that automate document creation, bulk seeding, review audits, and editing. Skills read higher-authority documents to pre-fill lower ones, check ADRs before scoping new work, and cross-reference everything.
+**`.claude/skills/`** — 38 slash commands that automate document creation, bulk seeding, review audits, and editing. Skills read higher-authority documents to pre-fill lower ones, check ADRs before scoping new work, and cross-reference everything.
 
 ## Prerequisites
 
@@ -73,18 +73,36 @@ Fix anything the reviews flag before moving on.
 /scaffold-new-task [name]         ← create an implementation task tied to the spec
 ```
 
+Or bulk-seed planning docs from higher-level documents:
+
+```
+/scaffold-bulk-seed-slices        ← seed slice stubs from phases + interfaces
+/scaffold-bulk-seed-specs         ← seed spec stubs from slices + system designs
+/scaffold-bulk-seed-tasks         ← seed task stubs from specs + engine docs
+```
+
+Review planning docs for completeness and cross-doc consistency:
+
+```
+/scaffold-review-roadmap          ← audit roadmap completeness and ADR currency
+/scaffold-bulk-review-phases      ← audit all phases + entry/exit chains
+/scaffold-bulk-review-slices      ← audit all slices + phase/interface coverage
+/scaffold-bulk-review-specs       ← audit all specs + system/state alignment
+/scaffold-bulk-review-tasks       ← audit all tasks + file conflicts + ordering
+```
+
 Build. When implementation conflicts with the plan, file an ADR. After completing a phase, ADRs feed back into the roadmap and re-scope upcoming work.
 
 See `scaffold/WORKFLOW.md` for the full 24-step recipe.
 
-## All 26 Skills
+## All 38 Skills
 
 | Category | Skills |
 |----------|--------|
 | **Create** | `new-design`, `new-style`, `new-system`, `new-reference`, `new-engine`, `new-roadmap`, `new-phase`, `new-slice`, `new-spec`, `new-task` |
-| **Bulk seed** | `bulk-seed-style`, `bulk-seed-systems`, `bulk-seed-references`, `bulk-seed-engine` |
-| **Review** | `review-design`, `review-style`, `review-system`, `review-reference`, `review-engine`, `review-input` |
-| **Bulk review** | `bulk-review-style`, `bulk-review-systems`, `bulk-review-references`, `bulk-review-engine`, `bulk-review-input` |
+| **Bulk seed** | `bulk-seed-style`, `bulk-seed-systems`, `bulk-seed-references`, `bulk-seed-engine`, `bulk-seed-slices`, `bulk-seed-specs`, `bulk-seed-tasks` |
+| **Review** | `review-design`, `review-style`, `review-system`, `review-reference`, `review-engine`, `review-input`, `review-roadmap`, `review-phase`, `review-slice`, `review-spec`, `review-task` |
+| **Bulk review** | `bulk-review-style`, `bulk-review-systems`, `bulk-review-references`, `bulk-review-engine`, `bulk-review-input`, `bulk-review-phases`, `bulk-review-slices`, `bulk-review-specs`, `bulk-review-tasks` |
 | **Edit** | `update-doc` |
 
 All skill names are prefixed with `/scaffold-` (e.g., `/scaffold-new-design`).
