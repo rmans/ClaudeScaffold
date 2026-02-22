@@ -1,6 +1,6 @@
 ---
-name: scaffold-seed-reference
-description: Seed a single reference doc from system designs. Pick which doc to populate — entity-components, resource-definitions, signal-registry, or balance-params.
+name: scaffold-new-reference
+description: Add entries to a reference doc. Pre-fills from system designs if available, or add entries manually. Pick which doc — entity-components, resource-definitions, signal-registry, or balance-params.
 argument-hint: [doc-name]
 allowed-tools: Read, Edit, Write, Grep, Glob
 ---

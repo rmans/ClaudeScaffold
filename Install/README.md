@@ -29,7 +29,7 @@ This gives your project:
 |-------|-------------|
 | `/scaffold-new-design` | Walk through the design doc section by section |
 | `/scaffold-new-system` | Create a system — pre-fills from design doc if available |
-| `/scaffold-seed-reference` | Seed one reference doc from system designs |
+| `/scaffold-new-reference` | Seed one reference doc from system designs |
 | `/scaffold-bulk-seed-systems` | Glossary + all system stubs from design doc |
 | `/scaffold-bulk-seed-references` | All companion docs from system designs |
 | `/scaffold-review-design` | Audit design doc completeness |

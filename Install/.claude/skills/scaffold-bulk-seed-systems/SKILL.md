@@ -76,7 +76,7 @@ For each confirmed system:
 Summarize what was created:
 - Number of glossary terms added
 - Number of systems created, with their IDs and names
-- Remind the user of next steps: fill in each system design, then run `/scaffold-seed-references` once systems are complete
+- Remind the user of next steps: fill in each system design, then run `/scaffold-bulk-seed-references` once systems are complete
 
 ## Rules
 

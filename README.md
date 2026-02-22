@@ -96,7 +96,7 @@ The scaffold includes 8 Claude Code skills organized by workflow:
 |-------|---------|
 | `/scaffold-new-design` | Fill out the design doc interactively, section by section |
 | `/scaffold-new-system` | Create a system — pre-fills from design doc if available, blank template if not |
-| `/scaffold-seed-reference` | Seed one reference doc from system designs |
+| `/scaffold-new-reference` | Seed one reference doc from system designs |
 
 **Bulk create:**
 
