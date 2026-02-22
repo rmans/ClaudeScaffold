@@ -100,7 +100,7 @@ When documents conflict, the higher-ranked document wins. Lower documents must c
 
 ### Skills
 
-The scaffold includes 19 Claude Code skills organized by workflow:
+The scaffold includes 21 Claude Code skills organized by workflow:
 
 **Create:**
 
@@ -130,10 +130,12 @@ The scaffold includes 19 Claude Code skills organized by workflow:
 | `/scaffold-review-system` | Audit one system's completeness and quality |
 | `/scaffold-review-reference` | Audit one reference doc against system designs |
 | `/scaffold-review-engine` | Audit one engine doc for completeness and quality |
+| `/scaffold-review-input` | Audit one input doc for completeness and quality |
 | `/scaffold-bulk-review-style` | Audit all Rank 2 docs + cross-doc consistency |
 | `/scaffold-bulk-review-systems` | Audit all systems + cross-system consistency |
 | `/scaffold-bulk-review-references` | Audit all reference docs + cross-doc consistency |
 | `/scaffold-bulk-review-engine` | Audit all engine docs + cross-doc consistency |
+| `/scaffold-bulk-review-input` | Audit all input docs + cross-doc consistency |
 
 **Edit:**
 

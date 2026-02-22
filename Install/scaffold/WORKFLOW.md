@@ -120,11 +120,25 @@ Fill in the input documents manually:
 - `inputs/input-philosophy.md` — responsiveness targets, dead zones, buffering
 - `inputs/ui-navigation.md` — focus flow and navigation
 
+### Step 12 — Review all input docs
+
+```
+/scaffold-bulk-review-input
+```
+
+Audits all input docs for completeness and cross-doc consistency (action map ↔ bindings, philosophy ↔ all docs, design doc ↔ actions).
+
+To review a single input doc in detail:
+
+```
+/scaffold-review-input [action-map|bindings-kbm|bindings-gamepad|ui-navigation|input-philosophy]
+```
+
 ---
 
 ## Engine
 
-### Step 12 — Seed engine docs
+### Step 13 — Seed engine docs
 
 ```
 /scaffold-bulk-seed-engine
@@ -132,7 +146,7 @@ Fill in the input documents manually:
 
 Asks which engine you're using (Godot 4, Unity, Unreal 5, etc.), then creates all 5 engine docs from templates with engine-specific conventions pre-filled. Use the **Project Overrides** table at the bottom of each doc for project-specific deviations.
 
-### Step 13 — Fill in remaining engine sections
+### Step 14 — Fill in remaining engine sections
 
 For any sections the bulk seed couldn't pre-fill, fill them interactively:
 
@@ -140,7 +154,7 @@ For any sections the bulk seed couldn't pre-fill, fill them interactively:
 /scaffold-new-engine [coding|ui|input|scene-architecture|performance]
 ```
 
-### Step 14 — Review all engine docs
+### Step 15 — Review all engine docs
 
 ```
 /scaffold-bulk-review-engine
@@ -158,19 +172,19 @@ To review a single engine doc in detail:
 
 ## Planning
 
-### Step 15 — Define phases
+### Step 16 — Define phases
 
 Create `phases/P#-###.md` files using `templates/phase-template.md` — scope gates and milestones.
 
-### Step 16 — Write specs
+### Step 17 — Write specs
 
 Create `specs/SPEC-###.md` files using `templates/spec-template.md` — atomic behavior definitions derived from system designs.
 
-### Step 17 — Write tasks
+### Step 18 — Write tasks
 
 Create `tasks/TASK-###.md` files using `templates/task-template.md` — executable implementation steps, each tied to a spec.
 
-### Step 18 — Define slices
+### Step 19 — Define slices
 
 Create `slices/SLICE-###.md` files using `templates/slice-template.md` — vertical slice contracts that bundle related tasks.
 
@@ -178,15 +192,15 @@ Create `slices/SLICE-###.md` files using `templates/slice-template.md` — verti
 
 ## Building
 
-### Step 19 — Implement tasks
+### Step 20 — Implement tasks
 
 For each task, read the task doc, its linked spec, relevant system designs, and engine constraints, then write code.
 
-### Step 20 — Record decisions
+### Step 21 — Record decisions
 
 When a conflict or ambiguity arises during implementation, create `decisions/ADR-###.md` using `templates/decision-template.md`. ADRs are permanent records.
 
-### Step 21 — Repeat
+### Step 22 — Repeat
 
 Continue the implement → ADR cycle for each task until the slice is complete. Then move to the next slice.
 
@@ -210,8 +224,10 @@ Continue the implement → ADR cycle for each task until the slice is complete. 
 | `/scaffold-review-system` | Audit one system's quality |
 | `/scaffold-review-reference` | Audit one reference doc |
 | `/scaffold-review-engine` | Audit one engine doc |
+| `/scaffold-review-input` | Audit one input doc |
 | `/scaffold-bulk-review-style` | Audit all Rank 2 docs + cross-doc consistency |
 | `/scaffold-bulk-review-systems` | Audit all systems + cross-system consistency |
 | `/scaffold-bulk-review-references` | Audit all reference docs + cross-doc consistency |
 | `/scaffold-bulk-review-engine` | Audit all engine docs + cross-doc consistency |
+| `/scaffold-bulk-review-input` | Audit all input docs + cross-doc consistency |
 | `/scaffold-update-doc` | Add, remove, or modify entries in any scaffold doc |
