@@ -21,6 +21,9 @@ Create a new system design document for: **$ARGUMENTS**
    - `scaffold/theory/game-design-principles.md` — principles to guide system design
    - `scaffold/theory/common-design-pitfalls.md` — anti-patterns to steer away from
    - `scaffold/theory/balance-principles.md` — balance guidance for system tuning
+   - `scaffold/theory/game-architecture.md` — architecture patterns for system design
+   - `scaffold/theory/performance-engineering.md` — performance considerations for system design
+   - `scaffold/theory/testing-strategies.md` — testability considerations for system design
 
 ### 2. Determine the Next SYS ID
 

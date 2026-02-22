@@ -24,6 +24,8 @@ Guide the user through filling out a Rank 2 style document: **$ARGUMENTS**
 3. **Read advisory theory doc** for context (informs suggestions but carries no authority):
    - `scaffold/theory/ux-heuristics.md` — UX principles to guide style decisions
    - `scaffold/theory/audio-design.md` — audio principles for sound feedback sections
+   - `scaffold/theory/color-theory.md` — color fundamentals for color-system walkthrough
+   - `scaffold/theory/visual-design.md` — visual composition for style-guide walkthrough
 4. **Read the target doc** and identify which sections are already filled (have content beyond `*TODO:*` markers) and which are empty.
 5. **Skip sections that are already complete.** Only walk the user through unfilled or partial sections.
 

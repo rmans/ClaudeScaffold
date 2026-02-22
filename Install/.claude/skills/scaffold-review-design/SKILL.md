@@ -17,6 +17,7 @@ Read theory docs for advisory context (these inform observations but never cause
 - `scaffold/theory/genre-conventions.md` — check alignment with genre expectations (if genre is stated)
 - `scaffold/theory/narrative-design.md` — check narrative sections against storytelling principles
 - `scaffold/theory/balance-principles.md` — check difficulty and pacing against balance principles
+- `scaffold/theory/world-design.md` — check world/content sections against world building principles
 
 ### 1. Design Doc Completeness
 

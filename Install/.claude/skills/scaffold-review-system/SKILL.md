@@ -14,6 +14,9 @@ Review the system design for: **$ARGUMENTS**
 Read theory docs for advisory context (these inform observations but never cause hard failures):
 - `scaffold/theory/common-design-pitfalls.md` — flag patterns that match known anti-patterns
 - `scaffold/theory/balance-principles.md` — check system balance against tuning principles
+- `scaffold/theory/game-architecture.md` — check architecture patterns and decoupling
+- `scaffold/theory/performance-engineering.md` — flag potential performance concerns
+- `scaffold/theory/testing-strategies.md` — flag testability concerns
 
 ## Locate the System
 

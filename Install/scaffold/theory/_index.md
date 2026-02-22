@@ -24,6 +24,13 @@
 | [level-design.md](level-design.md) | Level design principles — teaching through space, pacing, navigation, secrets |
 | [audio-design.md](audio-design.md) | Audio design principles — feedback, hierarchy, adaptive audio, silence, accessibility |
 | [balance-principles.md](balance-principles.md) | Game balance principles — difficulty, economies, feedback loops, tuning |
+| [world-design.md](world-design.md) | World building — sense of place, internal logic, biomes, navigation, ecosystems |
+| [color-theory.md](color-theory.md) | Color fundamentals — harmony, psychology, contrast, saturation, palettes |
+| [visual-design.md](visual-design.md) | Visual composition — hierarchy, readability, silhouette, contrast, style consistency |
+| [multiplayer-design.md](multiplayer-design.md) | Multiplayer — networking, social dynamics, matchmaking, co-op, competitive |
+| [game-architecture.md](game-architecture.md) | Software architecture — ECS, state machines, events, decoupling, data-driven design |
+| [performance-engineering.md](performance-engineering.md) | Performance — profiling, frame budgets, memory, batching, LOD, optimization traps |
+| [testing-strategies.md](testing-strategies.md) | Testing — unit tests, integration, regression, edge cases, determinism |
 
 ## Rules
 

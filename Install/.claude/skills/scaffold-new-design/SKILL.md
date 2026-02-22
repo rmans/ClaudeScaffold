@@ -20,6 +20,8 @@ Guide the user through filling out `scaffold/design/design-doc.md` for: **$ARGUM
    - `scaffold/theory/level-design.md` — spatial design for content structure
    - `scaffold/theory/audio-design.md` — audio principles for audio identity
    - `scaffold/theory/balance-principles.md` — balance guidance for difficulty and pacing
+   - `scaffold/theory/world-design.md` — world building for content structure and world sections
+   - `scaffold/theory/multiplayer-design.md` — multiplayer principles if the game has multiplayer
 3. **Identify which sections are already filled** (have content beyond `*TODO:*` markers) and which are empty.
 4. **Skip sections that are already complete.** Only walk the user through unfilled or partial sections.
 

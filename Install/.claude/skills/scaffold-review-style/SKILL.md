@@ -34,6 +34,8 @@ Read the target doc and assess its overall state — empty, partially filled, or
 Read theory doc for advisory context (informs observations but never causes hard failures):
 - `scaffold/theory/ux-heuristics.md` — UX principles to check style decisions against
 - `scaffold/theory/audio-design.md` — audio principles for reviewing sound feedback
+- `scaffold/theory/color-theory.md` — color fundamentals for reviewing color-system
+- `scaffold/theory/visual-design.md` — visual composition for reviewing style-guide
 
 ### 4. Read the Design Doc for Cross-Reference
 
