@@ -13,15 +13,15 @@
 
 | Directory | Layer | Contents |
 |-----------|-------|----------|
-| [design/](design/_index.md) | Canon | What the game is — vision, style, systems, interfaces, data authority, states |
-| [reference/](reference/_index.md) | Reference | Canonical data tables — signals, entities, resources, balance, glossary, tracking |
+| [design/](design/_index.md) | Canon | What the game is — vision, style, glossary, systems, interfaces, authority, states |
+| [reference/](reference/_index.md) | Reference | Canonical data tables — signals, entities, resources, balance |
 | [engine/](engine/_index.md) | Implementation | How we build in Godot 4 — best practices, constraints |
 | [inputs/](inputs/_index.md) | Canon | Input action map, bindings, navigation rules |
 | [theory/](theory/_index.md) | Reference | Background reading — never canonical |
 | [phases/](phases/_index.md) | Scope | Phase gates and milestones |
 | [specs/](specs/_index.md) | Behavior | Atomic behavior definitions |
 | [tasks/](tasks/_index.md) | Execution | Executable implementation steps |
-| [decisions/](decisions/_index.md) | History | Architecture Decision Records |
+| [decisions/](decisions/_index.md) | History | Architecture Decision Records, known issues, design debt |
 | [slices/](slices/_index.md) | Integration | Vertical slice contracts |
 | [templates/](templates/_index.md) | Meta | Document templates for all ID'd types |
 | [tools/](tools/_index.md) | Tooling | Scripts and utilities for the pipeline |

@@ -10,14 +10,15 @@
 | 2 | [design/style-guide.md](design/style-guide.md) | Canon — visual and code style |
 | 2 | [design/color-system.md](design/color-system.md) | Canon — color palette and rules |
 | 2 | [design/ui-kit.md](design/ui-kit.md) | Canon — UI component definitions |
+| 2 | [design/glossary.md](design/glossary.md) | Canon — canonical terminology |
 | 3 | [inputs/action-map.md](inputs/action-map.md) | Canon — canonical action IDs |
 | 3 | [inputs/default-bindings-kbm.md](inputs/default-bindings-kbm.md) | Canon — keyboard/mouse bindings |
 | 3 | [inputs/default-bindings-gamepad.md](inputs/default-bindings-gamepad.md) | Canon — gamepad bindings |
 | 4 | [design/interfaces.md](design/interfaces.md) | Canon — system interface contracts |
 | 4 | [design/authority.md](design/authority.md) | Canon — data authority table |
 | 5 | design/systems/SYS-### | Canon — individual system designs |
-| 5 | [design/states/state-transitions.md](design/states/state-transitions.md) | Canon — state machine definitions |
-| 6 | reference/* | Reference — canonical data tables and tracking |
+| 5 | [design/state-transitions.md](design/state-transitions.md) | Canon — state machine definitions |
+| 6 | reference/* | Reference — canonical data tables |
 | 7 | phases/P#-### | Scope — phase gates |
 | 8 | specs/SPEC-### | Behavior — atomic specs |
 | 9 | tasks/TASK-### | Execution — implementation steps |

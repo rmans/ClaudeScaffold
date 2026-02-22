@@ -2,7 +2,7 @@
 
 > **Authority:** Rank 5
 > **Layer:** Canon
-> **Conforms to:** [design-doc.md](../design-doc.md)
+> **Conforms to:** [design-doc.md](design-doc.md)
 
 ---
 

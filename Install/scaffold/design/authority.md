@@ -10,6 +10,10 @@
 
 Defines who **writes** each piece of game data at runtime. Every variable, property, or state has exactly one owning system. Other systems may read it, but only the owner may change it. This prevents silent conflicts where two systems fight over the same value.
 
+## Relationship to Entity Components
+
+This document tracks **cross-system ownership** — which system is the single writer for each shared variable. For the full per-field data shape of each entity (types, components, all fields), see [reference/entity-components.md](../reference/entity-components.md). The Authority column in entity-components is derived from this table. **On conflict, this document wins.**
+
 ## Authority Table
 
 <!-- Add entries as systems are designed. One row per variable or property. -->

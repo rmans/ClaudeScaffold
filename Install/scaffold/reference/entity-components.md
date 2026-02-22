@@ -10,6 +10,10 @@
 
 Master registry of every entity in the game and its fields, grouped by component. Defines the data shape for each entity type — what fields it has, their types, which system owns them, and how often they update.
 
+## Relationship to Authority Table
+
+The Authority column in entity tables is a **convenience reference** derived from [design/authority.md](../design/authority.md). That document is the canonical source for data ownership (Rank 4). If the Authority column here conflicts with authority.md, **authority.md wins** — update this document to match.
+
 ## Entities
 
 <!-- Add entities as they are designed. One section per entity type. -->

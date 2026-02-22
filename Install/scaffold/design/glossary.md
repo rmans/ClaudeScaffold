@@ -1,8 +1,8 @@
 # Glossary
 
-> **Authority:** Rank 6
-> **Layer:** Reference
-> **Conforms to:** [design/design-doc.md](../design/design-doc.md)
+> **Authority:** Rank 2
+> **Layer:** Canon
+> **Conforms to:** [design-doc.md](design-doc.md)
 
 ---
 
