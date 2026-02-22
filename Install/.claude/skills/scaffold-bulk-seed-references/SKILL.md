@@ -33,9 +33,25 @@ Read all completed system designs and use them to bulk-populate the companion do
 4. **Present to the user for confirmation.** Flag any conflicts where two systems appear to write the same variable.
 5. **Write confirmed entries** into `scaffold/design/authority.md`.
 
-## Phase 2 — State Transitions
+## Phase 2 — Interface Contracts
+
+1. **Read** `scaffold/design/interfaces.md`.
+2. **Extract system-to-system communication** from every system's Inputs & Dependencies and Outputs & Consequences tables. For each pair of systems that exchange data:
+   - Identify the data exchanged
+   - Determine the direction: Push (source notifies target), Pull (target reads from source), or Request (source asks target to act)
+   - Draft source guarantees and target guarantees
+3. **Add a row to the Interface Summary table** for each interface:
+   ```
+   | Source System | Target System | Data Exchanged | Direction | Notes |
+   ```
+4. **Draft detailed contracts** for each interface, following the format in interfaces.md (data exchanged, direction, source guarantees, target guarantees, failure mode).
+5. **Present to the user for confirmation.** Flag any conflicts where systems disagree about what data flows between them.
+6. **Write confirmed interfaces** into `scaffold/design/interfaces.md`.
+
+## Phase 3 — State Transitions
 
 1. **Read** `scaffold/design/state-transitions.md`.
+
 2. **Extract state machines** from system designs. Look for:
    - Entities that have lifecycle states (idle, active, dead, etc.)
    - Entities that change mode (building → built, raw → refined)
@@ -47,12 +63,12 @@ Read all completed system designs and use them to bulk-populate the companion do
 4. **Present to the user for confirmation.**
 5. **Write confirmed state machines** into `scaffold/design/state-transitions.md`.
 
-## Phase 3 — Entity Components
+## Phase 4 — Entity Components
 
 1. **Read** `scaffold/reference/entity-components.md`.
 2. **Extract entities** from system designs. Any noun that a system creates, modifies, moves, or destroys is likely an entity. Look for:
    - Entities named in Player Actions and System Resolution
-   - Entities implied by state machines (Phase 2)
+   - Entities implied by state machines (Phase 3)
    - Entities implied by the authority table (Phase 1)
 3. **For each entity**, draft a component table:
    - Group fields by component (logical grouping: Identity, Health, Movement, etc.)
@@ -62,7 +78,7 @@ Read all completed system designs and use them to bulk-populate the companion do
 4. **Present to the user for confirmation.**
 5. **Write confirmed entities** into `scaffold/reference/entity-components.md`.
 
-## Phase 4 — Resource Definitions
+## Phase 5 — Resource Definitions
 
 1. **Read** `scaffold/reference/resource-definitions.md`.
 2. **Extract resources** from system designs. Look for:
@@ -75,7 +91,7 @@ Read all completed system designs and use them to bulk-populate the companion do
 5. **Write confirmed resources** into `scaffold/reference/resource-definitions.md`.
 6. **Draft production chains** if multi-step resource transformations exist.
 
-## Phase 5 — Signal Registry
+## Phase 6 — Signal Registry
 
 1. **Read** `scaffold/reference/signal-registry.md`.
 2. **Extract signals** from system Inputs/Outputs tables. Every row in an Outputs table is a candidate signal or intent:
@@ -87,7 +103,7 @@ Read all completed system designs and use them to bulk-populate the companion do
 5. **Present to the user for confirmation.**
 6. **Write confirmed signals** into the Signals table and intents into the Intent Objects table.
 
-## Phase 6 — Balance Parameters
+## Phase 7 — Balance Parameters
 
 1. **Read** `scaffold/reference/balance-params.md`.
 2. **Extract tunable numbers** from system designs. Look for:
@@ -101,10 +117,11 @@ Read all completed system designs and use them to bulk-populate the companion do
 4. **Present to the user for confirmation.** Values can be approximate — tuning comes later.
 5. **Write confirmed parameters** into `scaffold/reference/balance-params.md`, grouped by system.
 
-## Phase 7 — Report
+## Phase 8 — Report
 
 Summarize what was seeded:
 - Authority table: X entries
+- Interface contracts: X defined
 - State machines: X defined
 - Entities: X with Y total fields
 - Resources: X defined, Y production chains
@@ -126,7 +143,8 @@ Remind the user of next steps:
 
 - **Never write without confirmation.** Every phase presents proposals before writing.
 - **Work phase by phase.** Complete one phase before starting the next — later phases build on earlier ones.
-- **Authority table comes first** because entity-components and balance-params reference it.
+- **Authority table comes first** because interfaces, entity-components, and balance-params reference it.
+- **Interfaces come before signals** because signal-registry conforms to interface contracts.
 - **Preserve existing content.** If a reference doc already has entries, add to them — don't overwrite.
 - **Flag conflicts, don't resolve them.** If two systems claim the same variable or entity field, present the conflict to the user. Don't guess.
 - **"TBD" is a valid value.** For balance params where no number exists yet, use TBD. The point is to register the parameter, not to tune it.

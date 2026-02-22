@@ -14,6 +14,7 @@ Review a single reference document: **$ARGUMENTS**
 | Argument | File |
 |----------|------|
 | `authority` | `scaffold/design/authority.md` |
+| `interfaces` | `scaffold/design/interfaces.md` |
 | `states` | `scaffold/design/state-transitions.md` |
 | `entities` | `scaffold/reference/entity-components.md` |
 | `resources` | `scaffold/reference/resource-definitions.md` |
@@ -44,6 +45,14 @@ Depending on the target:
 - Every variable referenced in system Inputs/Outputs should have an authority entry.
 - Every entry should have: Variable, Owning System, Readers, Update Cadence.
 - Flag variables mentioned in systems but missing from the authority table.
+
+**Interfaces** —
+- Every pair of systems that communicate (one's Outputs reference another's Inputs) should have an interface contract.
+- Every interface should have: Source, Target, Data Exchanged, Direction (Push/Pull/Request).
+- Detailed contracts should include source guarantees, target guarantees, and failure modes.
+- Interface summary table should be consistent with the detailed contracts below it.
+- Flag system pairs that exchange data but have no interface defined.
+- Cross-reference with `scaffold/reference/signal-registry.md` — signals should implement interface contracts.
 
 **States** —
 - Every entity with lifecycle states in system designs should have a state machine.

@@ -13,6 +13,7 @@ Review every reference and companion doc for completeness, accuracy, and cross-d
 | Doc | File |
 |-----|------|
 | Authority table | `scaffold/design/authority.md` |
+| Interface contracts | `scaffold/design/interfaces.md` |
 | State transitions | `scaffold/design/state-transitions.md` |
 | Entity components | `scaffold/reference/entity-components.md` |
 | Resource definitions | `scaffold/reference/resource-definitions.md` |
@@ -26,7 +27,7 @@ Review every reference and companion doc for completeness, accuracy, and cross-d
 
 ### 1. Read Everything
 
-1. Read all 9 documents listed above.
+1. Read all 10 documents listed above.
 2. Read all system designs from `scaffold/design/systems/`.
 3. Read the design doc at `scaffold/design/design-doc.md` for high-level cross-reference.
 
@@ -46,7 +47,9 @@ This is the main value of bulk review — checking relationships BETWEEN referen
 - **Authority ↔ Entity Components.** Every Authority column in entity-components must match the owning system in authority.md. Flag mismatches.
 - **Authority ↔ Systems.** Every variable in authority.md should trace back to a system's responsibilities. Flag orphaned authority entries.
 - **Signals ↔ System Outputs.** Every signal in signal-registry should correspond to a system Outputs table entry. Every system output should have a registered signal. Flag one-sided entries.
-- **Signals ↔ Interfaces.** Signals should align with contracts in `scaffold/design/interfaces.md`. Flag signals that don't have an interface contract.
+- **Interfaces ↔ Systems.** Every system-to-system communication in system Inputs/Outputs should have an interface contract. Flag system pairs that communicate but have no interface defined.
+- **Interfaces ↔ Authority.** Data exchanged in interfaces should respect authority ownership — the owning system should be the source for push interfaces. Flag interfaces where a non-owner pushes data it doesn't own.
+- **Signals ↔ Interfaces.** Every signal in signal-registry should implement an interface contract. Flag signals that don't have an interface contract and interface contracts that don't have a corresponding signal.
 - **Resources ↔ Systems.** Every resource should be produced and consumed by at least one system. Flag resources with no producer or no consumer.
 - **Resources ↔ Balance Params.** Resource-related numbers (stack limits, production rates, storage capacities) should appear in balance-params. Flag missing params.
 - **Balance Params ↔ Systems.** Every parameter should reference a valid owning system. Flag orphaned params.

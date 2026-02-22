@@ -14,6 +14,7 @@ Populate a single reference document from system designs: **$ARGUMENTS**
 | Argument | File | What gets seeded |
 |----------|------|------------------|
 | `authority` | `scaffold/design/authority.md` | Variable ownership extracted from system Inputs/Outputs |
+| `interfaces` | `scaffold/design/interfaces.md` | Interface contracts extracted from system Inputs/Outputs |
 | `states` | `scaffold/design/state-transitions.md` | State machines extracted from entity lifecycles |
 | `entities` | `scaffold/reference/entity-components.md` | Entity fields from system descriptions |
 | `resources` | `scaffold/reference/resource-definitions.md` | Resources from system production/consumption |
@@ -43,6 +44,8 @@ Populate a single reference document from system designs: **$ARGUMENTS**
 Depending on the target document:
 
 **Authority** — For each system, find variables it writes to in Player Actions and System Resolution. Propose ownership entries with readers derived from other systems' Inputs tables.
+
+**Interfaces** — For each pair of systems that communicate (one system's Outputs reference another system's Inputs), draft an interface contract. Identify the data exchanged, direction (push/pull/request), and what guarantees each side provides. Cross-reference with `scaffold/design/authority.md` for data ownership.
 
 **States** — For each entity referenced in systems, look for lifecycle states (idle, active, dead, etc.) or mode changes. Draft state tables with transitions and triggers.
 
