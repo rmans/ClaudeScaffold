@@ -2,6 +2,7 @@
 
 > **Authority:** Rank 1 — highest. All other documents must conform to this.
 > **Layer:** Canon
+> **Status:** Draft
 
 ---
 

@@ -105,3 +105,4 @@ Summarize what was created:
 - **Preserve any existing engine docs.** If some docs already exist, only create the missing ones (unless user explicitly wants to overwrite).
 - **Pre-filled content is a starting point.** Tell the user to review and refine — engine conventions evolve.
 - **Update the engine index** to reflect the actual files created.
+- **Created documents start with Status: Draft.**

@@ -3,6 +3,7 @@
 > **Authority:** Rank 4
 > **Layer:** Canon
 > **Conforms to:** [design-doc.md](design-doc.md)
+> **Status:** Draft
 
 ---
 

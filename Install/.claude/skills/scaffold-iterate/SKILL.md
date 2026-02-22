@@ -165,7 +165,11 @@ After all iterations complete, create a review log in `scaffold/reviews/`:
 - Fill in all sections from the iteration data.
 - Update the Review Log table in `scaffold/reviews/_index.md` with a new row.
 
-### 6. Report
+### 6. Update Document Status
+
+If the review completed successfully (consensus reached, no unresolved HIGH issues), update the document's `> **Status:**` line from whatever it currently is to `Approved` using the Edit tool. If the review ended with unresolved HIGH issues or required user arbitration, leave the status unchanged.
+
+### 7. Report
 
 Present a summary to the user:
 - Document reviewed, type, tier

@@ -86,3 +86,4 @@ Summarize what was created:
 - **System names are nouns, not verbs.** "Construction" not "Building things." "Combat" not "Fighting."
 - **IDs are sequential and permanent.** Never skip or reuse.
 - **Preserve any existing systems.** If SYS-### files already exist, start numbering after the highest existing ID and don't overwrite.
+- **Created documents start with Status: Draft.**

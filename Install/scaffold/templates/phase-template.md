@@ -3,6 +3,7 @@
 > **Authority:** Rank 6
 > **Layer:** Scope
 > **Conforms to:** [design/design-doc.md](../design/design-doc.md)
+> **Status:** Draft
 
 ## Goal
 

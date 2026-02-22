@@ -96,3 +96,4 @@ Remind the user of next steps:
 - **Integration points must reference real interfaces** from interfaces.md. Don't invent interfaces that don't exist.
 - **Flag conflicts, don't resolve them.** If phase scope items can't be cleanly divided into slices, present the conflict to the user.
 - **One slice per end-to-end experience.** Don't create overlapping slices that prove the same thing.
+- **Created documents start with Status: Draft.**

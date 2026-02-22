@@ -3,6 +3,7 @@
 > **Layer:** Implementation
 > **Authority:** Rank 10
 > **Conforms to:** [design/ui-kit.md](../design/ui-kit.md), [design/style-guide.md](../design/style-guide.md)
+> **Status:** Draft
 
 ## UI Framework Components
 

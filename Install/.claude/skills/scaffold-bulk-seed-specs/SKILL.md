@@ -110,3 +110,4 @@ Remind the user of next steps:
 - **Each spec should be atomic** — one testable behavior. If a system behavior is complex, suggest splitting into multiple specs.
 - **Flag conflicts, don't resolve them.** If system designs disagree about a behavior, present the conflict to the user.
 - **ADR impacts must be noted.** If an ADR changes a system behavior, the spec must reflect the post-ADR behavior, not the original.
+- **Created documents start with Status: Draft.**

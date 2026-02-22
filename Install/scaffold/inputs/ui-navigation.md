@@ -3,6 +3,7 @@
 > **Authority:** Rank 3
 > **Layer:** Canon
 > **Conforms to:** [design/ui-kit.md](../design/ui-kit.md), [action-map.md](action-map.md)
+> **Status:** Draft
 
 ## Purpose
 

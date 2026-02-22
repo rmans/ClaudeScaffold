@@ -3,6 +3,7 @@
 > **Authority:** Rank 2
 > **Layer:** Canon
 > **Conforms to:** [design-doc.md](design-doc.md), [style-guide.md](style-guide.md), [color-system.md](color-system.md)
+> **Status:** Draft
 
 ## Component Definitions
 

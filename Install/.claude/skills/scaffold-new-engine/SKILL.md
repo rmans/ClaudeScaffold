@@ -89,3 +89,4 @@ Work through the performance budget doc section by section:
 - **If the user gives a short answer**, that's fine. Short and clear beats long and vague.
 - **After completing all sections**, report how many sections are filled vs. remaining TODOs.
 - **Remind the user** to run `/scaffold-review-engine` when done to audit completeness.
+- **Created documents start with Status: Draft.**

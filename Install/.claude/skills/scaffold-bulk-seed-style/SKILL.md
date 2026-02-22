@@ -79,3 +79,4 @@ Summarize what was seeded:
 - **Be specific, not generic.** Proposed content should reference the actual game described in the design doc, not boilerplate.
 - **If a section can't be derived**, say so and leave it as TODO. Don't force content where the design doc doesn't provide enough context.
 - **Preserve any existing content.** If a section is already filled, skip it — don't overwrite.
+- **Created documents start with Status: Draft.**

@@ -3,6 +3,7 @@
 > **Layer:** Implementation
 > **Authority:** Rank 10
 > **Conforms to:** [inputs/action-map.md](../inputs/action-map.md), [inputs/input-philosophy.md](../inputs/input-philosophy.md)
+> **Status:** Draft
 
 ## Input System Configuration
 

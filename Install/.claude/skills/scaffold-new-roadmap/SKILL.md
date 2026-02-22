@@ -64,3 +64,4 @@ Show the user:
 - **Phases should be outcome-oriented** ("prove the core loop works") not task-oriented ("implement 5 systems").
 - **Reference known issues and design debt** when discussing scope — they may affect phase planning.
 - **Remind the user** that the roadmap is a living document that updates after each phase.
+- **Created documents start with Status: Draft.**

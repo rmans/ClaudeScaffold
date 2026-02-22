@@ -66,6 +66,16 @@ Never load entire directories. Follow this protocol:
 - Specs describe BEHAVIOR (what it does). Tasks describe IMPLEMENTATION (how to build it in the engine).
 - After completing a phase, follow the Phase Transition Protocol in `scaffold/phases/roadmap.md` to update the roadmap.
 
+## Document Status
+
+Every scaffold document carries a `> **Status:**` field in its blockquote header. Values: `Draft | Review | Approved`.
+
+- **Draft** — set automatically when a document is created (via templates and create/seed skills).
+- **Review** — set manually by the user when the document is ready for adversarial review.
+- **Approved** — set automatically by `/scaffold-iterate` after a successful adversarial review (consensus reached, no unresolved HIGH issues).
+
+ADRs use their own status lifecycle (`Proposed | Accepted | Deprecated | Superseded`) and are not part of this system.
+
 ## Workflow
 
 Follow the step-by-step recipe in `scaffold/WORKFLOW.md` for the full 24-step pipeline from design doc to implementation.

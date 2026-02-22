@@ -4,6 +4,7 @@
 > **Layer:** Execution
 > **Implements:** SPEC-### (link to parent spec)
 > **Phase:** P#-### (link to parent phase)
+> **Status:** Draft
 
 ## Objective
 

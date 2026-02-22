@@ -62,3 +62,4 @@ Show the user:
 - **The demo script should be concrete enough** for someone unfamiliar with the project to follow.
 - **If no argument is provided**, ask the user for a slice name before proceeding.
 - **IDs are sequential and permanent** — never skip or reuse.
+- **Created documents start with Status: Draft.**

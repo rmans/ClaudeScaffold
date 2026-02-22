@@ -85,3 +85,4 @@ Show the user:
 - **Pre-filled content is a starting point.** Tell the user to review and refine — don't present it as final.
 - **Keep both index tables in sync** — the design doc and systems/_index.md must always match.
 - **Use theory docs as advisory context.** Reference principles or pitfalls when relevant to help the user think through system design, but never impose them. Theory informs — it doesn't dictate.
+- **Created documents start with Status: Draft.**

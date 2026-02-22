@@ -80,3 +80,4 @@ Show what was added and flag any gaps (systems that didn't contribute entries, o
 - **One doc at a time.** For bulk seeding of all docs, use `/scaffold-bulk-seed-references`.
 - **Flag conflicts** (e.g., two systems writing the same variable) — don't silently resolve them.
 - **"TBD" is valid** for balance param values. Register the parameter even without a number.
+- **Created documents start with Status: Draft.**

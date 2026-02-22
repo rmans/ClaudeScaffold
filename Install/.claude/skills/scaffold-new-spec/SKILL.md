@@ -84,3 +84,4 @@ Show the user:
 - **IDs are sequential and permanent** — never skip or reuse.
 - **Never overwrite an existing spec file.**
 - **Keep index tables in sync** — `scaffold/specs/_index.md` and the parent slice document must always match.
+- **Created documents start with Status: Draft.**

@@ -149,3 +149,4 @@ Remind the user of next steps:
 - **Flag conflicts, don't resolve them.** If two systems claim the same variable or entity field, present the conflict to the user. Don't guess.
 - **"TBD" is a valid value.** For balance params where no number exists yet, use TBD. The point is to register the parameter, not to tune it.
 - **Cross-reference everything.** Every entity should trace back to a system. Every signal should trace back to an Outputs table. Every authority entry should trace back to a system's responsibilities. If something is orphaned, flag it.
+- **Created documents start with Status: Draft.**

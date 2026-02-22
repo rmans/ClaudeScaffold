@@ -3,6 +3,7 @@
 > **Authority:** Rank 2
 > **Layer:** Canon
 > **Conforms to:** [design-doc.md](design-doc.md)
+> **Status:** Draft
 
 This document defines the game's **visual identity** — what it looks like, how it feels to the eye. It is engine-agnostic and describes intent, not implementation.
 

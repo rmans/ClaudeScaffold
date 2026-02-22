@@ -135,3 +135,4 @@ Remind the user of next steps:
 - **Each task should be right-sized** — completable in one session (~3-8 steps, ~1-5 files). Split larger tasks.
 - **Flag conflicts, don't resolve them.** If file ownership is unclear or tasks would conflict, present the conflict to the user.
 - **Ordering matters.** Tasks within a slice must be ordered so each task can build on the previous ones.
+- **Created documents start with Status: Draft.**

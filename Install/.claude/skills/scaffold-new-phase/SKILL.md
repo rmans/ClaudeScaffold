@@ -76,3 +76,4 @@ Show the user:
 - **IDs are sequential and permanent** — never skip or reuse.
 - **Entry criteria must reference specific IDs** — use phase IDs (P1-001) or system IDs (SYS-003), not vague conditions like "when the design is ready."
 - **Never overwrite an existing phase file.**
+- **Created documents start with Status: Draft.**

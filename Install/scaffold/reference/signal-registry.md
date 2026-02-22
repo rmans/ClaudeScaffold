@@ -3,6 +3,7 @@
 > **Authority:** Rank 6
 > **Layer:** Reference
 > **Conforms to:** [design/interfaces.md](../design/interfaces.md)
+> **Status:** Draft
 
 ---
 

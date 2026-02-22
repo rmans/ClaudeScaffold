@@ -74,3 +74,4 @@ Show the user:
 - If no argument is provided, ask the user for a task name.
 - IDs are sequential and permanent.
 - Each task should be small enough to complete in one session. If it's too big, suggest splitting into multiple tasks.
+- **Created documents start with Status: Draft.**
