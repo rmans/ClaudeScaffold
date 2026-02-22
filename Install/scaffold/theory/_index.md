@@ -1,7 +1,7 @@
 # Theory — Index
 
 > **Layer:** Reference only — never canonical.
-> **Authority:** Rank 10 (lowest). Theory informs decisions but never dictates them.
+> **Authority:** Rank 11 (lowest). Theory informs decisions but never dictates them.
 
 ## Documents
 
@@ -15,7 +15,11 @@
 
 | File | Topic |
 |------|-------|
-| *None yet* | — |
+| [game-design-principles.md](game-design-principles.md) | Core game design principles — agency, feedback, pacing, economy, etc. |
+| [common-design-pitfalls.md](common-design-pitfalls.md) | Recurring game design anti-patterns and how to avoid them |
+| [playtesting-guidelines.md](playtesting-guidelines.md) | How to structure, run, and interpret effective playtests |
+| [ux-heuristics.md](ux-heuristics.md) | General UX principles for games — onboarding, feedback, accessibility, etc. |
+| [genre-conventions.md](genre-conventions.md) | Genre-specific player expectations and design pillars |
 
 ## Rules
 

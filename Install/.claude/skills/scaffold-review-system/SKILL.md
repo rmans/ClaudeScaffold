@@ -9,6 +9,11 @@ allowed-tools: Read, Grep, Glob
 
 Review the system design for: **$ARGUMENTS**
 
+## Read Advisory Context
+
+Read theory docs for advisory context (these inform observations but never cause hard failures):
+- `scaffold/theory/common-design-pitfalls.md` — flag patterns that match known anti-patterns
+
 ## Locate the System
 
 1. If the argument is a SYS-### ID, look for the matching file in `scaffold/design/systems/`.
@@ -71,6 +76,9 @@ For sections that are filled in, check:
 ### Registration: [OK / Issues found]
 - [Status of both index entries]
 
+### Advisory Observations
+[Patterns from theory docs — pitfalls worth considering. Clearly labeled as advisory, not hard failures.]
+
 ### Recommendations
 1. [Most important thing to fix or fill in]
 2. [Second priority]
@@ -83,3 +91,4 @@ For sections that are filled in, check:
 - Be specific. Quote the problematic text when flagging issues.
 - Distinguish between "empty" (needs writing) and "bad" (needs rewriting). Both need action but for different reasons.
 - If the system is well-designed, say so. Don't manufacture issues.
+- **Theory observations are advisory only.** Present them as "worth considering" — never as errors or required fixes. Theory docs carry no authority.

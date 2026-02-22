@@ -21,8 +21,10 @@ Guide the user through filling out a Rank 2 style document: **$ARGUMENTS**
 
 1. **Match the argument** to a supported document above. If no argument or unrecognized, list the options and ask the user which doc to fill out.
 2. **Read the design doc** at `scaffold/design/design-doc.md` for context — especially Tone, Aesthetic Pillars, Camera/Perspective, and Audio Identity sections.
-3. **Read the target doc** and identify which sections are already filled (have content beyond `*TODO:*` markers) and which are empty.
-4. **Skip sections that are already complete.** Only walk the user through unfilled or partial sections.
+3. **Read advisory theory doc** for context (informs suggestions but carries no authority):
+   - `scaffold/theory/ux-heuristics.md` — UX principles to guide style decisions
+4. **Read the target doc** and identify which sections are already filled (have content beyond `*TODO:*` markers) and which are empty.
+5. **Skip sections that are already complete.** Only walk the user through unfilled or partial sections.
 
 ## Walkthrough: style-guide
 
@@ -66,6 +68,7 @@ Work through `scaffold/design/ui-kit.md` section by section:
 - **Write answers into the target doc immediately** after the user responds. Replace the `*TODO:*` marker with their answer.
 - **Use the user's voice.** Capture their intent faithfully — don't rewrite into generic design language.
 - **Reference the design doc.** If the design doc has relevant info (e.g. Aesthetic Pillars for style-guide, or Tone for color-system), mention it to the user as context before asking.
+- **Use theory docs as advisory context.** Reference UX heuristics when relevant to help the user think through style decisions, but never impose them. Theory informs — it doesn't dictate.
 - **If the user says "skip" or "later"**, leave the TODO marker and move on.
 - **If the user gives a short answer**, that's fine. Short and clear beats long and vague.
 - **After completing all sections**, report how many sections are filled vs. remaining TODOs.

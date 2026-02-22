@@ -17,6 +17,9 @@ Create a new system design document for: **$ARGUMENTS**
 2. **Read the systems index** at `scaffold/design/systems/_index.md` to find the next available SYS-### ID.
 3. **Read the design doc** at `scaffold/design/design-doc.md`.
 4. **Read the glossary** at `scaffold/design/glossary.md`.
+5. **Read advisory theory docs** for context (these inform suggestions but carry no authority):
+   - `scaffold/theory/game-design-principles.md` — principles to guide system design
+   - `scaffold/theory/common-design-pitfalls.md` — anti-patterns to steer away from
 
 ### 2. Determine the Next SYS ID
 
@@ -77,3 +80,4 @@ Show the user:
 - **If no system name is provided**, ask the user for one before proceeding.
 - **Pre-filled content is a starting point.** Tell the user to review and refine — don't present it as final.
 - **Keep both index tables in sync** — the design doc and systems/_index.md must always match.
+- **Use theory docs as advisory context.** Reference principles or pitfalls when relevant to help the user think through system design, but never impose them. Theory informs — it doesn't dictate.

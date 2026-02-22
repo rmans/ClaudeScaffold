@@ -29,7 +29,12 @@ Review a single Rank 2 document: **$ARGUMENTS**
 
 Read the target doc and assess its overall state — empty, partially filled, or populated.
 
-### 3. Read the Design Doc for Cross-Reference
+### 3. Read Advisory Context
+
+Read theory doc for advisory context (informs observations but never causes hard failures):
+- `scaffold/theory/ux-heuristics.md` — UX principles to check style decisions against
+
+### 4. Read the Design Doc for Cross-Reference
 
 Read `scaffold/design/design-doc.md` — especially the sections relevant to the target:
 
@@ -38,7 +43,7 @@ Read `scaffold/design/design-doc.md` — especially the sections relevant to the
 - **ui-kit** ← Core Loop, Player Verbs, Camera/Perspective, Target Platforms, Input Feel, Audio Identity
 - **glossary** ← All sections (check for terms that should be canonicalized)
 
-### 4. Completeness Check
+### 5. Completeness Check
 
 **style-guide** —
 - Every section should have content beyond the TODO marker.
@@ -70,7 +75,7 @@ Read `scaffold/design/design-doc.md` — especially the sections relevant to the
 - Entries should be in alphabetical order.
 - Flag terms used in the design doc that don't have glossary entries yet.
 
-### 5. Quality Check
+### 6. Quality Check
 
 For all docs:
 - **Consistency with design doc.** Does the content align with the vision, tone, and pillars in the design doc? Flag contradictions.
@@ -92,6 +97,9 @@ For all docs:
 ### Design Doc Alignment
 - [Matches and contradictions between this doc and the design doc]
 
+### Advisory Observations
+[Patterns from UX heuristics worth considering. Clearly labeled as advisory, not hard failures.]
+
 ### Recommendations
 1. [Most important fix]
 2. ...
@@ -103,3 +111,4 @@ For all docs:
 - Be specific — quote the exact text when flagging issues.
 - If the doc is empty, don't just say "empty" — list what SHOULD be in it based on the design doc.
 - If the design doc itself is empty, report that and suggest filling it first.
+- **Theory observations are advisory only.** Present them as "worth considering" — never as errors or required fixes. Theory docs carry no authority.

@@ -10,6 +10,12 @@ Audit the design document and system designs for completeness and consistency.
 
 ## Steps
 
+### 0. Read Advisory Context
+
+Read theory docs for advisory context (these inform observations but never cause hard failures):
+- `scaffold/theory/common-design-pitfalls.md` — flag patterns that match known anti-patterns
+- `scaffold/theory/genre-conventions.md` — check alignment with genre expectations (if genre is stated)
+
 ### 1. Design Doc Completeness
 
 Read `scaffold/design/design-doc.md` and check every section for:
@@ -73,6 +79,9 @@ Present the review as a structured report:
 ### Cross-References
 [Any broken references or issues]
 
+### Advisory Observations
+[Patterns from theory docs — pitfalls or genre mismatches worth considering. Clearly labeled as advisory, not hard failures.]
+
 ### Recommendations
 [Prioritized list of what to fill in next]
 ```
@@ -82,3 +91,4 @@ Present the review as a structured report:
 - This skill is read-only. Do not modify any files.
 - Be specific about what's missing — don't just say "incomplete", say which sections need attention.
 - Prioritize recommendations by impact: Vision and Core Loop matter more than Business & Lifecycle early in development.
+- **Theory observations are advisory only.** Present them as "worth considering" — never as errors or required fixes. Theory docs carry no authority.

@@ -12,8 +12,12 @@ Guide the user through filling out `scaffold/design/design-doc.md` for: **$ARGUM
 ## Before Starting
 
 1. **Read the current design doc** at `scaffold/design/design-doc.md`.
-2. **Identify which sections are already filled** (have content beyond `*TODO:*` markers) and which are empty.
-3. **Skip sections that are already complete.** Only walk the user through unfilled or partial sections.
+2. **Read advisory theory docs** for context (these inform suggestions but carry no authority):
+   - `scaffold/theory/game-design-principles.md` — core principles to guide suggestions
+   - `scaffold/theory/common-design-pitfalls.md` — anti-patterns to steer away from
+   - `scaffold/theory/genre-conventions.md` — genre-specific expectations to reference when genre is known
+3. **Identify which sections are already filled** (have content beyond `*TODO:*` markers) and which are empty.
+4. **Skip sections that are already complete.** Only walk the user through unfilled or partial sections.
 
 ## Walkthrough Order
 
@@ -91,6 +95,7 @@ Work through the design doc in this order. Each section is a conversation with t
 - **Ask one section at a time.** Do not dump all questions at once.
 - **Write answers into the design doc immediately** after the user responds. Replace the `*TODO:*` marker with their answer.
 - **Use the user's voice.** Capture their intent faithfully — don't rewrite their vision into generic game-design language.
+- **Use theory docs as advisory context.** Reference principles or pitfalls when relevant to help the user think through decisions, but never impose them. Theory informs — it doesn't dictate.
 - **If the user says "skip" or "later"**, leave the TODO marker and move on.
 - **If the user gives a short answer**, that's fine. Short and clear beats long and vague.
 - **After completing a pass**, summarize what was captured and ask if they want to continue to the next pass or stop for now.
