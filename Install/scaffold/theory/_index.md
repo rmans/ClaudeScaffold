@@ -20,6 +20,10 @@
 | [playtesting-guidelines.md](playtesting-guidelines.md) | How to structure, run, and interpret effective playtests |
 | [ux-heuristics.md](ux-heuristics.md) | General UX principles for games — onboarding, feedback, accessibility, etc. |
 | [genre-conventions.md](genre-conventions.md) | Genre-specific player expectations and design pillars |
+| [narrative-design.md](narrative-design.md) | Narrative design principles — storytelling through interactive systems |
+| [level-design.md](level-design.md) | Level design principles — teaching through space, pacing, navigation, secrets |
+| [audio-design.md](audio-design.md) | Audio design principles — feedback, hierarchy, adaptive audio, silence, accessibility |
+| [balance-principles.md](balance-principles.md) | Game balance principles — difficulty, economies, feedback loops, tuning |
 
 ## Rules
 

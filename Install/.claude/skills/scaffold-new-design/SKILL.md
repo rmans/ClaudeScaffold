@@ -16,6 +16,10 @@ Guide the user through filling out `scaffold/design/design-doc.md` for: **$ARGUM
    - `scaffold/theory/game-design-principles.md` — core principles to guide suggestions
    - `scaffold/theory/common-design-pitfalls.md` — anti-patterns to steer away from
    - `scaffold/theory/genre-conventions.md` — genre-specific expectations to reference when genre is known
+   - `scaffold/theory/narrative-design.md` — narrative principles for the storytelling sections
+   - `scaffold/theory/level-design.md` — spatial design for content structure
+   - `scaffold/theory/audio-design.md` — audio principles for audio identity
+   - `scaffold/theory/balance-principles.md` — balance guidance for difficulty and pacing
 3. **Identify which sections are already filled** (have content beyond `*TODO:*` markers) and which are empty.
 4. **Skip sections that are already complete.** Only walk the user through unfilled or partial sections.
 

@@ -15,6 +15,8 @@ Audit the design document and system designs for completeness and consistency.
 Read theory docs for advisory context (these inform observations but never cause hard failures):
 - `scaffold/theory/common-design-pitfalls.md` — flag patterns that match known anti-patterns
 - `scaffold/theory/genre-conventions.md` — check alignment with genre expectations (if genre is stated)
+- `scaffold/theory/narrative-design.md` — check narrative sections against storytelling principles
+- `scaffold/theory/balance-principles.md` — check difficulty and pacing against balance principles
 
 ### 1. Design Doc Completeness
 

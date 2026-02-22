@@ -20,6 +20,7 @@ Create a new system design document for: **$ARGUMENTS**
 5. **Read advisory theory docs** for context (these inform suggestions but carry no authority):
    - `scaffold/theory/game-design-principles.md` — principles to guide system design
    - `scaffold/theory/common-design-pitfalls.md` — anti-patterns to steer away from
+   - `scaffold/theory/balance-principles.md` — balance guidance for system tuning
 
 ### 2. Determine the Next SYS ID
 
