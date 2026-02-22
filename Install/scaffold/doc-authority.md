@@ -14,12 +14,15 @@
 | 3 | [inputs/default-bindings-kbm.md](inputs/default-bindings-kbm.md) | Canon — keyboard/mouse bindings |
 | 3 | [inputs/default-bindings-gamepad.md](inputs/default-bindings-gamepad.md) | Canon — gamepad bindings |
 | 4 | [design/interfaces.md](design/interfaces.md) | Canon — system interface contracts |
+| 4 | [design/authority.md](design/authority.md) | Canon — data authority table |
 | 5 | design/systems/SYS-### | Canon — individual system designs |
-| 6 | phases/P#-### | Scope — phase gates |
-| 7 | specs/SPEC-### | Behavior — atomic specs |
-| 8 | tasks/TASK-### | Execution — implementation steps |
-| 9 | engine/* | Implementation — Godot 4 constraints |
-| 10 | theory/* | Reference only — never canonical |
+| 5 | [design/states/state-transitions.md](design/states/state-transitions.md) | Canon — state machine definitions |
+| 6 | reference/* | Reference — canonical data tables and tracking |
+| 7 | phases/P#-### | Scope — phase gates |
+| 8 | specs/SPEC-### | Behavior — atomic specs |
+| 9 | tasks/TASK-### | Execution — implementation steps |
+| 10 | engine/* | Implementation — Godot 4 constraints |
+| 11 | theory/* | Reference only — never canonical |
 
 ## Rules
 

@@ -13,7 +13,8 @@
 
 | Directory | Layer | Contents |
 |-----------|-------|----------|
-| [design/](design/_index.md) | Canon | What the game is — vision, style, systems, interfaces |
+| [design/](design/_index.md) | Canon | What the game is — vision, style, systems, interfaces, data authority, states |
+| [reference/](reference/_index.md) | Reference | Canonical data tables — signals, entities, resources, balance, glossary, tracking |
 | [engine/](engine/_index.md) | Implementation | How we build in Godot 4 — best practices, constraints |
 | [inputs/](inputs/_index.md) | Canon | Input action map, bindings, navigation rules |
 | [theory/](theory/_index.md) | Reference | Background reading — never canonical |
