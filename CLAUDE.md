@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What This Is
 
-<!-- Describe your project here. -->
+ClaudeScaffold is an installable overlay that helps Claude Code self-document and operate under a structured workflow/pipeline. Everything inside `Install/` is a scaffold that can be copied into any project to give Claude Code the context, conventions, and skills it needs to work effectively.
 
 ## Project Structure
 
