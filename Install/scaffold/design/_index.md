@@ -8,9 +8,9 @@
 | File | Purpose |
 |------|---------|
 | [design-doc.md](design-doc.md) | Core vision, non-negotiables (rank 1) |
-| [style-guide.md](style-guide.md) | Visual and code style conventions (rank 2) |
-| [color-system.md](color-system.md) | Color palette and usage rules (rank 2) |
-| [ui-kit.md](ui-kit.md) | UI component definitions (rank 2) |
+| [style-guide.md](style-guide.md) | Visual art style — art direction, tone, rendering, VFX, animation (rank 2) |
+| [color-system.md](color-system.md) | Color palette, tokens, usage rules, accessibility (rank 2) |
+| [ui-kit.md](ui-kit.md) | UI components, layout, typography, animation, sound, scaling (rank 2) |
 | [glossary.md](glossary.md) | Canonical terminology — term, definition, NOT column (rank 2) |
 | [interfaces.md](interfaces.md) | System interface contracts (rank 4) |
 | [authority.md](authority.md) | Data authority — who writes what variable, readers, cadence (rank 4) |

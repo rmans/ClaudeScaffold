@@ -7,7 +7,7 @@
 | Rank | Document | Layer |
 |------|----------|-------|
 | 1 | [design/design-doc.md](design/design-doc.md) | Canon — core vision, non-negotiables |
-| 2 | [design/style-guide.md](design/style-guide.md) | Canon — visual and code style |
+| 2 | [design/style-guide.md](design/style-guide.md) | Canon — visual art style |
 | 2 | [design/color-system.md](design/color-system.md) | Canon — color palette and rules |
 | 2 | [design/ui-kit.md](design/ui-kit.md) | Canon — UI component definitions |
 | 2 | [design/glossary.md](design/glossary.md) | Canon — canonical terminology |

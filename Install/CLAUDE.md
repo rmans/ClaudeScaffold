@@ -24,7 +24,7 @@ Never load entire directories. Follow this protocol:
 | Rank | Document | Layer |
 |------|----------|-------|
 | 1 | `design/design-doc.md` | Canon — core vision |
-| 2 | `design/style-guide.md`, `color-system.md`, `ui-kit.md`, `glossary.md` | Canon — style, terminology |
+| 2 | `design/style-guide.md`, `color-system.md`, `ui-kit.md`, `glossary.md` | Canon — visual style, colors, UI, terminology |
 | 3 | `inputs/*` | Canon — input actions and bindings |
 | 4 | `design/interfaces.md`, `design/authority.md` | Canon — contracts, data ownership |
 | 5 | `design/systems/SYS-###`, `design/state-transitions.md` | Canon — systems, states |

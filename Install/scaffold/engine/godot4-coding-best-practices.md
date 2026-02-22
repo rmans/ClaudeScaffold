@@ -2,7 +2,7 @@
 
 > **Layer:** Implementation
 > **Authority:** Rank 9
-> **Conforms to:** [design/style-guide.md](../design/style-guide.md)
+> **Conforms to:** [design/design-doc.md](../design/design-doc.md)
 
 ## GDScript Conventions
 

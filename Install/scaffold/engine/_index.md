@@ -1,7 +1,7 @@
 # Engine — Index
 
-> **Layer:** Implementation — How we build in Godot 4.
-> **Authority:** Rank 9. Engine docs adapt to design, never the reverse.
+> **Layer:** Implementation — How we build in the target engine.
+> **Authority:** Rank 10. Engine docs adapt to design, never the reverse.
 
 ## Documents
 

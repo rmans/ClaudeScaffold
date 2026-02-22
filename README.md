@@ -75,7 +75,7 @@ When documents conflict, the higher-ranked document wins. Lower documents must c
 | Rank | Document | Role |
 |------|----------|------|
 | 1 | `design/design-doc.md` | Core vision, non-negotiables |
-| 2 | `style-guide`, `color-system`, `ui-kit`, `glossary` | Style, terminology |
+| 2 | `style-guide`, `color-system`, `ui-kit`, `glossary` | Visual style, colors, UI, terminology |
 | 3 | `inputs/*` | Canonical input actions and bindings |
 | 4 | `interfaces.md`, `authority.md` | System contracts, data ownership |
 | 5 | `systems/SYS-###`, `state-transitions.md` | System designs, state machines |
