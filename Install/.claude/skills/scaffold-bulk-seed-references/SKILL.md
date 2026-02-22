@@ -1,5 +1,5 @@
 ---
-name: scaffold-seed-references
+name: scaffold-bulk-seed-references
 description: Read all system designs and bulk-populate reference docs, state transitions, and the authority table. Use after system designs are filled out.
 allowed-tools: Read, Edit, Write, Grep, Glob
 ---

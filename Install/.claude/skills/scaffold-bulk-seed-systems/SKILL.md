@@ -1,5 +1,5 @@
 ---
-name: scaffold-seed-systems
+name: scaffold-bulk-seed-systems
 description: Read the design doc, seed the glossary with key terms, and bulk-create all system design stubs. Use after the design doc is filled out.
 allowed-tools: Read, Edit, Write, Grep, Glob
 ---
