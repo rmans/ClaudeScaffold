@@ -24,7 +24,7 @@ Never load entire directories. Follow this protocol:
 | Rank | Document | Layer |
 |------|----------|-------|
 | 1 | `design/design-doc.md` | Canon — core vision |
-| 2 | `design/style-guide.md`, `color-system.md`, `ui-kit.md`, `glossary.md` | Canon — visual style, colors, UI, terminology |
+| 2 | `design/style-guide.md`, `design/color-system.md`, `design/ui-kit.md`, `design/glossary.md` | Canon — visual style, colors, UI, terminology |
 | 3 | `inputs/*` | Canon — input actions and bindings |
 | 4 | `design/interfaces.md`, `design/authority.md` | Canon — contracts, data ownership |
 | 5 | `design/systems/SYS-###`, `design/state-transitions.md` | Canon — systems, states |
@@ -37,12 +37,12 @@ Never load entire directories. Follow this protocol:
 
 ## Key Directories
 
-- `scaffold/design/` — What the game is (vision, systems, glossary, interfaces, authority, states)
+- `scaffold/design/` — What the game is (vision, style, colors, UI, glossary, systems, interfaces, authority, states)
 - `scaffold/inputs/` — Player input definitions (action maps, bindings)
 - `scaffold/reference/` — Canonical data tables (signals, entities, resources, balance)
 - `scaffold/decisions/` — ADRs, known issues, design debt
-- `scaffold/engine/` — Engine-specific implementation constraints
-- `scaffold/templates/` — Templates for all document types
+- `scaffold/engine/` — Engine-specific implementation constraints (seeded from templates)
+- `scaffold/templates/` — Templates for all document types and engine docs
 
 ## When Creating or Modifying Systems
 
@@ -50,6 +50,10 @@ Never load entire directories. Follow this protocol:
 - Assign sequential SYS-### IDs — never skip or reuse.
 - Register in both `scaffold/design/systems/_index.md` AND the System Design Index in `scaffold/design/design-doc.md`.
 - Write in player-visible behavior only. Technical contracts belong in `scaffold/design/interfaces.md` and `scaffold/reference/signal-registry.md`.
+
+## Workflow
+
+Follow the step-by-step recipe in `scaffold/WORKFLOW.md` for the full pipeline from design doc to implementation.
 
 ## When Resolving Conflicts
 
