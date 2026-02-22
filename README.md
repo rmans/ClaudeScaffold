@@ -14,7 +14,7 @@ Everything inside the `Install/` directory is the scaffold. Copy or overlay its 
 
 ```
 Install/
-├── .claude/skills/       ← Claude Code skills (9 skills)
+├── .claude/skills/       ← Claude Code skills (8 skills)
 ├── scaffold/             ← Document pipeline (see below)
 ├── CLAUDE.md             ← Install-specific instructions for Claude Code
 └── README.md             ← Installation instructions
@@ -88,15 +88,14 @@ When documents conflict, the higher-ranked document wins. Lower documents must c
 
 ### Skills
 
-The scaffold includes 9 Claude Code skills organized by workflow:
+The scaffold includes 8 Claude Code skills organized by workflow:
 
 **Create:**
 
 | Skill | Purpose |
 |-------|---------|
 | `/scaffold-new-design` | Fill out the design doc interactively, section by section |
-| `/scaffold-new-system` | Create a blank system from template |
-| `/scaffold-seed-system` | Create one system pre-filled from design doc context |
+| `/scaffold-new-system` | Create a system — pre-fills from design doc if available, blank template if not |
 | `/scaffold-seed-reference` | Seed one reference doc from system designs |
 
 **Bulk create:**
