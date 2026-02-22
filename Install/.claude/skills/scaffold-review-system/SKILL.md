@@ -1,5 +1,5 @@
 ---
-name: scaffold-system-review
+name: scaffold-review-system
 description: Review a specific system design for completeness and quality. Use to audit a single system's design file.
 argument-hint: [SYS-ID or system-name]
 allowed-tools: Read, Grep, Glob
