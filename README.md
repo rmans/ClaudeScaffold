@@ -14,7 +14,7 @@ Everything inside the `Install/` directory is the scaffold. Copy or overlay its 
 
 ```
 Install/
-├── .claude/skills/       ← Claude Code skills (10 skills)
+├── .claude/skills/       ← Claude Code skills (14 skills)
 ├── scaffold/             ← Document pipeline (see below)
 ├── CLAUDE.md             ← Install-specific instructions for Claude Code
 └── README.md             ← Installation instructions
@@ -32,7 +32,7 @@ scaffold/
 │
 ├── design/                          # CANON: what the game is
 │   ├── design-doc.md                #   Core vision, pillars, loops, mechanics (rank 1)
-│   ├── style-guide.md               #   Visual/code style (rank 2)
+│   ├── style-guide.md               #   Visual art style (rank 2)
 │   ├── color-system.md              #   Color palette and rules (rank 2)
 │   ├── ui-kit.md                    #   UI component definitions (rank 2)
 │   ├── glossary.md                  #   Canonical terminology + NOT column (rank 2)
@@ -64,7 +64,19 @@ scaffold/
 ├── slices/                          # Vertical slice contracts
 ├── engine/                          # Engine-specific constraints (rank 10, seeded from templates)
 ├── theory/                          # Advisory only — no authority (rank 11)
-├── templates/                       # Document templates for all types + engine docs
+├── templates/                       # Document + engine templates
+│   ├── system-template.md           #   System design template
+│   ├── phase-template.md            #   Phase gate template
+│   ├── spec-template.md             #   Behavior spec template
+│   ├── task-template.md             #   Implementation task template
+│   ├── decision-template.md         #   ADR template
+│   ├── slice-template.md            #   Vertical slice template
+│   ├── engine-coding-template.md    #   Engine: coding best practices
+│   ├── engine-ui-template.md        #   Engine: UI best practices
+│   ├── engine-input-template.md     #   Engine: input system
+│   ├── engine-scene-architecture-template.md  # Engine: scene architecture
+│   └── engine-performance-template.md         # Engine: performance budget
+│
 └── tools/                           # Scripts and utilities
 ```
 
