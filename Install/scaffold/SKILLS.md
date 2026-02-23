@@ -1,6 +1,6 @@
 # Skills Reference
 
-> Man-page reference for all 56 scaffold slash commands. Each entry shows synopsis, description, arguments, examples, and related skills.
+> Man-page reference for all 58 scaffold slash commands. Each entry shows synopsis, description, arguments, examples, and related skills.
 >
 > **When to use each skill** — see [WORKFLOW.md](WORKFLOW.md) for the step-by-step pipeline order.
 
@@ -62,10 +62,12 @@
 | `/scaffold-art-sprite` | `[prompt or document-path]` | Generate sprite art using DALL-E, informed by style guide and color system |
 | `/scaffold-art-icon` | `[prompt or document-path]` | Generate icon art using DALL-E, informed by UI kit, color system, and style guide |
 | `/scaffold-art-promo` | `[prompt or document-path]` | Generate promotional art using DALL-E, informed by style guide and color system |
+| `/scaffold-review-art` | — | Audit all art assets for visual consistency, index health, and coverage gaps |
 | `/scaffold-audio-music` | `[prompt or document-path]` | Generate music tracks using ElevenLabs, informed by style guide and design doc mood/tone |
 | `/scaffold-audio-sfx` | `[prompt or document-path]` | Generate sound effects using ElevenLabs, informed by style guide and design doc game feel |
 | `/scaffold-audio-ambience` | `[prompt or document-path]` | Generate ambient audio loops using ElevenLabs, informed by style guide, color system mood, and design doc world/setting |
 | `/scaffold-audio-voice` | `[prompt or document-path]` | Generate voice audio using OpenAI TTS, informed by style guide and design doc characters/narrative |
+| `/scaffold-review-audio` | — | Audit all audio assets for prompt consistency, index health, and coverage gaps |
 
 ---
 
@@ -1525,6 +1527,28 @@ Generates promotional art using DALL-E, grounded in the project's visual identit
 
 ---
 
+### /scaffold-review-art
+
+Audit all art assets for visual consistency, index health, and coverage gaps.
+
+**Synopsis**
+
+    /scaffold-review-art
+
+**Description**
+
+Reviews all generated art assets across 7 subdirectories (concept-art, ui-mockups, character-art, environment-art, sprite-art, icon-art, promo-art). Reads the style guide and color system for visual identity, then visually inspects each image for palette adherence, art style match, and quality consistency. Cross-references the design doc to identify coverage gaps (characters, environments, systems, UI, icons without art). Checks index health for missing entries, stale entries, and naming convention violations. Reports asset counts per type, visual consistency findings, coverage gaps, and prioritized recommendations.
+
+**Examples**
+
+    /scaffold-review-art
+
+**See Also**
+
+`/scaffold-art-concept`, `/scaffold-art-character`, `/scaffold-art-environment`, `/scaffold-art-sprite`, `/scaffold-art-icon`, `/scaffold-art-ui-mockup`, `/scaffold-art-promo`
+
+---
+
 ## Audio
 
 Skills for generating audio assets informed by the project's style guide, color system, and design doc.
@@ -1648,3 +1672,25 @@ Generates voice audio using OpenAI TTS, grounded in the project's narrative iden
 **See Also**
 
 `/scaffold-audio-music`, `/scaffold-audio-sfx`, `/scaffold-audio-ambience`
+
+---
+
+### /scaffold-review-audio
+
+Audit all audio assets for prompt consistency, index health, and coverage gaps.
+
+**Synopsis**
+
+    /scaffold-review-audio
+
+**Description**
+
+Reviews all generated audio assets across 4 subdirectories (music, sfx, ambience, voice). Reads the style guide, color system, and design doc for tonal and mood direction, then reviews prompts recorded in indexes for consistency with the project's audio identity. Cross-references the design doc to identify coverage gaps (game states needing music, systems needing SFX, environments needing ambience, characters needing voice). Checks index health for missing entries, stale entries, and naming convention violations. Reports asset counts per type, prompt consistency findings, coverage gaps, and prioritized recommendations. Note: Claude cannot listen to audio files — this review audits prompts, metadata, and coverage, not audio content.
+
+**Examples**
+
+    /scaffold-review-audio
+
+**See Also**
+
+`/scaffold-audio-music`, `/scaffold-audio-sfx`, `/scaffold-audio-ambience`, `/scaffold-audio-voice`
