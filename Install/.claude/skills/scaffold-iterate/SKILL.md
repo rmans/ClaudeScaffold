@@ -76,7 +76,7 @@ Based on the document type, read these context files and pass them to the review
 | engine | `scaffold/design/design-doc.md` |
 | input | `scaffold/design/design-doc.md`, `scaffold/design/glossary.md` |
 | roadmap | `scaffold/design/design-doc.md`, `scaffold/design/systems/_index.md`, `scaffold/decisions/known-issues.md` |
-| phase | `scaffold/phases/roadmap.md`, `scaffold/design/design-doc.md`, all ADRs, `scaffold/decisions/known-issues.md` |
+| phase | `scaffold/phases/roadmap.md`, `scaffold/design/design-doc.md`, all ADRs, `scaffold/decisions/known-issues.md`, `scaffold/decisions/playtest-feedback.md` |
 | slice | parent phase file, `scaffold/design/interfaces.md`, `scaffold/design/systems/_index.md` |
 | spec | parent system file, parent slice file, `scaffold/design/state-transitions.md`, all ADRs |
 | task | parent spec file, engine docs, `scaffold/reference/signal-registry.md` |

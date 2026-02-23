@@ -19,7 +19,8 @@ Review the project roadmap for completeness, currency, and alignment with the de
 5. **Read all ADRs** — Glob `scaffold/decisions/ADR-*.md`.
 6. **Read known issues** at `scaffold/decisions/known-issues.md`.
 7. **Read design debt** at `scaffold/decisions/design-debt.md`.
-8. If the roadmap is empty or at template defaults, report that and stop.
+8. **Read playtest feedback** at `scaffold/decisions/playtest-feedback.md` — check for Pattern-status entries that may affect phase planning.
+9. If the roadmap is empty or at template defaults, report that and stop.
 
 ### 2. Completeness Check
 

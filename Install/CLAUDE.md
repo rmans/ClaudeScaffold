@@ -42,7 +42,7 @@ Never load entire directories. Follow this protocol:
 - `scaffold/design/` — What the game is: vision, style, colors, UI, glossary, systems, interfaces, authority, states
 - `scaffold/inputs/` — Player input definitions: action maps, bindings, navigation, input philosophy
 - `scaffold/reference/` — Canonical data tables: signals, entities, resources, balance
-- `scaffold/decisions/` — ADRs, known issues, design debt
+- `scaffold/decisions/` — ADRs, known issues, design debt, playtest feedback
 - `scaffold/phases/` — Roadmap and phase scope gates
 - `scaffold/specs/` — Atomic behavior specs tied to slices
 - `scaffold/tasks/` — Implementation tasks tied to specs

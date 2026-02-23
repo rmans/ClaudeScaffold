@@ -13,7 +13,7 @@ Guide the user through creating the project roadmap at `scaffold/phases/roadmap.
 1. **Read `scaffold/phases/roadmap.md`** to check its current state.
 2. **Read `scaffold/design/design-doc.md`** — especially Core Fantasy, Scope Reality Check, Vertical Slice, and Target Platforms.
 3. **Read `scaffold/design/systems/_index.md`** to see all registered systems.
-4. **Read `scaffold/decisions/known-issues.md`** and **`scaffold/decisions/design-debt.md`** for open issues.
+4. **Read `scaffold/decisions/known-issues.md`**, **`scaffold/decisions/design-debt.md`**, and **`scaffold/decisions/playtest-feedback.md`** for open issues and playtest patterns.
 5. **If the design doc is empty or systems aren't designed**, tell the user to complete those first. Do not proceed with an incomplete foundation.
 
 ## 2. Vision Checkpoint
@@ -62,6 +62,6 @@ Show the user:
 - **Use the user's voice.** Capture their intent faithfully — don't rewrite their vision into generic project-management language.
 - **If the user says "skip" or "later"**, leave the TODO marker and move on.
 - **Phases should be outcome-oriented** ("prove the core loop works") not task-oriented ("implement 5 systems").
-- **Reference known issues and design debt** when discussing scope — they may affect phase planning.
+- **Reference known issues, design debt, and playtest feedback** when discussing scope — they may affect phase planning.
 - **Remind the user** that the roadmap is a living document that updates after each phase.
 - **Created documents start with Status: Draft.**
