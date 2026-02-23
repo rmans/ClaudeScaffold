@@ -50,6 +50,7 @@ Never load entire directories. Follow this protocol:
 - `scaffold/engine/` — Engine-specific constraints (seeded from templates)
 - `scaffold/theory/` — Advisory reference: game design, UX, architecture patterns (no authority)
 - `scaffold/reviews/` — Adversarial review logs from `/scaffold-iterate`
+- `scaffold/audio/` — Generated audio from audio skills (music, SFX, ambience, voice)
 - `scaffold/templates/` — Templates for all document types and engine docs
 
 ## When Creating or Modifying Systems

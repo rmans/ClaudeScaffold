@@ -7,6 +7,8 @@
 | File | Description |
 |------|-------------|
 | `image-gen.py` | Image generator — DALL-E integration for the scaffold pipeline (shared by all 7 art skills) |
+| `audio-gen.py` | Audio generator — multi-provider audio integration for the scaffold pipeline (shared by all 4 audio skills) |
+| `audio_config.json` | Configuration for audio-gen.py (provider per audio type, model/voice defaults) |
 | `doc-review.py` | Adversarial document reviewer — multi-provider (OpenAI / Anthropic) |
 | `review_config.json` | Configuration for doc-review.py (provider, model, temperature) |
 | `validate-refs.py` | Cross-reference validator — checks referential integrity across all scaffold docs |
@@ -67,6 +69,126 @@ On error:
 ### Dependencies
 
 None — uses Python standard library only (`urllib`, `json`, `argparse`, `base64`).
+
+## audio-gen.py
+
+Audio generator that sends requests to OpenAI TTS or ElevenLabs APIs and saves generated audio locally. Shared by all 4 audio skills: `/scaffold-audio-music`, `/scaffold-audio-sfx`, `/scaffold-audio-ambience`, `/scaffold-audio-voice`.
+
+### Commands
+
+| Command | Description |
+|---------|-------------|
+| `tts` | Generate speech audio (OpenAI TTS or ElevenLabs TTS) |
+| `sfx` | Generate sound effects (ElevenLabs Sound Generation) |
+| `music` | Generate music (ElevenLabs Music Generation) |
+| `check-config` | Verify configuration and API keys |
+
+### Usage
+
+```
+python scaffold/tools/audio-gen.py tts \
+    --text "The ancient forest holds secrets." \
+    --output scaffold/audio/voice/ancient-forest-line.mp3 \
+    --voice alloy \
+    --model tts-1
+
+python scaffold/tools/audio-gen.py sfx \
+    --prompt "sword slash impact, metallic ring" \
+    --output scaffold/audio/sfx/sword-slash.mp3 \
+    --duration 2.0 \
+    --prompt-influence 0.3
+
+python scaffold/tools/audio-gen.py music \
+    --prompt "upbeat chiptune battle theme, 120 BPM" \
+    --output scaffold/audio/music/battle-theme.mp3 \
+    --duration 30 \
+    --instrumental
+
+python scaffold/tools/audio-gen.py check-config
+```
+
+### Arguments — tts
+
+| Argument | Required | Default | Description |
+|----------|----------|---------|-------------|
+| `--text` | Yes | — | The text to speak |
+| `--output` | Yes | — | Output file path (.mp3) |
+| `--voice` | No | From config | Voice name/ID (OpenAI: alloy/echo/fable/onyx/nova/shimmer) |
+| `--model` | No | From config | TTS model (e.g., `tts-1`, `gpt-4o-mini-tts`) |
+| `--speed` | No | `1.0` | Speech speed 0.25–4.0 (OpenAI only) |
+| `--instructions` | No | — | Voice instructions (`gpt-4o-mini-tts` only) |
+| `--provider` | No | From config | Override provider (`openai` or `elevenlabs`) |
+
+### Arguments — sfx
+
+| Argument | Required | Default | Description |
+|----------|----------|---------|-------------|
+| `--prompt` | Yes | — | Description of the sound effect |
+| `--output` | Yes | — | Output file path (.mp3) |
+| `--duration` | No | — | Duration in seconds |
+| `--prompt-influence` | No | From config | Prompt influence 0.0–1.0 |
+| `--loop` | No | `false` | Mark as looping audio (metadata flag) |
+
+### Arguments — music
+
+| Argument | Required | Default | Description |
+|----------|----------|---------|-------------|
+| `--prompt` | Yes | — | Description of the music |
+| `--output` | Yes | — | Output file path (.mp3) |
+| `--duration` | No | — | Duration in seconds |
+| `--instrumental` | No | `false` | Generate instrumental only (no vocals) |
+
+### Output Format (JSON)
+
+```json
+{
+  "status": "ok",
+  "file": "scaffold/audio/music/battle-theme.mp3",
+  "provider": "elevenlabs",
+  "instrumental": true
+}
+```
+
+On error:
+
+```json
+{
+  "status": "error",
+  "message": "ELEVENLABS_API_KEY not found..."
+}
+```
+
+### Dependencies
+
+None — uses Python standard library only (`urllib`, `json`, `argparse`).
+
+## audio_config.json
+
+Provider configuration for `audio-gen.py`. Specifies which provider to use for each audio type (tts, sfx, music), along with model/voice defaults and API key environment variable names.
+
+### Structure
+
+```json
+{
+  "tts": {
+    "provider": "openai",
+    "openai": { "model": "tts-1", "voice": "alloy", "api_key_env": "OPENAI_API_KEY" },
+    "elevenlabs": { "model_id": "eleven_multilingual_v2", "voice_id": "...", "api_key_env": "ELEVENLABS_API_KEY" }
+  },
+  "sfx": {
+    "provider": "elevenlabs",
+    "elevenlabs": { "prompt_influence": 0.3, "api_key_env": "ELEVENLABS_API_KEY" }
+  },
+  "music": {
+    "provider": "elevenlabs",
+    "elevenlabs": { "api_key_env": "ELEVENLABS_API_KEY" }
+  }
+}
+```
+
+### Provider Selection
+
+Each audio type (`tts`, `sfx`, `music`) has a `provider` field that selects which provider config to use. The `tts` subcommand also supports a `--provider` CLI flag to override at runtime.
 
 ## doc-review.py
 

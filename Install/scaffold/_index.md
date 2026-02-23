@@ -26,12 +26,13 @@
 | [templates/](templates/_index.md) | Meta | Document templates for all ID'd types and engine docs |
 | [reviews/](reviews/_index.md) | Tooling | Adversarial review logs from `/scaffold-iterate` |
 | [art/](art/_index.md) | Content | Generated art from art skills (`/scaffold-art-concept`, `/scaffold-art-ui-mockup`, etc.) |
+| [audio/](audio/_index.md) | Content | Generated audio from audio skills (`/scaffold-audio-music`, `/scaffold-audio-sfx`, etc.) |
 | [tools/](tools/_index.md) | Tooling | Scripts and utilities for the pipeline |
 
 ## Key Files
 
 - [WORKFLOW.md](WORKFLOW.md) — Step-by-step recipe for the full pipeline
-- [SKILLS.md](SKILLS.md) — Man-page reference for all 52 slash commands
+- [SKILLS.md](SKILLS.md) — Man-page reference for all 56 slash commands
 - [doc-authority.md](doc-authority.md) — Precedence rules (read when conflicts arise)
 - [README.md](README.md) — How to use this scaffold
 

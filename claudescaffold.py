@@ -17,7 +17,7 @@ VERSION = "1.0.0"
 GITHUB_ZIP_URL = "https://github.com/rmans/ClaudeScaffold/archive/refs/heads/{branch}.zip"
 EXCLUDE_DIRS = {"__pycache__"}
 SCAFFOLD_SKILL_PREFIX = "scaffold-"
-EXPECTED_SKILLS = 52
+EXPECTED_SKILLS = 56
 
 # Upgrade mode: these scaffold/ subdirectories are infrastructure and get fully replaced
 UPGRADE_REPLACE_DIRS = {"theory", "templates", "tools"}
@@ -33,6 +33,11 @@ UPGRADE_REPLACE_SUBDIR_FILES = {
     "art/sprite-art/_index.md",
     "art/icon-art/_index.md",
     "art/promo-art/_index.md",
+    "audio/_index.md",
+    "audio/music/_index.md",
+    "audio/sfx/_index.md",
+    "audio/ambience/_index.md",
+    "audio/voice/_index.md",
 }
 
 

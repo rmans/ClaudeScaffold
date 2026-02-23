@@ -1,6 +1,6 @@
 # Skills Reference
 
-> Man-page reference for all 52 scaffold slash commands. Each entry shows synopsis, description, arguments, examples, and related skills.
+> Man-page reference for all 56 scaffold slash commands. Each entry shows synopsis, description, arguments, examples, and related skills.
 >
 > **When to use each skill** — see [WORKFLOW.md](WORKFLOW.md) for the step-by-step pipeline order.
 
@@ -62,6 +62,10 @@
 | `/scaffold-art-sprite` | `[prompt or document-path]` | Generate sprite art using DALL-E, informed by style guide and color system |
 | `/scaffold-art-icon` | `[prompt or document-path]` | Generate icon art using DALL-E, informed by UI kit, color system, and style guide |
 | `/scaffold-art-promo` | `[prompt or document-path]` | Generate promotional art using DALL-E, informed by style guide and color system |
+| `/scaffold-audio-music` | `[prompt or document-path]` | Generate music tracks using ElevenLabs, informed by style guide and design doc mood/tone |
+| `/scaffold-audio-sfx` | `[prompt or document-path]` | Generate sound effects using ElevenLabs, informed by style guide and design doc game feel |
+| `/scaffold-audio-ambience` | `[prompt or document-path]` | Generate ambient audio loops using ElevenLabs, informed by style guide, color system mood, and design doc world/setting |
+| `/scaffold-audio-voice` | `[prompt or document-path]` | Generate voice audio using OpenAI TTS, informed by style guide and design doc characters/narrative |
 
 ---
 
@@ -1518,3 +1522,129 @@ Generates promotional art using DALL-E, grounded in the project's visual identit
 **See Also**
 
 `/scaffold-art-concept`, `/scaffold-art-environment`, `/scaffold-new-style`
+
+---
+
+## Audio
+
+Skills for generating audio assets informed by the project's style guide, color system, and design doc.
+
+---
+
+### /scaffold-audio-music
+
+Generate music tracks using ElevenLabs, informed by the project's style guide and design doc mood/tone.
+
+**Synopsis**
+
+    /scaffold-audio-music [prompt or document-path]
+
+**Description**
+
+Generates music tracks using ElevenLabs, grounded in the project's tonal identity. Reads `design/style-guide.md` and `design/design-doc.md` to build a musical direction (genre, tempo, mood, instrumentation). Supports two modes: freeform (text prompt) and document-driven (reads a scaffold doc and extracts musical elements). Shows the composed prompt for user confirmation before calling the API. Saves audio to `audio/music/` with kebab-case timestamped filenames. Output format: `.mp3`.
+
+**Arguments**
+
+| Argument | Required | Description |
+|----------|----------|-------------|
+| `prompt or document-path` | No | Freeform text prompt, or a path to a scaffold doc for document-driven mode. If omitted, asks interactively. |
+
+**Examples**
+
+    /scaffold-audio-music upbeat chiptune battle theme, loopable, 120 BPM
+    /scaffold-audio-music scaffold/design/design-doc.md
+    /scaffold-audio-music
+
+**See Also**
+
+`/scaffold-audio-sfx`, `/scaffold-audio-ambience`, `/scaffold-audio-voice`
+
+---
+
+### /scaffold-audio-sfx
+
+Generate sound effects using ElevenLabs, informed by the project's style guide and design doc game feel.
+
+**Synopsis**
+
+    /scaffold-audio-sfx [prompt or document-path]
+
+**Description**
+
+Generates sound effects using ElevenLabs, grounded in the project's tonal identity. Reads `design/style-guide.md` and `design/design-doc.md` to build a sound design direction (intensity, style, audio character). Focuses on clarity, impact, timing, and game-appropriate intensity. Supports freeform (text prompt) and document-driven (reads a scaffold doc and extracts sound-worthy events) modes. Shows the composed prompt for user confirmation before calling the API. Saves audio to `audio/sfx/` with kebab-case timestamped filenames. Output format: `.mp3`.
+
+**Arguments**
+
+| Argument | Required | Description |
+|----------|----------|-------------|
+| `prompt or document-path` | No | Freeform text prompt, or a path to a scaffold doc for document-driven mode. If omitted, asks interactively. |
+
+**Examples**
+
+    /scaffold-audio-sfx sword slash impact, metallic ring, medium weight
+    /scaffold-audio-sfx scaffold/design/systems/SYS-001-combat.md
+    /scaffold-audio-sfx
+
+**See Also**
+
+`/scaffold-audio-music`, `/scaffold-audio-ambience`, `/scaffold-audio-voice`
+
+---
+
+### /scaffold-audio-ambience
+
+Generate ambient audio loops using ElevenLabs, informed by the project's style guide, color system mood, and design doc world/setting.
+
+**Synopsis**
+
+    /scaffold-audio-ambience [prompt or document-path]
+
+**Description**
+
+Generates ambient audio loops using ElevenLabs, grounded in the project's world and atmosphere. Reads `design/style-guide.md`, `design/color-system.md`, and `design/design-doc.md` to build an atmospheric direction (environment type, mood, depth, spatial character). Uses the `sfx` subcommand with `--loop` for seamless looping. Focuses on atmosphere, depth, layering, and loop seamlessness. Supports freeform (text prompt) and document-driven (reads a scaffold doc and extracts environment descriptions) modes. Shows the composed prompt for user confirmation before calling the API. Saves audio to `audio/ambience/` with kebab-case timestamped filenames. Output format: `.mp3`.
+
+**Arguments**
+
+| Argument | Required | Description |
+|----------|----------|-------------|
+| `prompt or document-path` | No | Freeform text prompt, or a path to a scaffold doc for document-driven mode. If omitted, asks interactively. |
+
+**Examples**
+
+    /scaffold-audio-ambience misty forest clearing with distant birdsong and gentle wind
+    /scaffold-audio-ambience scaffold/design/systems/SYS-003-exploration.md
+    /scaffold-audio-ambience
+
+**See Also**
+
+`/scaffold-audio-music`, `/scaffold-audio-sfx`, `/scaffold-audio-voice`
+
+---
+
+### /scaffold-audio-voice
+
+Generate voice audio using OpenAI TTS, informed by the project's style guide and design doc characters/narrative.
+
+**Synopsis**
+
+    /scaffold-audio-voice [prompt or document-path]
+
+**Description**
+
+Generates voice audio using OpenAI TTS, grounded in the project's narrative identity. Reads `design/style-guide.md` and `design/design-doc.md` to build a voice direction (vocal register, energy, pacing, emotional range). Supports selecting from OpenAI TTS voices (alloy, echo, fable, onyx, nova, shimmer) based on character personality. Supports freeform (text to speak) and document-driven (reads a scaffold doc and extracts dialogue/narration) modes. Shows the text and voice parameters for user confirmation before calling the API. Saves audio to `audio/voice/` with kebab-case timestamped filenames. Output format: `.mp3`.
+
+**Arguments**
+
+| Argument | Required | Description |
+|----------|----------|-------------|
+| `prompt or document-path` | No | Freeform text to speak, or a path to a scaffold doc for document-driven mode. If omitted, asks interactively. |
+
+**Examples**
+
+    /scaffold-audio-voice "The ancient forest holds secrets older than memory."
+    /scaffold-audio-voice scaffold/design/design-doc.md
+    /scaffold-audio-voice
+
+**See Also**
+
+`/scaffold-audio-music`, `/scaffold-audio-sfx`, `/scaffold-audio-ambience`
