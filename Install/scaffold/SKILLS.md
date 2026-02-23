@@ -1,6 +1,6 @@
 # Skills Reference
 
-> Man-page reference for all 45 scaffold slash commands. Each entry shows synopsis, description, arguments, examples, and related skills.
+> Man-page reference for all 46 scaffold slash commands. Each entry shows synopsis, description, arguments, examples, and related skills.
 >
 > **When to use each skill** — see [WORKFLOW.md](WORKFLOW.md) for the step-by-step pipeline order.
 
@@ -55,6 +55,7 @@
 | `/scaffold-validate` | — | Run cross-reference validation across all scaffold docs |
 | `/scaffold-playtest-log` | `[session-type]` | Log playtester observations into the feedback tracker |
 | `/scaffold-playtest-review` | — | Analyze playtest feedback patterns with priority grid |
+| `/scaffold-concept-art` | `[prompt or document-path]` | Generate concept art using DALL-E, informed by style guide and color system |
 
 ---
 
@@ -1295,3 +1296,39 @@ Read-only analysis of `decisions/playtest-feedback.md`. Groups feedback by syste
 **See Also**
 
 `/scaffold-playtest-log`, `/scaffold-review-roadmap`, `/scaffold-new-phase`
+
+---
+
+## Art
+
+Skills for generating visual assets informed by the project's style guide and color system.
+
+---
+
+### /scaffold-concept-art
+
+Generate concept art using DALL-E, informed by the project's style guide and color system.
+
+**Synopsis**
+
+    /scaffold-concept-art [prompt or document-path]
+
+**Description**
+
+Generates concept art using DALL-E, grounded in the project's visual identity. Reads `design/style-guide.md` and `design/color-system.md` to build a style context, then combines it with the user's prompt or a document's visual elements. Supports two modes: freeform (text prompt) and document-driven (reads a scaffold doc and extracts visual elements). Shows the composed prompt for user confirmation before calling the API. Saves images to `art/concept-art/` with kebab-case timestamped filenames and updates the art index.
+
+**Arguments**
+
+| Argument | Required | Description |
+|----------|----------|-------------|
+| `prompt or document-path` | No | Freeform text prompt, or a path to a scaffold doc for document-driven mode. If omitted, asks interactively. |
+
+**Examples**
+
+    /scaffold-concept-art a misty pixel-art village at dawn
+    /scaffold-concept-art scaffold/design/systems/SYS-001-combat.md
+    /scaffold-concept-art
+
+**See Also**
+
+`/scaffold-new-style`, `/scaffold-review-style`

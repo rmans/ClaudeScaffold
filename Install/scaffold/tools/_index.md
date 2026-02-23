@@ -6,9 +6,67 @@
 
 | File | Description |
 |------|-------------|
+| `concept-art.py` | Concept art generator — DALL-E integration for the scaffold pipeline |
 | `doc-review.py` | Adversarial document reviewer — multi-provider (OpenAI / Anthropic) |
 | `review_config.json` | Configuration for doc-review.py (provider, model, temperature) |
 | `validate-refs.py` | Cross-reference validator — checks referential integrity across all scaffold docs |
+
+## concept-art.py
+
+Concept art generator that sends prompts to the DALL-E API and saves generated images locally. Used by `/scaffold-concept-art`.
+
+### Commands
+
+| Command | Description |
+|---------|-------------|
+| `generate` | Generate an image from a text prompt via DALL-E |
+
+### Usage
+
+```
+python scaffold/tools/concept-art.py generate \
+    --prompt "a forest village at dusk" \
+    --style-context "pixel art, warm palette" \
+    --output scaffold/art/concept-art/forest-village.png \
+    --size 1024x1024 \
+    --model dall-e-3 \
+    --quality standard
+```
+
+### Arguments
+
+| Argument | Required | Default | Description |
+|----------|----------|---------|-------------|
+| `--prompt` | Yes | — | The image generation prompt |
+| `--style-context` | No | — | Extra style/color context prepended to the prompt |
+| `--output` | Yes | — | Output file path (.png) |
+| `--size` | No | `1024x1024` | Image dimensions (`1024x1024`, `1792x1024`, `1024x1792`) |
+| `--model` | No | `dall-e-3` | DALL-E model to use |
+| `--quality` | No | `standard` | Image quality (`standard` or `hd`) |
+
+### Output Format (JSON)
+
+```json
+{
+  "status": "ok",
+  "file": "scaffold/art/concept-art/forest-village.png",
+  "revised_prompt": "A serene forest village at dusk...",
+  "size": "1024x1024"
+}
+```
+
+On error:
+
+```json
+{
+  "status": "error",
+  "message": "OPENAI_API_KEY not found..."
+}
+```
+
+### Dependencies
+
+None — uses Python standard library only (`urllib`, `json`, `argparse`, `base64`).
 
 ## doc-review.py
 
