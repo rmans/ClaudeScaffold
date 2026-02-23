@@ -190,6 +190,8 @@ To review a single engine doc in detail:
 
 > **Optional:** Run `/scaffold-iterate` on individual engine docs for adversarial review. A passing review sets the document's status to `Approved`.
 
+> **Prototype opportunity:** If engine review reveals uncertainty about whether an engine approach will work (performance, API capability, architecture viability), run `/scaffold-new-prototype` to create a throwaway spike that answers the question before committing to the approach.
+
 ---
 
 ## Planning
@@ -215,6 +217,8 @@ Creates a phase scope gate in `phases/P#-###-name.md`. Reads the roadmap, all ex
 > **Review:** Run `/scaffold-bulk-review-phases` to audit all phases for roadmap alignment, entry/exit chains, scope coverage, and ADR absorption.
 > **Alternative:** Run `/scaffold-review-phase [P#-###]` to audit a single phase.
 
+> **Prototype opportunity:** If a phase's scope includes untested system interactions or uncertain technical approaches, run `/scaffold-new-prototype` to validate assumptions before defining slices.
+
 ### Step 18 — Define slices
 
 ```
@@ -226,6 +230,8 @@ Defines a vertical slice within a phase — a playable end-to-end chunk that pro
 > **Bulk seed:** Run `/scaffold-bulk-seed-slices` to generate slice stubs for all phases at once from phase scopes and interfaces.
 > **Review:** Run `/scaffold-bulk-review-slices` to audit all slices for phase coverage, spec overlap, and interface coverage.
 > **Alternative:** Run `/scaffold-review-slice [SLICE-###]` to audit a single slice.
+
+> **Prototype opportunity:** If a slice involves complex integration points or uncertain engine capabilities, run `/scaffold-new-prototype` to spike the risky part before writing specs.
 
 ### Step 19 — Write specs
 
@@ -275,6 +281,8 @@ After completing a phase, follow the Phase Transition Protocol in `phases/roadma
 3. Move the phase to Completed Phases with delivery notes.
 4. Re-scope the next phase based on ADR impacts, playtest patterns, and lessons learned.
 5. Update the Phase Overview and set the new Current Phase.
+
+> **Prototype opportunity:** If ADR review or playtest patterns reveal new uncertainties for the next phase, run `/scaffold-bulk-seed-prototypes` to identify prototype candidates before starting the next phase.
 
 ### Step 24 — Repeat
 
@@ -331,3 +339,8 @@ Continue the implement → ADR → update cycle for each task until the slice is
 | `/scaffold-validate` | Run cross-reference validation across all scaffold docs |
 | `/scaffold-playtest-log` | Log playtester observations into the feedback tracker |
 | `/scaffold-playtest-review` | Analyze playtest feedback patterns with priority grid |
+| `/scaffold-new-prototype` | Create a prototype document for a throwaway code spike |
+| `/scaffold-review-prototype` | Audit one prototype for question clarity and scope discipline |
+| `/scaffold-bulk-seed-prototypes` | Identify prototype candidates from pipeline docs |
+| `/scaffold-bulk-review-prototypes` | Audit all prototypes for consistency and coverage gaps |
+| `/scaffold-prototype-log` | Log findings from completed spike, file ADR stubs |

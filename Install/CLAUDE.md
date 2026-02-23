@@ -50,6 +50,7 @@ Never load entire directories. Follow this protocol:
 - `scaffold/engine/` — Engine-specific constraints (seeded from templates)
 - `scaffold/theory/` — Advisory reference: game design, UX, architecture patterns (no authority)
 - `scaffold/reviews/` — Adversarial review logs from `/scaffold-iterate`
+- `scaffold/prototypes/` — Throwaway code spikes that answer specific questions, findings feed back through ADRs
 - `scaffold/audio/` — Generated audio from audio skills (music, SFX, ambience, voice)
 - `scaffold/templates/` — Templates for all document types and engine docs
 
@@ -65,9 +66,18 @@ Never load entire directories. Follow this protocol:
 - Follow the order: Roadmap → Phases → Slices → Specs → Tasks.
 - Before creating a phase, spec, or task, read all ADRs filed during prior work. ADRs may change scope.
 - Before creating a phase, read `scaffold/decisions/playtest-feedback.md` for Pattern-status entries. Playtest patterns may affect phase scope alongside ADRs.
+- When facing specific technical or design uncertainty, consider creating a prototype (`/scaffold-new-prototype`) to answer the question with a throwaway code spike before committing to a design.
 - Slices define vertical end-to-end chunks within a phase. Specs define behavior within a slice. Tasks implement specs.
 - Specs describe BEHAVIOR (what it does). Tasks describe IMPLEMENTATION (how to build it in the engine).
 - After completing a phase, follow the Phase Transition Protocol in `scaffold/phases/roadmap.md` to update the roadmap.
+
+## When Prototyping
+
+- Prototypes are throwaway code spikes that answer ONE specific question. The document (findings + ADRs) is the output — not the code.
+- Use `/scaffold-new-prototype` to create a prototype with a question, hypothesis, and scoped approach.
+- After completing the spike, use `/scaffold-prototype-log` to capture findings, file ADR stubs, and set disposition.
+- Prototypes have no authority rank. Findings feed back through ADRs only — a prototype never directly changes a design document.
+- Default disposition is Discarded. Only archive or absorb spike code when there's a specific reason.
 
 ## Document Status
 

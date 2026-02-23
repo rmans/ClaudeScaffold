@@ -27,12 +27,13 @@
 | [reviews/](reviews/_index.md) | Tooling | Adversarial review logs from `/scaffold-iterate` |
 | [art/](art/_index.md) | Content | Generated art from art skills (`/scaffold-art-concept`, `/scaffold-art-ui-mockup`, etc.) |
 | [audio/](audio/_index.md) | Content | Generated audio from audio skills (`/scaffold-audio-music`, `/scaffold-audio-sfx`, etc.) |
+| [prototypes/](prototypes/_index.md) | Validation | Throwaway code spikes — each answers one specific question |
 | [tools/](tools/_index.md) | Tooling | Scripts and utilities for the pipeline |
 
 ## Key Files
 
 - [WORKFLOW.md](WORKFLOW.md) — Step-by-step recipe for the full pipeline
-- [SKILLS.md](SKILLS.md) — Man-page reference for all 58 slash commands
+- [SKILLS.md](SKILLS.md) — Man-page reference for all 63 slash commands
 - [doc-authority.md](doc-authority.md) — Precedence rules (read when conflicts arise)
 - [README.md](README.md) — How to use this scaffold
 
@@ -46,6 +47,7 @@
 | Task | TASK-### | TASK-001 |
 | ADR | ADR-### | ADR-001 |
 | Slice | SLICE-### | SLICE-001 |
+| Prototype | PROTO-### | PROTO-001 |
 | Playtester Feedback | PF-### | PF-001 |
 
 IDs are permanent. They never change even if the document is renamed.

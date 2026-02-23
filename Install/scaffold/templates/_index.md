@@ -13,6 +13,7 @@
 | [decision-template.md](decision-template.md) | ADR-### | [decisions/](../decisions/_index.md) |
 | [slice-template.md](slice-template.md) | SLICE-### | [slices/](../slices/_index.md) |
 | [playtest-session-template.md](playtest-session-template.md) | PT-YYYY-MM-DD | [decisions/](../decisions/_index.md) |
+| [prototype-template.md](prototype-template.md) | PROTO-### | [prototypes/](../prototypes/_index.md) |
 
 ## Engine Templates
 

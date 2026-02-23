@@ -1,6 +1,6 @@
 # Skills Reference
 
-> Man-page reference for all 58 scaffold slash commands. Each entry shows synopsis, description, arguments, examples, and related skills.
+> Man-page reference for all 63 scaffold slash commands. Each entry shows synopsis, description, arguments, examples, and related skills.
 >
 > **When to use each skill** — see [WORKFLOW.md](WORKFLOW.md) for the step-by-step pipeline order.
 
@@ -55,6 +55,11 @@
 | `/scaffold-validate` | — | Run cross-reference validation across all scaffold docs |
 | `/scaffold-playtest-log` | `[session-type]` | Log playtester observations into the feedback tracker |
 | `/scaffold-playtest-review` | — | Analyze playtest feedback patterns with priority grid |
+| `/scaffold-new-prototype` | `[prototype-name]` | Create a prototype document for a throwaway code spike |
+| `/scaffold-review-prototype` | `[PROTO-###\|prototype-name]` | Audit one prototype for question clarity, scope discipline, ADR follow-through |
+| `/scaffold-bulk-seed-prototypes` | — | Identify prototype candidates from systems, engine, slices, known issues |
+| `/scaffold-bulk-review-prototypes` | — | Audit all prototypes — cross-prototype consistency, coverage gaps, ADR follow-through |
+| `/scaffold-prototype-log` | `[PROTO-###\|prototype-name]` | Log findings from completed spike, file ADR stubs from design impacts |
 | `/scaffold-art-concept` | `[prompt or document-path]` | Generate concept art using DALL-E, informed by style guide and color system |
 | `/scaffold-art-ui-mockup` | `[prompt or document-path]` | Generate UI mockup art using DALL-E, informed by UI kit, style guide, and color system |
 | `/scaffold-art-character` | `[prompt or document-path]` | Generate character art using DALL-E, informed by style guide and color system |
@@ -1308,6 +1313,146 @@ Read-only analysis of `decisions/playtest-feedback.md`. Groups feedback by syste
 **See Also**
 
 `/scaffold-playtest-log`, `/scaffold-review-roadmap`, `/scaffold-new-phase`
+
+---
+
+## Prototype
+
+Skills for creating and managing throwaway code spikes. Each prototype answers ONE specific question and feeds findings back through ADRs. The document is the real output — not the code.
+
+---
+
+### /scaffold-new-prototype
+
+Create a new prototype document for a throwaway code spike.
+
+**Synopsis**
+
+    /scaffold-new-prototype [prototype-name]
+
+**Description**
+
+Creates a prototype document at `prototypes/PROTO-###-<name>.md` with automatic sequential ID assignment. Walks through Question, Hypothesis, Scope: Build, Scope: Skip, Approach, and Related Documents interactively. Validates that the question is specific, singular, answerable, and not already resolved by an existing ADR. Pushes back on scope creep — if Build scope exceeds ~5 steps, suggests splitting. Registers in `prototypes/_index.md`.
+
+**Arguments**
+
+| Argument | Required | Description |
+|----------|----------|-------------|
+| `prototype-name` | No | Name for the prototype. If omitted, asks interactively. |
+
+**Examples**
+
+    /scaffold-new-prototype damage-calc-performance
+    /scaffold-new-prototype ui-focus-ring-behavior
+    /scaffold-new-prototype
+
+**See Also**
+
+`/scaffold-review-prototype`, `/scaffold-prototype-log`, `/scaffold-bulk-seed-prototypes`
+
+---
+
+### /scaffold-review-prototype
+
+Audit one prototype for question clarity, scope discipline, and ADR follow-through.
+
+**Synopsis**
+
+    /scaffold-review-prototype [PROTO-###|prototype-name]
+
+**Description**
+
+Reviews a single prototype for completeness, question quality, scope discipline, and (for completed prototypes) findings quality and ADR follow-through. Pre-spike review checks Question specificity, Hypothesis reasoning, Scope minimality, and Skip explicitness. Post-spike review checks Answer directness, Evidence specificity, Surprise documentation, Design Impact completeness, and ADR coverage. Verifies registration in `prototypes/_index.md`.
+
+**Arguments**
+
+| Argument | Required | Description |
+|----------|----------|-------------|
+| `PROTO-###\|prototype-name` | No | Prototype to review (e.g., `PROTO-001` or `damage-calc-performance`). If omitted, asks interactively. |
+
+**Examples**
+
+    /scaffold-review-prototype PROTO-001
+    /scaffold-review-prototype damage-calc-performance
+    /scaffold-review-prototype
+
+**See Also**
+
+`/scaffold-new-prototype`, `/scaffold-bulk-review-prototypes`, `/scaffold-prototype-log`
+
+---
+
+### /scaffold-bulk-seed-prototypes
+
+Identify prototype candidates from systems, engine docs, slices, and known issues.
+
+**Synopsis**
+
+    /scaffold-bulk-seed-prototypes
+
+**Description**
+
+Scans the full pipeline for questions that would benefit from a throwaway code spike. Reads system designs (Open Questions, unclear authority, performance concerns), engine docs (unvalidated performance targets, uncertain API patterns), slices (complex integration points, untested capabilities), specs (engine-dependent behaviors, measurable thresholds), and known issues / design debt (open investigations, scaling concerns). Filters out questions already covered by existing prototypes or ADRs. Presents candidates organized by source for user confirmation. Creates PROTO-### files with Question and Related Documents pre-filled; leaves Hypothesis, Scope, and Approach for the user.
+
+**Examples**
+
+    /scaffold-bulk-seed-prototypes
+
+**See Also**
+
+`/scaffold-new-prototype`, `/scaffold-bulk-review-prototypes`
+
+---
+
+### /scaffold-bulk-review-prototypes
+
+Audit all prototypes for cross-prototype consistency, coverage gaps, and ADR follow-through.
+
+**Synopsis**
+
+    /scaffold-bulk-review-prototypes
+
+**Description**
+
+Reviews all registered prototypes at once for completeness, quality, and cross-prototype consistency. Per-prototype: checks section completeness and question quality. Cross-prototype checks: question overlap (similar questions across prototypes), scope overlap (redundant Build scopes), coverage gaps (areas of uncertainty with no prototype), ADR follow-through (completed prototypes with missing ADRs), disposition consistency (Absorbed without TASK-### reference), and stale prototypes (Draft prototypes referencing deprecated docs). Reports per-prototype details, cross-prototype consistency, and recommendations prioritized by blast radius.
+
+**Examples**
+
+    /scaffold-bulk-review-prototypes
+
+**See Also**
+
+`/scaffold-review-prototype`, `/scaffold-bulk-seed-prototypes`
+
+---
+
+### /scaffold-prototype-log
+
+Log findings from a completed spike, file ADR stubs from design impacts.
+
+**Synopsis**
+
+    /scaffold-prototype-log [PROTO-###|prototype-name]
+
+**Description**
+
+Captures findings from a completed prototype spike. Walks through Answer (direct response to the Question), Evidence (specific measurements and observations), Surprises (unexpected findings — often the highest-value output), Design Impact (which scaffold docs need to change), and Disposition (Discarded / Archived / Absorbed). For each Design Impact entry, creates an ADR stub with Context and Consequences pre-filled from findings. Updates the prototype status to Complete and registers all changes in `prototypes/_index.md`.
+
+**Arguments**
+
+| Argument | Required | Description |
+|----------|----------|-------------|
+| `PROTO-###\|prototype-name` | No | Prototype to log findings for (e.g., `PROTO-001` or `damage-calc-performance`). If omitted, lists Draft/In Progress prototypes and asks. |
+
+**Examples**
+
+    /scaffold-prototype-log PROTO-001
+    /scaffold-prototype-log damage-calc-performance
+    /scaffold-prototype-log
+
+**See Also**
+
+`/scaffold-new-prototype`, `/scaffold-review-prototype`
 
 ---
 

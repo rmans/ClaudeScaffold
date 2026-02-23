@@ -17,7 +17,7 @@ This is the document pipeline for your game. Every design decision, style rule, 
 | [_index.md](_index.md) | Master entry point — directory map, ID system, retrieval protocol |
 | [doc-authority.md](doc-authority.md) | Precedence rules — which document wins when they conflict |
 | [WORKFLOW.md](WORKFLOW.md) | Step-by-step recipe — 24 steps from design through implementation |
-| [SKILLS.md](SKILLS.md) | Man-page reference — all 45 skills with arguments, descriptions, and examples |
+| [SKILLS.md](SKILLS.md) | Man-page reference — all 63 skills with arguments, descriptions, and examples |
 
 ## The Pipeline
 
@@ -61,6 +61,7 @@ The top row defines the game. The bottom row builds it. ADRs close the loop — 
 | `slices/` | Integration | — | Vertical slice contracts within phases |
 | `engine/` | Implementation | 10 | Engine-specific best practices and constraints |
 | `theory/` | Advisory | 11 | Game design principles, UX heuristics, architecture patterns — no authority |
+| `prototypes/` | Validation | — | Throwaway code spikes that answer specific questions |
 | `templates/` | Meta | — | Templates for all document types and engine docs |
 | `tools/` | Tooling | — | Scripts and utilities |
 
