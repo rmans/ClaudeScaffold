@@ -58,6 +58,10 @@ Audits all Rank 2 docs for completeness and cross-doc consistency (style ↔ col
 
 > **Optional:** Run `/scaffold-iterate` on individual style docs for adversarial review. A passing review sets the document's status to `Approved`.
 
+> **Art & Audio:** With style docs in place, you can now generate visual and audio assets at any point.
+> Run `/scaffold-art-concept`, `/scaffold-art-character`, etc. for art. Run `/scaffold-audio-music`,
+> `/scaffold-audio-sfx`, etc. for audio. See the Quick Reference table for all art and audio skills.
+
 ---
 
 ## Systems
@@ -267,6 +271,9 @@ For each task, read the task doc, its linked spec, relevant system designs, and 
 
 > **Status:** When a task's implementation is done and its verification checks pass, run `/scaffold-complete` on the task. This sets its status to `Complete` and automatically ripples upward through specs, slices, and phases when all children are done.
 
+> **Asset review:** If art or audio assets have been generated, run `/scaffold-review-art` and
+> `/scaffold-review-audio` to audit visual consistency, prompt quality, and coverage gaps.
+
 ### Step 22 — Record decisions
 
 When a conflict or ambiguity arises during implementation, create `decisions/ADR-###.md` using `templates/decision-template.md`. ADRs are permanent records that feed back into upcoming phases, specs, and tasks.
@@ -344,3 +351,16 @@ Continue the implement → ADR → update cycle for each task until the slice is
 | `/scaffold-bulk-seed-prototypes` | Identify prototype candidates from pipeline docs |
 | `/scaffold-bulk-review-prototypes` | Audit all prototypes for consistency and coverage gaps |
 | `/scaffold-prototype-log` | Log findings from completed spike, file ADR stubs |
+| `/scaffold-art-concept` | Generate concept art from style guide and color system |
+| `/scaffold-art-character` | Generate character art from style guide and color system |
+| `/scaffold-art-environment` | Generate environment art from style guide and color system |
+| `/scaffold-art-icon` | Generate icon art from UI kit, color system, and style guide |
+| `/scaffold-art-promo` | Generate promotional art from style guide and color system |
+| `/scaffold-art-sprite` | Generate sprite art from style guide and color system |
+| `/scaffold-art-ui-mockup` | Generate UI mockup art from UI kit, style guide, and color system |
+| `/scaffold-review-art` | Audit all art assets for visual consistency and coverage gaps |
+| `/scaffold-audio-music` | Generate music tracks from style guide and design doc |
+| `/scaffold-audio-sfx` | Generate sound effects from style guide and design doc |
+| `/scaffold-audio-ambience` | Generate ambient audio from style guide and design doc |
+| `/scaffold-audio-voice` | Generate voice audio from style guide and design doc |
+| `/scaffold-review-audio` | Audit all audio assets for prompt consistency and coverage gaps |
