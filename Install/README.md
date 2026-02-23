@@ -24,22 +24,29 @@ your-project/
 
 ## Install
 
+Download and run — no need to clone the repo:
+
 ```bash
-# From the ClaudeScaffold repo
+# Download install.py (once)
+curl -O https://raw.githubusercontent.com/rmans/ClaudeScaffold/main/install.py
+
+# Install into your project
 python install.py /path/to/your/project
 ```
 
 Options:
+- `--branch <name>` — download a specific branch or tag (default: `main`)
 - `--dry-run` — preview what would be copied without making changes
 - `--force` — overwrite an existing `scaffold/` directory
 - `--verbose` — list every file as it's copied
 
-**Manual alternative:**
+**Manual alternative** (requires cloning the repo):
 
 ```bash
-cp -r Install/.claude /path/to/your/project/
-cp -r Install/scaffold /path/to/your/project/
-cp Install/CLAUDE.md /path/to/your/project/
+git clone https://github.com/rmans/ClaudeScaffold.git
+cp -r ClaudeScaffold/Install/.claude /path/to/your/project/
+cp -r ClaudeScaffold/Install/scaffold /path/to/your/project/
+cp ClaudeScaffold/Install/CLAUDE.md /path/to/your/project/
 ```
 
 ## After Installing
