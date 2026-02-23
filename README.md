@@ -91,7 +91,18 @@ The `theory/` directory contains 16 documents covering game design principles, c
 
 ## Installation
 
-Copy the contents of `Install/` into the root of your target project:
+Run the install script from the ClaudeScaffold repository:
+
+```bash
+python install.py /path/to/your/project
+```
+
+Options:
+- `--dry-run` — preview what would be copied without making changes
+- `--force` — overwrite an existing `scaffold/` directory
+- `--verbose` — list every file as it's copied
+
+**Manual alternative** (if you prefer not to use the script):
 
 ```bash
 cp -r Install/.claude /path/to/your/project/

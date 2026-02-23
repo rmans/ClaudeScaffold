@@ -26,6 +26,17 @@ your-project/
 
 ```bash
 # From the ClaudeScaffold repo
+python install.py /path/to/your/project
+```
+
+Options:
+- `--dry-run` — preview what would be copied without making changes
+- `--force` — overwrite an existing `scaffold/` directory
+- `--verbose` — list every file as it's copied
+
+**Manual alternative:**
+
+```bash
 cp -r Install/.claude /path/to/your/project/
 cp -r Install/scaffold /path/to/your/project/
 cp Install/CLAUDE.md /path/to/your/project/
