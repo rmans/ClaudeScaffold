@@ -1,12 +1,12 @@
 # ClaudeScaffold — Installation
 
-This is the installable overlay. Copy its contents into any game project to give Claude Code a structured document pipeline, strict design authority, and 39 skills that automate the workflow from concept to code.
+This is the installable overlay. Copy its contents into any game project to give Claude Code a structured document pipeline, strict design authority, and 40 skills that automate the workflow from concept to code.
 
 ## What Gets Installed
 
 ```
 your-project/
-├── .claude/skills/       ← 39 slash commands (create, seed, review, iterate, edit)
+├── .claude/skills/       ← 40 slash commands (create, seed, review, iterate, complete, edit)
 ├── scaffold/             ← Document pipeline with indexes and templates
 └── CLAUDE.md             ← Rules that tell Claude Code how to use the scaffold
 ```
@@ -15,7 +15,7 @@ your-project/
 
 **`scaffold/`** — A structured document hierarchy with 11 authority ranks. Every design decision, style rule, system behavior, interface contract, and implementation constraint has a home. Start at `scaffold/_index.md` — it's the master entry point.
 
-**`.claude/skills/`** — 39 slash commands that automate document creation, bulk seeding, review audits, adversarial iteration, and editing. Skills read higher-authority documents to pre-fill lower ones, check ADRs before scoping new work, and cross-reference everything.
+**`.claude/skills/`** — 40 slash commands that automate document creation, bulk seeding, review audits, adversarial iteration, completion tracking, and editing. Skills read higher-authority documents to pre-fill lower ones, check ADRs before scoping new work, and cross-reference everything.
 
 ## Prerequisites
 
@@ -69,7 +69,7 @@ For deeper adversarial review using an external LLM:
 
 Fix anything the reviews flag before moving on.
 
-Documents start as `Draft` when created. Set status to `Review` before running `/scaffold-iterate` — a passing review sets status to `Approved`.
+Documents start as `Draft` when created. Set status to `Review` before running `/scaffold-iterate` — a passing review sets status to `Approved`. Run `/scaffold-complete` after implementation and testing — completion ripples up from tasks through specs, slices, and phases.
 
 ### Phase 3 — Plan and build
 
@@ -103,7 +103,7 @@ Build. When implementation conflicts with the plan, file an ADR. After completin
 
 See `scaffold/WORKFLOW.md` for the full 24-step recipe.
 
-## All 39 Skills
+## All 40 Skills
 
 | Category | Skills |
 |----------|--------|
@@ -112,6 +112,7 @@ See `scaffold/WORKFLOW.md` for the full 24-step recipe.
 | **Review** | `review-design`, `review-style`, `review-system`, `review-reference`, `review-engine`, `review-input`, `review-roadmap`, `review-phase`, `review-slice`, `review-spec`, `review-task` |
 | **Bulk review** | `bulk-review-style`, `bulk-review-systems`, `bulk-review-references`, `bulk-review-engine`, `bulk-review-input`, `bulk-review-phases`, `bulk-review-slices`, `bulk-review-specs`, `bulk-review-tasks` |
 | **Iterate** | `iterate` |
+| **Complete** | `complete` |
 | **Edit** | `update-doc` |
 
 All skill names are prefixed with `/scaffold-` (e.g., `/scaffold-new-design`).

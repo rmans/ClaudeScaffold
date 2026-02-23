@@ -251,6 +251,8 @@ Creates an implementation task tied to a spec. Reads engine docs and ADRs. This 
 
 For each task, read the task doc, its linked spec, relevant system designs, and engine constraints, then write code.
 
+> **Status:** When a task's implementation is done and its verification checks pass, run `/scaffold-complete` on the task. This sets its status to `Complete` and automatically ripples upward through specs, slices, and phases when all children are done.
+
 ### Step 22 — Record decisions
 
 When a conflict or ambiguity arises during implementation, create `decisions/ADR-###.md` using `templates/decision-template.md`. ADRs are permanent records that feed back into upcoming phases, specs, and tasks.
@@ -312,5 +314,6 @@ Continue the implement → ADR → update cycle for each task until the slice is
 | `/scaffold-bulk-seed-slices` | Seed slice stubs from phases + systems + interfaces |
 | `/scaffold-bulk-seed-specs` | Seed spec stubs from slices + system designs + state transitions |
 | `/scaffold-bulk-seed-tasks` | Seed task stubs from specs + engine docs + signal registry |
+| `/scaffold-complete` | Mark a planning doc as Complete; ripples up through parents |
 | `/scaffold-update-doc` | Add, remove, or modify entries in any scaffold doc |
 | `/scaffold-iterate` | Adversarial review of any doc via external LLM (`--focus`, `--iterations`) |

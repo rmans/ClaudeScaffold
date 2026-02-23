@@ -69,11 +69,12 @@ Never load entire directories. Follow this protocol:
 
 ## Document Status
 
-Every scaffold document carries a `> **Status:**` field in its blockquote header. Values: `Draft | Review | Approved`.
+Every scaffold document carries a `> **Status:**` field in its blockquote header. Values: `Draft | Review | Approved | Complete`.
 
 - **Draft** — set automatically when a document is created (via templates and create/seed skills).
 - **Review** — set manually by the user when the document is ready for adversarial review.
 - **Approved** — set automatically by `/scaffold-iterate` after a successful adversarial review (consensus reached, no unresolved HIGH issues).
+- **Complete** — set by `/scaffold-complete` when implementation is done and verified. Applies to planning-layer docs only (phases, slices, specs, tasks). Ripples upward: when all tasks for a spec are Complete, the spec becomes Complete, and so on through slices and phases.
 
 ADRs use their own status lifecycle (`Proposed | Accepted | Deprecated | Superseded`) and are not part of this system.
 
