@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Concept art generator — DALL-E integration for the scaffold pipeline."""
+"""Image generator — DALL-E integration for the scaffold pipeline."""
 
 import argparse
 import base64
@@ -112,11 +112,11 @@ def generate_image(args):
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Concept art generator — DALL-E integration for the scaffold pipeline."
+        description="Image generator — DALL-E integration for the scaffold pipeline."
     )
     subparsers = parser.add_subparsers(dest="command", help="Available commands")
 
-    p_generate = subparsers.add_parser("generate", help="Generate concept art via DALL-E")
+    p_generate = subparsers.add_parser("generate", help="Generate an image via DALL-E")
     p_generate.add_argument("--prompt", required=True, help="The image generation prompt")
     p_generate.add_argument(
         "--style-context",

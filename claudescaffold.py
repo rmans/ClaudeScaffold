@@ -17,14 +17,23 @@ VERSION = "1.0.0"
 GITHUB_ZIP_URL = "https://github.com/rmans/ClaudeScaffold/archive/refs/heads/{branch}.zip"
 EXCLUDE_DIRS = {"__pycache__"}
 SCAFFOLD_SKILL_PREFIX = "scaffold-"
-EXPECTED_SKILLS = 46
+EXPECTED_SKILLS = 52
 
 # Upgrade mode: these scaffold/ subdirectories are infrastructure and get fully replaced
 UPGRADE_REPLACE_DIRS = {"theory", "templates", "tools"}
 # Upgrade mode: these scaffold/ root files are infrastructure and get replaced
 UPGRADE_REPLACE_ROOT_FILES = {"_index.md", "doc-authority.md", "WORKFLOW.md", "README.md", "SKILLS.md"}
 # Upgrade mode: these subdir files are infrastructure and get replaced
-UPGRADE_REPLACE_SUBDIR_FILES = {"reviews/TEMPLATE-review.md"}
+UPGRADE_REPLACE_SUBDIR_FILES = {
+    "reviews/TEMPLATE-review.md",
+    "art/_index.md",
+    "art/ui-mockups/_index.md",
+    "art/character-art/_index.md",
+    "art/environment-art/_index.md",
+    "art/sprite-art/_index.md",
+    "art/icon-art/_index.md",
+    "art/promo-art/_index.md",
+}
 
 
 # ---------------------------------------------------------------------------

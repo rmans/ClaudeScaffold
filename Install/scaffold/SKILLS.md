@@ -1,6 +1,6 @@
 # Skills Reference
 
-> Man-page reference for all 46 scaffold slash commands. Each entry shows synopsis, description, arguments, examples, and related skills.
+> Man-page reference for all 52 scaffold slash commands. Each entry shows synopsis, description, arguments, examples, and related skills.
 >
 > **When to use each skill** — see [WORKFLOW.md](WORKFLOW.md) for the step-by-step pipeline order.
 
@@ -56,6 +56,12 @@
 | `/scaffold-playtest-log` | `[session-type]` | Log playtester observations into the feedback tracker |
 | `/scaffold-playtest-review` | — | Analyze playtest feedback patterns with priority grid |
 | `/scaffold-concept-art` | `[prompt or document-path]` | Generate concept art using DALL-E, informed by style guide and color system |
+| `/scaffold-ui-mockup` | `[prompt or document-path]` | Generate UI mockup art using DALL-E, informed by UI kit, style guide, and color system |
+| `/scaffold-character-art` | `[prompt or document-path]` | Generate character art using DALL-E, informed by style guide and color system |
+| `/scaffold-environment-art` | `[prompt or document-path]` | Generate environment art using DALL-E, informed by style guide and color system |
+| `/scaffold-sprite-art` | `[prompt or document-path]` | Generate sprite art using DALL-E, informed by style guide and color system |
+| `/scaffold-icon-art` | `[prompt or document-path]` | Generate icon art using DALL-E, informed by UI kit, color system, and style guide |
+| `/scaffold-promo-art` | `[prompt or document-path]` | Generate promotional art using DALL-E, informed by style guide and color system |
 
 ---
 
@@ -1331,4 +1337,184 @@ Generates concept art using DALL-E, grounded in the project's visual identity. R
 
 **See Also**
 
-`/scaffold-new-style`, `/scaffold-review-style`
+`/scaffold-new-style`, `/scaffold-review-style`, `/scaffold-ui-mockup`, `/scaffold-character-art`, `/scaffold-environment-art`, `/scaffold-sprite-art`, `/scaffold-icon-art`, `/scaffold-promo-art`
+
+---
+
+### /scaffold-ui-mockup
+
+Generate UI mockup art using DALL-E, informed by the project's UI kit, style guide, and color system.
+
+**Synopsis**
+
+    /scaffold-ui-mockup [prompt or document-path]
+
+**Description**
+
+Generates UI mockup art using DALL-E, grounded in the project's visual identity. Reads `design/ui-kit.md`, `design/style-guide.md`, and `design/color-system.md` to build a style context focused on screen composition, HUD layout, menu flows, and readability. Supports freeform (text prompt) and document-driven (reads a scaffold doc and extracts UI elements) modes. Shows the composed prompt for user confirmation before calling the API. Saves images to `art/ui-mockups/` with kebab-case timestamped filenames. Default size: 1792x1024.
+
+**Arguments**
+
+| Argument | Required | Description |
+|----------|----------|-------------|
+| `prompt or document-path` | No | Freeform text prompt, or a path to a scaffold doc for document-driven mode. If omitted, asks interactively. |
+
+**Examples**
+
+    /scaffold-ui-mockup main HUD with health bar, minimap, and hotbar
+    /scaffold-ui-mockup scaffold/design/ui-kit.md
+    /scaffold-ui-mockup
+
+**See Also**
+
+`/scaffold-concept-art`, `/scaffold-icon-art`, `/scaffold-new-style`
+
+---
+
+### /scaffold-character-art
+
+Generate character art using DALL-E, informed by the project's style guide and color system.
+
+**Synopsis**
+
+    /scaffold-character-art [prompt or document-path]
+
+**Description**
+
+Generates character art using DALL-E, grounded in the project's visual identity. Reads `design/style-guide.md` and `design/color-system.md` to build a style context, plus checks the design doc for character descriptions. Focuses on silhouette readability, proportions, color identity, expression, and costume design. Supports freeform (text prompt) and document-driven (reads a scaffold doc and extracts character descriptions) modes. Shows the composed prompt for user confirmation before calling the API. Saves images to `art/character-art/` with kebab-case timestamped filenames. Default size: 1024x1024.
+
+**Arguments**
+
+| Argument | Required | Description |
+|----------|----------|-------------|
+| `prompt or document-path` | No | Freeform text prompt, or a path to a scaffold doc for document-driven mode. If omitted, asks interactively. |
+
+**Examples**
+
+    /scaffold-character-art a rogue archer with dark cloak and glowing arrows
+    /scaffold-character-art scaffold/design/design-doc.md
+    /scaffold-character-art
+
+**See Also**
+
+`/scaffold-concept-art`, `/scaffold-sprite-art`, `/scaffold-new-style`
+
+---
+
+### /scaffold-environment-art
+
+Generate environment art using DALL-E, informed by the project's style guide and color system.
+
+**Synopsis**
+
+    /scaffold-environment-art [prompt or document-path]
+
+**Description**
+
+Generates environment art using DALL-E, grounded in the project's visual identity. Reads `design/style-guide.md` and `design/color-system.md` to build a style context, plus checks the design doc for world/setting descriptions. Focuses on depth, atmosphere, lighting, scale, and walkable vs decorative space. Supports freeform (text prompt) and document-driven (reads a scaffold doc and extracts environment descriptions) modes. Shows the composed prompt for user confirmation before calling the API. Saves images to `art/environment-art/` with kebab-case timestamped filenames. Default size: 1792x1024.
+
+**Arguments**
+
+| Argument | Required | Description |
+|----------|----------|-------------|
+| `prompt or document-path` | No | Freeform text prompt, or a path to a scaffold doc for document-driven mode. If omitted, asks interactively. |
+
+**Examples**
+
+    /scaffold-environment-art a misty forest clearing with ancient ruins
+    /scaffold-environment-art scaffold/design/systems/SYS-003-exploration.md
+    /scaffold-environment-art
+
+**See Also**
+
+`/scaffold-concept-art`, `/scaffold-promo-art`, `/scaffold-new-style`
+
+---
+
+### /scaffold-sprite-art
+
+Generate sprite art using DALL-E, informed by the project's style guide and color system.
+
+**Synopsis**
+
+    /scaffold-sprite-art [prompt or document-path]
+
+**Description**
+
+Generates sprite art using DALL-E, grounded in the project's visual identity. Reads `design/style-guide.md` and `design/color-system.md` to build a style context focused on pixel art style, limited palette, clean edges, and small-size readability. Supports freeform (text prompt) and document-driven (reads a scaffold doc and extracts sprite subjects) modes. Shows the composed prompt for user confirmation before calling the API. Saves images to `art/sprite-art/` with kebab-case timestamped filenames. Default size: 1024x1024.
+
+**Arguments**
+
+| Argument | Required | Description |
+|----------|----------|-------------|
+| `prompt or document-path` | No | Freeform text prompt, or a path to a scaffold doc for document-driven mode. If omitted, asks interactively. |
+
+**Examples**
+
+    /scaffold-sprite-art warrior idle animation frame, 16-color palette
+    /scaffold-sprite-art scaffold/design/systems/SYS-001-combat.md
+    /scaffold-sprite-art
+
+**See Also**
+
+`/scaffold-concept-art`, `/scaffold-character-art`, `/scaffold-new-style`
+
+---
+
+### /scaffold-icon-art
+
+Generate icon art using DALL-E, informed by the project's UI kit, color system, and style guide.
+
+**Synopsis**
+
+    /scaffold-icon-art [prompt or document-path]
+
+**Description**
+
+Generates icon art using DALL-E, grounded in the project's visual identity. Reads `design/ui-kit.md`, `design/color-system.md`, and `design/style-guide.md` to build a style context focused on square format, simple silhouette, high contrast, and icon-size readability. Supports freeform (text prompt) and document-driven (reads a scaffold doc and extracts icon subjects) modes. Shows the composed prompt for user confirmation before calling the API. Saves images to `art/icon-art/` with kebab-case timestamped filenames. Default size: 1024x1024.
+
+**Arguments**
+
+| Argument | Required | Description |
+|----------|----------|-------------|
+| `prompt or document-path` | No | Freeform text prompt, or a path to a scaffold doc for document-driven mode. If omitted, asks interactively. |
+
+**Examples**
+
+    /scaffold-icon-art health potion icon, red liquid in glass vial
+    /scaffold-icon-art scaffold/reference/entity-components.md
+    /scaffold-icon-art
+
+**See Also**
+
+`/scaffold-ui-mockup`, `/scaffold-concept-art`, `/scaffold-new-style`
+
+---
+
+### /scaffold-promo-art
+
+Generate promotional art using DALL-E, informed by the project's style guide and color system.
+
+**Synopsis**
+
+    /scaffold-promo-art [prompt or document-path]
+
+**Description**
+
+Generates promotional art using DALL-E, grounded in the project's visual identity. Reads `design/style-guide.md` and `design/color-system.md` to build a style context, plus checks the design doc for identity and vision. Focuses on dramatic composition, marketing appeal, text-safe space for title/logo overlay, and landscape orientation. Supports freeform (text prompt) and document-driven (reads a scaffold doc and extracts visual themes) modes. Shows the composed prompt for user confirmation before calling the API. Saves images to `art/promo-art/` with kebab-case timestamped filenames. Default size: 1792x1024.
+
+**Arguments**
+
+| Argument | Required | Description |
+|----------|----------|-------------|
+| `prompt or document-path` | No | Freeform text prompt, or a path to a scaffold doc for document-driven mode. If omitted, asks interactively. |
+
+**Examples**
+
+    /scaffold-promo-art epic hero banner with dark forest background, text-safe left third
+    /scaffold-promo-art scaffold/design/design-doc.md
+    /scaffold-promo-art
+
+**See Also**
+
+`/scaffold-concept-art`, `/scaffold-environment-art`, `/scaffold-new-style`

@@ -1,13 +1,13 @@
 ---
-name: scaffold-concept-art
-description: Generate concept art using DALL-E, informed by the project's style guide and color system.
+name: scaffold-sprite-art
+description: Generate sprite art using DALL-E, informed by the project's style guide and color system.
 argument-hint: [prompt or document-path]
 allowed-tools: Read, Bash, Glob, Write
 ---
 
-# /scaffold-concept-art
+# /scaffold-sprite-art
 
-Generate concept art using DALL-E, informed by the project's style guide and color system.
+Generate sprite art using DALL-E, informed by the project's style guide and color system.
 
 ## Steps
 
@@ -40,24 +40,26 @@ Summarize the art style, visual tone, and palette into a compact style context s
 
 Check the argument passed to the skill:
 
-- **Document-driven mode:** If the argument contains `/` or ends with `.md`, treat it as a document path. Read the document and extract visual elements, key scenes, characters, environments, or UI concepts described in it.
+- **Document-driven mode:** If the argument contains `/` or ends with `.md`, treat it as a document path. Read the document and extract visual elements, sprite subjects, or animation frame descriptions in it.
 - **Freeform mode:** Otherwise, treat the argument as a base prompt for image generation.
 
 ### 4. Build prompt
 
 Combine the style context from Step 2 with the user's prompt or document-extracted description into a single DALL-E prompt.
 
+**Prompt focus:** Emphasize pixel art style, limited color palette, clean pixel edges, small-size readability, and sprite-sheet clarity. Frame the image as a game sprite or pixel art asset.
+
 **Show the composed prompt to the user and ask for confirmation or edits before generating.** Do not call the API until the user approves the prompt.
 
 ### 5. Generate image
 
-1. Ensure `scaffold/art/concept-art/` directory exists (create it if needed).
+1. Ensure `scaffold/art/sprite-art/` directory exists (create it if needed).
 
 2. Generate a kebab-case filename from the prompt:
    - Take the first few meaningful words (max 40 characters)
    - Append a timestamp: `-YYYYMMDD-HHMMSS`
    - Add `.png` extension
-   - Example: `forest-village-at-dusk-20260223-143022.png`
+   - Example: `warrior-idle-sprite-20260223-143022.png`
 
 3. Run the generation command:
 
@@ -65,7 +67,7 @@ Combine the style context from Step 2 with the user's prompt or document-extract
 python scaffold/tools/image-gen.py generate \
     --prompt "<approved prompt>" \
     --style-context "<style context from step 2>" \
-    --output "scaffold/art/concept-art/<filename>.png" \
+    --output "scaffold/art/sprite-art/<filename>.png" \
     --size 1024x1024 \
     --model dall-e-3 \
     --quality standard
@@ -75,7 +77,7 @@ python scaffold/tools/image-gen.py generate \
 
 ### 6. Update index
 
-Append a row to `scaffold/art/concept-art/_index.md` in the Files table:
+Append a row to `scaffold/art/sprite-art/_index.md` in the Files table:
 
 ```markdown
 | <filename>.png | <short prompt summary, max 60 chars> | YYYY-MM-DD |

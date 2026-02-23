@@ -6,14 +6,14 @@
 
 | File | Description |
 |------|-------------|
-| `concept-art.py` | Concept art generator — DALL-E integration for the scaffold pipeline |
+| `image-gen.py` | Image generator — DALL-E integration for the scaffold pipeline (shared by all 7 art skills) |
 | `doc-review.py` | Adversarial document reviewer — multi-provider (OpenAI / Anthropic) |
 | `review_config.json` | Configuration for doc-review.py (provider, model, temperature) |
 | `validate-refs.py` | Cross-reference validator — checks referential integrity across all scaffold docs |
 
-## concept-art.py
+## image-gen.py
 
-Concept art generator that sends prompts to the DALL-E API and saves generated images locally. Used by `/scaffold-concept-art`.
+Image generator that sends prompts to the DALL-E API and saves generated images locally. Shared by all 7 art skills: `/scaffold-concept-art`, `/scaffold-ui-mockup`, `/scaffold-character-art`, `/scaffold-environment-art`, `/scaffold-sprite-art`, `/scaffold-icon-art`, `/scaffold-promo-art`.
 
 ### Commands
 
@@ -24,7 +24,7 @@ Concept art generator that sends prompts to the DALL-E API and saves generated i
 ### Usage
 
 ```
-python scaffold/tools/concept-art.py generate \
+python scaffold/tools/image-gen.py generate \
     --prompt "a forest village at dusk" \
     --style-context "pixel art, warm palette" \
     --output scaffold/art/concept-art/forest-village.png \
