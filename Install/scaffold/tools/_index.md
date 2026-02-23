@@ -13,7 +13,7 @@
 
 ## image-gen.py
 
-Image generator that sends prompts to the DALL-E API and saves generated images locally. Shared by all 7 art skills: `/scaffold-concept-art`, `/scaffold-ui-mockup`, `/scaffold-character-art`, `/scaffold-environment-art`, `/scaffold-sprite-art`, `/scaffold-icon-art`, `/scaffold-promo-art`.
+Image generator that sends prompts to the DALL-E API and saves generated images locally. Shared by all 7 art skills: `/scaffold-art-concept`, `/scaffold-art-ui-mockup`, `/scaffold-art-character`, `/scaffold-art-environment`, `/scaffold-art-sprite`, `/scaffold-art-icon`, `/scaffold-art-promo`.
 
 ### Commands
 

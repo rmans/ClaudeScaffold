@@ -25,7 +25,7 @@
 | [slices/](slices/_index.md) | Integration | Vertical slice contracts |
 | [templates/](templates/_index.md) | Meta | Document templates for all ID'd types and engine docs |
 | [reviews/](reviews/_index.md) | Tooling | Adversarial review logs from `/scaffold-iterate` |
-| [art/](art/_index.md) | Content | Generated art from art skills (`/scaffold-concept-art`, `/scaffold-ui-mockup`, etc.) |
+| [art/](art/_index.md) | Content | Generated art from art skills (`/scaffold-art-concept`, `/scaffold-art-ui-mockup`, etc.) |
 | [tools/](tools/_index.md) | Tooling | Scripts and utilities for the pipeline |
 
 ## Key Files

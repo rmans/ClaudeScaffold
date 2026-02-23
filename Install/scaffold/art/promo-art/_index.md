@@ -1,6 +1,6 @@
 # Promo Art
 
-Generated promotional art for the project. Created by `/scaffold-promo-art`.
+Generated promotional art for the project. Created by `/scaffold-art-promo`.
 
 ## Files
 

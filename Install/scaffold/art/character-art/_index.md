@@ -1,6 +1,6 @@
 # Character Art
 
-Generated character art for the project. Created by `/scaffold-character-art`.
+Generated character art for the project. Created by `/scaffold-art-character`.
 
 ## Files
 

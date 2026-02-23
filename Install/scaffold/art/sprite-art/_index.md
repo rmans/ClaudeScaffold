@@ -1,6 +1,6 @@
 # Sprite Art
 
-Generated sprite art for the project. Created by `/scaffold-sprite-art`.
+Generated sprite art for the project. Created by `/scaffold-art-sprite`.
 
 ## Files
 

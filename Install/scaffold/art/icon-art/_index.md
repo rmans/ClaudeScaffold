@@ -1,6 +1,6 @@
 # Icon Art
 
-Generated icon art for the project. Created by `/scaffold-icon-art`.
+Generated icon art for the project. Created by `/scaffold-art-icon`.
 
 ## Files
 

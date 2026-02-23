@@ -55,13 +55,13 @@
 | `/scaffold-validate` | — | Run cross-reference validation across all scaffold docs |
 | `/scaffold-playtest-log` | `[session-type]` | Log playtester observations into the feedback tracker |
 | `/scaffold-playtest-review` | — | Analyze playtest feedback patterns with priority grid |
-| `/scaffold-concept-art` | `[prompt or document-path]` | Generate concept art using DALL-E, informed by style guide and color system |
-| `/scaffold-ui-mockup` | `[prompt or document-path]` | Generate UI mockup art using DALL-E, informed by UI kit, style guide, and color system |
-| `/scaffold-character-art` | `[prompt or document-path]` | Generate character art using DALL-E, informed by style guide and color system |
-| `/scaffold-environment-art` | `[prompt or document-path]` | Generate environment art using DALL-E, informed by style guide and color system |
-| `/scaffold-sprite-art` | `[prompt or document-path]` | Generate sprite art using DALL-E, informed by style guide and color system |
-| `/scaffold-icon-art` | `[prompt or document-path]` | Generate icon art using DALL-E, informed by UI kit, color system, and style guide |
-| `/scaffold-promo-art` | `[prompt or document-path]` | Generate promotional art using DALL-E, informed by style guide and color system |
+| `/scaffold-art-concept` | `[prompt or document-path]` | Generate concept art using DALL-E, informed by style guide and color system |
+| `/scaffold-art-ui-mockup` | `[prompt or document-path]` | Generate UI mockup art using DALL-E, informed by UI kit, style guide, and color system |
+| `/scaffold-art-character` | `[prompt or document-path]` | Generate character art using DALL-E, informed by style guide and color system |
+| `/scaffold-art-environment` | `[prompt or document-path]` | Generate environment art using DALL-E, informed by style guide and color system |
+| `/scaffold-art-sprite` | `[prompt or document-path]` | Generate sprite art using DALL-E, informed by style guide and color system |
+| `/scaffold-art-icon` | `[prompt or document-path]` | Generate icon art using DALL-E, informed by UI kit, color system, and style guide |
+| `/scaffold-art-promo` | `[prompt or document-path]` | Generate promotional art using DALL-E, informed by style guide and color system |
 
 ---
 
@@ -1311,13 +1311,13 @@ Skills for generating visual assets informed by the project's style guide and co
 
 ---
 
-### /scaffold-concept-art
+### /scaffold-art-concept
 
 Generate concept art using DALL-E, informed by the project's style guide and color system.
 
 **Synopsis**
 
-    /scaffold-concept-art [prompt or document-path]
+    /scaffold-art-concept [prompt or document-path]
 
 **Description**
 
@@ -1331,23 +1331,23 @@ Generates concept art using DALL-E, grounded in the project's visual identity. R
 
 **Examples**
 
-    /scaffold-concept-art a misty pixel-art village at dawn
-    /scaffold-concept-art scaffold/design/systems/SYS-001-combat.md
-    /scaffold-concept-art
+    /scaffold-art-concept a misty pixel-art village at dawn
+    /scaffold-art-concept scaffold/design/systems/SYS-001-combat.md
+    /scaffold-art-concept
 
 **See Also**
 
-`/scaffold-new-style`, `/scaffold-review-style`, `/scaffold-ui-mockup`, `/scaffold-character-art`, `/scaffold-environment-art`, `/scaffold-sprite-art`, `/scaffold-icon-art`, `/scaffold-promo-art`
+`/scaffold-new-style`, `/scaffold-review-style`, `/scaffold-art-ui-mockup`, `/scaffold-art-character`, `/scaffold-art-environment`, `/scaffold-art-sprite`, `/scaffold-art-icon`, `/scaffold-art-promo`
 
 ---
 
-### /scaffold-ui-mockup
+### /scaffold-art-ui-mockup
 
 Generate UI mockup art using DALL-E, informed by the project's UI kit, style guide, and color system.
 
 **Synopsis**
 
-    /scaffold-ui-mockup [prompt or document-path]
+    /scaffold-art-ui-mockup [prompt or document-path]
 
 **Description**
 
@@ -1361,23 +1361,23 @@ Generates UI mockup art using DALL-E, grounded in the project's visual identity.
 
 **Examples**
 
-    /scaffold-ui-mockup main HUD with health bar, minimap, and hotbar
-    /scaffold-ui-mockup scaffold/design/ui-kit.md
-    /scaffold-ui-mockup
+    /scaffold-art-ui-mockup main HUD with health bar, minimap, and hotbar
+    /scaffold-art-ui-mockup scaffold/design/ui-kit.md
+    /scaffold-art-ui-mockup
 
 **See Also**
 
-`/scaffold-concept-art`, `/scaffold-icon-art`, `/scaffold-new-style`
+`/scaffold-art-concept`, `/scaffold-art-icon`, `/scaffold-new-style`
 
 ---
 
-### /scaffold-character-art
+### /scaffold-art-character
 
 Generate character art using DALL-E, informed by the project's style guide and color system.
 
 **Synopsis**
 
-    /scaffold-character-art [prompt or document-path]
+    /scaffold-art-character [prompt or document-path]
 
 **Description**
 
@@ -1391,23 +1391,23 @@ Generates character art using DALL-E, grounded in the project's visual identity.
 
 **Examples**
 
-    /scaffold-character-art a rogue archer with dark cloak and glowing arrows
-    /scaffold-character-art scaffold/design/design-doc.md
-    /scaffold-character-art
+    /scaffold-art-character a rogue archer with dark cloak and glowing arrows
+    /scaffold-art-character scaffold/design/design-doc.md
+    /scaffold-art-character
 
 **See Also**
 
-`/scaffold-concept-art`, `/scaffold-sprite-art`, `/scaffold-new-style`
+`/scaffold-art-concept`, `/scaffold-art-sprite`, `/scaffold-new-style`
 
 ---
 
-### /scaffold-environment-art
+### /scaffold-art-environment
 
 Generate environment art using DALL-E, informed by the project's style guide and color system.
 
 **Synopsis**
 
-    /scaffold-environment-art [prompt or document-path]
+    /scaffold-art-environment [prompt or document-path]
 
 **Description**
 
@@ -1421,23 +1421,23 @@ Generates environment art using DALL-E, grounded in the project's visual identit
 
 **Examples**
 
-    /scaffold-environment-art a misty forest clearing with ancient ruins
-    /scaffold-environment-art scaffold/design/systems/SYS-003-exploration.md
-    /scaffold-environment-art
+    /scaffold-art-environment a misty forest clearing with ancient ruins
+    /scaffold-art-environment scaffold/design/systems/SYS-003-exploration.md
+    /scaffold-art-environment
 
 **See Also**
 
-`/scaffold-concept-art`, `/scaffold-promo-art`, `/scaffold-new-style`
+`/scaffold-art-concept`, `/scaffold-art-promo`, `/scaffold-new-style`
 
 ---
 
-### /scaffold-sprite-art
+### /scaffold-art-sprite
 
 Generate sprite art using DALL-E, informed by the project's style guide and color system.
 
 **Synopsis**
 
-    /scaffold-sprite-art [prompt or document-path]
+    /scaffold-art-sprite [prompt or document-path]
 
 **Description**
 
@@ -1451,23 +1451,23 @@ Generates sprite art using DALL-E, grounded in the project's visual identity. Re
 
 **Examples**
 
-    /scaffold-sprite-art warrior idle animation frame, 16-color palette
-    /scaffold-sprite-art scaffold/design/systems/SYS-001-combat.md
-    /scaffold-sprite-art
+    /scaffold-art-sprite warrior idle animation frame, 16-color palette
+    /scaffold-art-sprite scaffold/design/systems/SYS-001-combat.md
+    /scaffold-art-sprite
 
 **See Also**
 
-`/scaffold-concept-art`, `/scaffold-character-art`, `/scaffold-new-style`
+`/scaffold-art-concept`, `/scaffold-art-character`, `/scaffold-new-style`
 
 ---
 
-### /scaffold-icon-art
+### /scaffold-art-icon
 
 Generate icon art using DALL-E, informed by the project's UI kit, color system, and style guide.
 
 **Synopsis**
 
-    /scaffold-icon-art [prompt or document-path]
+    /scaffold-art-icon [prompt or document-path]
 
 **Description**
 
@@ -1481,23 +1481,23 @@ Generates icon art using DALL-E, grounded in the project's visual identity. Read
 
 **Examples**
 
-    /scaffold-icon-art health potion icon, red liquid in glass vial
-    /scaffold-icon-art scaffold/reference/entity-components.md
-    /scaffold-icon-art
+    /scaffold-art-icon health potion icon, red liquid in glass vial
+    /scaffold-art-icon scaffold/reference/entity-components.md
+    /scaffold-art-icon
 
 **See Also**
 
-`/scaffold-ui-mockup`, `/scaffold-concept-art`, `/scaffold-new-style`
+`/scaffold-art-ui-mockup`, `/scaffold-art-concept`, `/scaffold-new-style`
 
 ---
 
-### /scaffold-promo-art
+### /scaffold-art-promo
 
 Generate promotional art using DALL-E, informed by the project's style guide and color system.
 
 **Synopsis**
 
-    /scaffold-promo-art [prompt or document-path]
+    /scaffold-art-promo [prompt or document-path]
 
 **Description**
 
@@ -1511,10 +1511,10 @@ Generates promotional art using DALL-E, grounded in the project's visual identit
 
 **Examples**
 
-    /scaffold-promo-art epic hero banner with dark forest background, text-safe left third
-    /scaffold-promo-art scaffold/design/design-doc.md
-    /scaffold-promo-art
+    /scaffold-art-promo epic hero banner with dark forest background, text-safe left third
+    /scaffold-art-promo scaffold/design/design-doc.md
+    /scaffold-art-promo
 
 **See Also**
 
-`/scaffold-concept-art`, `/scaffold-environment-art`, `/scaffold-new-style`
+`/scaffold-art-concept`, `/scaffold-art-environment`, `/scaffold-new-style`

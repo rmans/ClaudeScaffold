@@ -1,13 +1,13 @@
 ---
-name: scaffold-promo-art
-description: Generate promotional art using DALL-E, informed by the project's style guide and color system.
+name: scaffold-art-concept
+description: Generate concept art using DALL-E, informed by the project's style guide and color system.
 argument-hint: [prompt or document-path]
 allowed-tools: Read, Bash, Glob, Write
 ---
 
-# /scaffold-promo-art
+# /scaffold-art-concept
 
-Generate promotional art using DALL-E, informed by the project's style guide and color system.
+Generate concept art using DALL-E, informed by the project's style guide and color system.
 
 ## Steps
 
@@ -29,41 +29,35 @@ Stop here if the key is not available.
 
 ### 2. Read design context
 
-Read these files for visual style and brand identity context:
+Read these files for visual style context:
 
 - `scaffold/design/style-guide.md` — art style, visual tone, aesthetic pillars
 - `scaffold/design/color-system.md` — palette, color roles, mood
 
-Also check for identity and vision context in the design doc:
-
-- `scaffold/design/design-doc.md` — look for Core Fantasy, Identity, Vision, and Aesthetic Pillars sections
-
-Summarize the art style, visual tone, brand identity, and palette into a compact style context string (1-2 sentences). If the files don't exist or are mostly TODOs, note this and proceed with a minimal style context.
+Summarize the art style, visual tone, and palette into a compact style context string (1-2 sentences). If the files don't exist or are mostly TODOs, note this and proceed with a minimal style context.
 
 ### 3. Determine mode
 
 Check the argument passed to the skill:
 
-- **Document-driven mode:** If the argument contains `/` or ends with `.md`, treat it as a document path. Read the document and extract key visual themes, dramatic moments, or brand identity elements described in it.
+- **Document-driven mode:** If the argument contains `/` or ends with `.md`, treat it as a document path. Read the document and extract visual elements, key scenes, characters, environments, or UI concepts described in it.
 - **Freeform mode:** Otherwise, treat the argument as a base prompt for image generation.
 
 ### 4. Build prompt
 
 Combine the style context from Step 2 with the user's prompt or document-extracted description into a single DALL-E prompt.
 
-**Prompt focus:** Emphasize dramatic composition, marketing appeal, text-safe space (leave room for title/logo overlay), landscape orientation, eye-catching focal point, and emotional impact. Frame the image as a game promotional banner, key art, or store page hero image.
-
 **Show the composed prompt to the user and ask for confirmation or edits before generating.** Do not call the API until the user approves the prompt.
 
 ### 5. Generate image
 
-1. Ensure `scaffold/art/promo-art/` directory exists (create it if needed).
+1. Ensure `scaffold/art/concept-art/` directory exists (create it if needed).
 
 2. Generate a kebab-case filename from the prompt:
    - Take the first few meaningful words (max 40 characters)
    - Append a timestamp: `-YYYYMMDD-HHMMSS`
    - Add `.png` extension
-   - Example: `hero-banner-dark-forest-20260223-143022.png`
+   - Example: `forest-village-at-dusk-20260223-143022.png`
 
 3. Run the generation command:
 
@@ -71,8 +65,8 @@ Combine the style context from Step 2 with the user's prompt or document-extract
 python scaffold/tools/image-gen.py generate \
     --prompt "<approved prompt>" \
     --style-context "<style context from step 2>" \
-    --output "scaffold/art/promo-art/<filename>.png" \
-    --size 1792x1024 \
+    --output "scaffold/art/concept-art/<filename>.png" \
+    --size 1024x1024 \
     --model dall-e-3 \
     --quality standard
 ```
@@ -81,7 +75,7 @@ python scaffold/tools/image-gen.py generate \
 
 ### 6. Update index
 
-Append a row to `scaffold/art/promo-art/_index.md` in the Files table:
+Append a row to `scaffold/art/concept-art/_index.md` in the Files table:
 
 ```markdown
 | <filename>.png | <short prompt summary, max 60 chars> | YYYY-MM-DD |

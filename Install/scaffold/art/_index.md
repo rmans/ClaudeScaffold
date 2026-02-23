@@ -6,10 +6,10 @@
 
 | Directory | Skill | Description |
 |-----------|-------|-------------|
-| [concept-art/](concept-art/_index.md) | `/scaffold-concept-art` | Concept art — exploratory visual ideas, mood, and tone |
-| [ui-mockups/](ui-mockups/_index.md) | `/scaffold-ui-mockup` | UI mockups — screen compositions, HUD layouts, menu flows |
-| [character-art/](character-art/_index.md) | `/scaffold-character-art` | Character art — silhouettes, costumes, expressions, color identity |
-| [environment-art/](environment-art/_index.md) | `/scaffold-environment-art` | Environment art — landscapes, interiors, atmosphere, lighting |
-| [sprite-art/](sprite-art/_index.md) | `/scaffold-sprite-art` | Sprite art — pixel art, limited palettes, small-size readability |
-| [icon-art/](icon-art/_index.md) | `/scaffold-icon-art` | Icon art — square icons, simple silhouettes, high contrast |
-| [promo-art/](promo-art/_index.md) | `/scaffold-promo-art` | Promo art — marketing visuals, dramatic composition, text-safe space |
+| [concept-art/](concept-art/_index.md) | `/scaffold-art-concept` | Concept art — exploratory visual ideas, mood, and tone |
+| [ui-mockups/](ui-mockups/_index.md) | `/scaffold-art-ui-mockup` | UI mockups — screen compositions, HUD layouts, menu flows |
+| [character-art/](character-art/_index.md) | `/scaffold-art-character` | Character art — silhouettes, costumes, expressions, color identity |
+| [environment-art/](environment-art/_index.md) | `/scaffold-art-environment` | Environment art — landscapes, interiors, atmosphere, lighting |
+| [sprite-art/](sprite-art/_index.md) | `/scaffold-art-sprite` | Sprite art — pixel art, limited palettes, small-size readability |
+| [icon-art/](icon-art/_index.md) | `/scaffold-art-icon` | Icon art — square icons, simple silhouettes, high contrast |
+| [promo-art/](promo-art/_index.md) | `/scaffold-art-promo` | Promo art — marketing visuals, dramatic composition, text-safe space |

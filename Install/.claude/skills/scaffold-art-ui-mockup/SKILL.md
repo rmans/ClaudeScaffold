@@ -1,13 +1,13 @@
 ---
-name: scaffold-environment-art
-description: Generate environment art using DALL-E, informed by the project's style guide and color system.
+name: scaffold-art-ui-mockup
+description: Generate UI mockup art using DALL-E, informed by the project's UI kit, style guide, and color system.
 argument-hint: [prompt or document-path]
 allowed-tools: Read, Bash, Glob, Write
 ---
 
-# /scaffold-environment-art
+# /scaffold-art-ui-mockup
 
-Generate environment art using DALL-E, informed by the project's style guide and color system.
+Generate UI mockup art using DALL-E, informed by the project's UI kit, style guide, and color system.
 
 ## Steps
 
@@ -29,41 +29,38 @@ Stop here if the key is not available.
 
 ### 2. Read design context
 
-Read these files for visual style and world context:
+Read these files for visual style and UI context:
 
+- `scaffold/design/ui-kit.md` — component inventory, layout patterns, spacing, typography
 - `scaffold/design/style-guide.md` — art style, visual tone, aesthetic pillars
 - `scaffold/design/color-system.md` — palette, color roles, mood
 
-Also check for world/setting descriptions in the design doc:
-
-- `scaffold/design/design-doc.md` — look for world sections, setting descriptions, biome/zone concepts, level themes
-
-Summarize the art style, visual tone, and palette into a compact style context string (1-2 sentences). If the files don't exist or are mostly TODOs, note this and proceed with a minimal style context.
+Summarize the UI style, visual tone, component patterns, and palette into a compact style context string (1-2 sentences). If the files don't exist or are mostly TODOs, note this and proceed with a minimal style context.
 
 ### 3. Determine mode
 
 Check the argument passed to the skill:
 
-- **Document-driven mode:** If the argument contains `/` or ends with `.md`, treat it as a document path. Read the document and extract environment descriptions, location details, atmosphere cues, or level themes described in it.
+- **Document-driven mode:** If the argument contains `/` or ends with `.md`, treat it as a document path. Read the document and extract UI elements, screen layouts, HUD components, or menu flows described in it.
 - **Freeform mode:** Otherwise, treat the argument as a base prompt for image generation.
 
 ### 4. Build prompt
 
 Combine the style context from Step 2 with the user's prompt or document-extracted description into a single DALL-E prompt.
 
-**Prompt focus:** Emphasize depth and sense of scale, atmosphere and lighting, walkable vs decorative space, environmental storytelling, and mood. Frame the image as a game environment or landscape concept.
+**Prompt focus:** Emphasize screen composition, HUD layout, menu flows, readability at target resolution, and clear visual hierarchy. Frame the image as a game UI mockup or screenshot.
 
 **Show the composed prompt to the user and ask for confirmation or edits before generating.** Do not call the API until the user approves the prompt.
 
 ### 5. Generate image
 
-1. Ensure `scaffold/art/environment-art/` directory exists (create it if needed).
+1. Ensure `scaffold/art/ui-mockups/` directory exists (create it if needed).
 
 2. Generate a kebab-case filename from the prompt:
    - Take the first few meaningful words (max 40 characters)
    - Append a timestamp: `-YYYYMMDD-HHMMSS`
    - Add `.png` extension
-   - Example: `misty-forest-clearing-20260223-143022.png`
+   - Example: `main-hud-layout-20260223-143022.png`
 
 3. Run the generation command:
 
@@ -71,7 +68,7 @@ Combine the style context from Step 2 with the user's prompt or document-extract
 python scaffold/tools/image-gen.py generate \
     --prompt "<approved prompt>" \
     --style-context "<style context from step 2>" \
-    --output "scaffold/art/environment-art/<filename>.png" \
+    --output "scaffold/art/ui-mockups/<filename>.png" \
     --size 1792x1024 \
     --model dall-e-3 \
     --quality standard
@@ -81,7 +78,7 @@ python scaffold/tools/image-gen.py generate \
 
 ### 6. Update index
 
-Append a row to `scaffold/art/environment-art/_index.md` in the Files table:
+Append a row to `scaffold/art/ui-mockups/_index.md` in the Files table:
 
 ```markdown
 | <filename>.png | <short prompt summary, max 60 chars> | YYYY-MM-DD |
@@ -99,7 +96,7 @@ Show the user:
 
 ## Rules
 
-- **Always read style guide and color system first** — even if the user provides a detailed prompt, the style context ensures brand consistency.
+- **Always read UI kit, style guide, and color system first** — even if the user provides a detailed prompt, the style context ensures brand consistency.
 - **Show composed prompt before calling API** — the user must confirm or edit the prompt. Never generate without explicit approval.
 - **If `OPENAI_API_KEY` is not set, explain how to set it and stop** — do not attempt generation.
 - **Kebab-case filenames with timestamps** — avoids collisions and keeps the directory scannable.
