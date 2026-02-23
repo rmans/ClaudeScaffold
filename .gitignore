@@ -3,3 +3,6 @@
 Thumbs.db
 Desktop.ini
 .reviews/
+/.claude/
+/.vs/
+__pycache__/
