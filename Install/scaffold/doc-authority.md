@@ -25,7 +25,7 @@
 | 8 | specs/SPEC-### | Behavior — atomic specs |
 | 9 | tasks/TASK-### | Execution — implementation steps |
 | 10 | engine/* | Implementation — engine constraints |
-| 11 | theory/* | Reference only — never canonical |
+| 11 | theory/* | Advisory only — no authority |
 
 ## Rules
 

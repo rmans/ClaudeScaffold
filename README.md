@@ -20,6 +20,7 @@ Every design decision, visual style rule, system behavior, interface contract, a
 - **11-rank precedence chain.** When a system design says one thing and a task says another, the system design wins. No ambiguity.
 - **Genre-agnostic design, engine-specific implementation.** The design layer works for any game. The engine layer adapts to Godot, Unity, Unreal, or anything else.
 - **ADR feedback loop.** When implementation reality conflicts with the plan, Architecture Decision Records capture why and feed back into upcoming phases, specs, and tasks.
+- **Draft → Review → Approved lifecycle.** Documents start as `Draft`, move to `Review` when ready for adversarial scrutiny, and are set to `Approved` by `/scaffold-iterate` after a passing review.
 - **Token-efficient retrieval.** Index files in every directory let Claude find what it needs without loading entire folders.
 - **39 skills automate the pipeline.** Create, seed, review, iterate, and edit documents with slash commands — no manual file wrangling.
 
@@ -65,7 +66,7 @@ When documents conflict, the higher-ranked document wins. Lower documents confor
 | 8 | Behavior specs | Atomic testable behaviors |
 | 9 | Implementation tasks | How to build each spec |
 | 10 | Engine docs | Engine-specific constraints |
-| 11 | Theory docs | Advisory only — never authoritative |
+| 11 | Theory docs | Advisory only — no authority |
 
 ### Layer Separation
 

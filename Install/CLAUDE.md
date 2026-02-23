@@ -35,7 +35,7 @@ Never load entire directories. Follow this protocol:
 | 8 | `specs/SPEC-###` | Behavior — atomic specs |
 | 9 | `tasks/TASK-###` | Execution — implementation steps |
 | 10 | `engine/*` | Implementation — engine constraints |
-| 11 | `theory/*` | Advisory — no authority |
+| 11 | `theory/*` | Advisory only — no authority |
 
 ## Key Directories
 
@@ -49,6 +49,7 @@ Never load entire directories. Follow this protocol:
 - `scaffold/slices/` — Vertical slice contracts within phases
 - `scaffold/engine/` — Engine-specific constraints (seeded from templates)
 - `scaffold/theory/` — Advisory reference: game design, UX, architecture patterns (no authority)
+- `scaffold/reviews/` — Adversarial review logs from `/scaffold-iterate`
 - `scaffold/templates/` — Templates for all document types and engine docs
 
 ## When Creating or Modifying Systems

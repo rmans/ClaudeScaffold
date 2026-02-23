@@ -69,6 +69,8 @@ For deeper adversarial review using an external LLM:
 
 Fix anything the reviews flag before moving on.
 
+Documents start as `Draft` when created. Set status to `Review` before running `/scaffold-iterate` — a passing review sets status to `Approved`.
+
 ### Phase 3 — Plan and build
 
 ```
@@ -128,6 +130,7 @@ All skill names are prefixed with `/scaffold-` (e.g., `/scaffold-new-design`).
 | `slices/` | Integration | Vertical slice contracts |
 | `engine/` | Implementation (rank 10) | Engine-specific best practices and constraints |
 | `theory/` | Advisory (rank 11) | 16 docs on game design, UX, architecture — no authority |
+| `reviews/` | Logs | Adversarial review logs from `/scaffold-iterate` |
 | `templates/` | Meta | Templates for all document types |
 
 ## Customization

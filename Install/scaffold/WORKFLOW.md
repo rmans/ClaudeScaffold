@@ -14,6 +14,8 @@
 
 Fills in `design/design-doc.md` with core vision, pillars, loops, mechanics, and scope. This is the highest-authority document — everything else flows from it.
 
+> **Status:** Created documents start as `Draft`. Set status to `Review` when you're satisfied and ready for adversarial review.
+
 ### Step 2 — Review the design document
 
 ```
@@ -22,7 +24,7 @@ Fills in `design/design-doc.md` with core vision, pillars, loops, mechanics, and
 
 Audits completeness, system index sync, and cross-references. Fix anything it flags before moving on.
 
-> **Optional:** Run `/scaffold-iterate design/design-doc.md` for adversarial review by an external LLM. Catches blind spots self-review misses.
+> **Optional:** Run `/scaffold-iterate design/design-doc.md` for adversarial review by an external LLM. Catches blind spots self-review misses. A passing review sets the document's status to `Approved`.
 
 ---
 
@@ -54,7 +56,7 @@ For any sections the bulk seed couldn't derive, fill them interactively:
 
 Audits all Rank 2 docs for completeness and cross-doc consistency (style ↔ colors ↔ UI kit ↔ glossary ↔ design doc).
 
-> **Optional:** Run `/scaffold-iterate` on individual style docs for adversarial review.
+> **Optional:** Run `/scaffold-iterate` on individual style docs for adversarial review. A passing review sets the document's status to `Approved`.
 
 ---
 
@@ -84,7 +86,7 @@ Open each `design/systems/SYS-###-*.md` file and fill in all sections. To create
 
 Audits all systems for completeness, quality, cross-system consistency (dependency symmetry, authority conflicts, orphan systems, glossary compliance).
 
-> **Optional:** Run `/scaffold-iterate` on individual system designs for adversarial review.
+> **Optional:** Run `/scaffold-iterate` on individual system designs for adversarial review. A passing review sets the document's status to `Approved`.
 
 ---
 
@@ -112,7 +114,7 @@ To review a single reference doc in detail:
 /scaffold-review-reference [authority|interfaces|states|entities|resources|signals|balance]
 ```
 
-> **Optional:** Run `/scaffold-iterate` on individual reference docs for adversarial review (uses Lint tier — lightweight accuracy check).
+> **Optional:** Run `/scaffold-iterate` on individual reference docs for adversarial review (uses Lint tier — lightweight accuracy check). A passing review sets the document's status to `Approved`.
 
 ---
 
@@ -142,7 +144,7 @@ To review a single input doc in detail:
 /scaffold-review-input [action-map|bindings-kbm|bindings-gamepad|ui-navigation|input-philosophy]
 ```
 
-> **Optional:** Run `/scaffold-iterate` on individual input docs for adversarial review.
+> **Optional:** Run `/scaffold-iterate` on individual input docs for adversarial review. A passing review sets the document's status to `Approved`.
 
 ---
 
@@ -178,7 +180,7 @@ To review a single engine doc in detail:
 /scaffold-review-engine [coding|ui|input|scene-architecture|performance]
 ```
 
-> **Optional:** Run `/scaffold-iterate` on individual engine docs for adversarial review.
+> **Optional:** Run `/scaffold-iterate` on individual engine docs for adversarial review. A passing review sets the document's status to `Approved`.
 
 ---
 
