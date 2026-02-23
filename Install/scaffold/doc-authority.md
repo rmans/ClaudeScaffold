@@ -34,3 +34,13 @@
 3. **Engine adapts to design.** The `engine/` layer describes *how* to implement, never *what* to implement. If an engine constraint conflicts with design intent, file an ADR.
 4. **Theory is advisory.** Documents in `theory/` inform decisions but never dictate them. They carry no authority.
 5. **IDs are stable.** Renaming a document does not change its authority rank — the rank is determined by its directory and type, not its filename.
+
+## Deprecation
+
+When a document is no longer active (system removed, spec superseded, phase cancelled):
+
+1. Set Status to `Deprecated`.
+2. Add `> **Superseded by:** [replacement doc or "N/A"]` to the blockquote header.
+3. Keep the document in its directory and index — IDs are permanent.
+4. Review skills flag references to deprecated documents as warnings.
+5. To deprecate, file an ADR explaining why and update the ADR's Updated Documents table.

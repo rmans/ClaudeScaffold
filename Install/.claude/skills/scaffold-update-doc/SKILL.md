@@ -80,7 +80,17 @@ Depending on the doc type and action:
 - **Remove:** Show existing entries, confirm which to remove or mark as resolved.
 - **Modify:** Show the current entry, ask what to change.
 
-### 5. Update Cross-References
+### 5. ADR Changelog Entry
+
+If the user mentions an ADR as the reason for the edit, add a changelog entry to the modified document's blockquote header:
+
+```
+> **Changelog:** ADR-### (YYYY-MM-DD): Brief description of what changed
+```
+
+If the document already has a `> **Changelog:**` line, append the new entry after the existing ones (comma-separated or on a new `>` line).
+
+### 6. Update Cross-References
 
 After making the edit, check and update related docs:
 
@@ -114,7 +124,7 @@ After making the edit, check and update related docs:
 **State machine changes:**
 - If a state machine is added/removed, check `scaffold/reference/entity-components.md` for matching state/status fields.
 
-### 6. Report
+### 7. Report
 
 Show the user:
 - What was changed and where

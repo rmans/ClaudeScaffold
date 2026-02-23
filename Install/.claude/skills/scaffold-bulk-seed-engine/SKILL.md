@@ -19,6 +19,15 @@ Ask the user which engine they're using, then create all 5 engine docs from temp
    - Unreal Engine 5 → `unreal5`
    - Custom → whatever the user provides (lowercase, hyphenated)
 
+## Supported Engines
+
+| Engine | Prefix | Pre-filled Conventions |
+|--------|--------|----------------------|
+| Godot 4 | `godot4` | GDScript, signals, autoloads, Control nodes, InputMap |
+| Unity | `unity` | C#, UnityEvents, ScriptableObjects, UI Toolkit/UGUI, New Input System |
+| Unreal Engine 5 | `unreal5` | C++/Blueprints, delegates, subsystems, UMG, Enhanced Input |
+| Other | user-provided | Blank templates with engine name — fill manually |
+
 ## Phase 2 — Check for Existing Engine Docs
 
 1. **Glob** `scaffold/engine/*` to see if engine docs already exist.

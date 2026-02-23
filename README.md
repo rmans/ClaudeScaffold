@@ -20,9 +20,9 @@ Every design decision, visual style rule, system behavior, interface contract, a
 - **11-rank precedence chain.** When a system design says one thing and a task says another, the system design wins. No ambiguity.
 - **Genre-agnostic design, engine-specific implementation.** The design layer works for any game. The engine layer adapts to Godot, Unity, Unreal, or anything else.
 - **ADR feedback loop.** When implementation reality conflicts with the plan, Architecture Decision Records capture why and feed back into upcoming phases, specs, and tasks.
-- **Draft → Review → Approved → Complete lifecycle.** Documents start as `Draft`, move to `Review` for adversarial scrutiny, are set to `Approved` by `/scaffold-iterate`, and marked `Complete` by `/scaffold-complete` when implementation is done. Completion ripples up from tasks through specs, slices, and phases.
+- **Draft → Review → Approved → Complete lifecycle.** Documents start as `Draft`, move to `Review` for adversarial scrutiny, are set to `Approved` by `/scaffold-iterate`, and marked `Complete` by `/scaffold-complete` when implementation is done. Completion ripples up from tasks through specs, slices, and phases. Documents can also be `Deprecated` via ADR when no longer active — they remain in place (IDs are permanent) but reviews flag references to them.
 - **Token-efficient retrieval.** Index files in every directory let Claude find what it needs without loading entire folders.
-- **40 skills automate the pipeline.** Create, seed, review, iterate, and edit documents with slash commands — no manual file wrangling.
+- **43 skills automate the pipeline.** Create, seed, review, iterate, and edit documents with slash commands — no manual file wrangling.
 
 ## How It Works
 
@@ -102,7 +102,7 @@ cp Install/CLAUDE.md /path/to/your/project/
 This gives your project:
 
 ```
-.claude/skills/       ← 40 Claude Code skills
+.claude/skills/       ← 43 Claude Code skills
 scaffold/             ← Document pipeline with templates and indexes
 CLAUDE.md             ← Instructions that tell Claude Code how to use the scaffold
 ```
@@ -111,11 +111,11 @@ See [Install/README.md](Install/README.md) for full installation details.
 
 ## Skills
 
-40 slash commands organized by workflow:
+43 slash commands organized by workflow:
 
-**Create (10):** `/scaffold-new-design`, `/scaffold-new-style`, `/scaffold-new-system`, `/scaffold-new-reference`, `/scaffold-new-engine`, `/scaffold-new-roadmap`, `/scaffold-new-phase`, `/scaffold-new-slice`, `/scaffold-new-spec`, `/scaffold-new-task`
+**Create (11):** `/scaffold-new-design`, `/scaffold-new-style`, `/scaffold-new-system`, `/scaffold-new-reference`, `/scaffold-new-engine`, `/scaffold-new-input`, `/scaffold-new-roadmap`, `/scaffold-new-phase`, `/scaffold-new-slice`, `/scaffold-new-spec`, `/scaffold-new-task`
 
-**Bulk seed (7):** `/scaffold-bulk-seed-style`, `/scaffold-bulk-seed-systems`, `/scaffold-bulk-seed-references`, `/scaffold-bulk-seed-engine`, `/scaffold-bulk-seed-slices`, `/scaffold-bulk-seed-specs`, `/scaffold-bulk-seed-tasks`
+**Bulk seed (8):** `/scaffold-bulk-seed-style`, `/scaffold-bulk-seed-systems`, `/scaffold-bulk-seed-references`, `/scaffold-bulk-seed-engine`, `/scaffold-bulk-seed-input`, `/scaffold-bulk-seed-slices`, `/scaffold-bulk-seed-specs`, `/scaffold-bulk-seed-tasks`
 
 **Review (20):** `/scaffold-review-design`, `/scaffold-review-style`, `/scaffold-review-system`, `/scaffold-review-reference`, `/scaffold-review-engine`, `/scaffold-review-input`, `/scaffold-review-roadmap`, `/scaffold-review-phase`, `/scaffold-review-slice`, `/scaffold-review-spec`, `/scaffold-review-task`, `/scaffold-bulk-review-style`, `/scaffold-bulk-review-systems`, `/scaffold-bulk-review-references`, `/scaffold-bulk-review-engine`, `/scaffold-bulk-review-input`, `/scaffold-bulk-review-phases`, `/scaffold-bulk-review-slices`, `/scaffold-bulk-review-specs`, `/scaffold-bulk-review-tasks`
 
@@ -124,6 +124,8 @@ See [Install/README.md](Install/README.md) for full installation details.
 **Complete (1):** `/scaffold-complete`
 
 **Edit (1):** `/scaffold-update-doc`
+
+**Validate (1):** `/scaffold-validate`
 
 ### Recommended Workflow
 

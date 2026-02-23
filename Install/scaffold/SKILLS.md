@@ -1,6 +1,6 @@
 # Skills Reference
 
-> Man-page reference for all 40 scaffold slash commands. Each entry shows synopsis, description, arguments, examples, and related skills.
+> Man-page reference for all 43 scaffold slash commands. Each entry shows synopsis, description, arguments, examples, and related skills.
 >
 > **When to use each skill** — see [WORKFLOW.md](WORKFLOW.md) for the step-by-step pipeline order.
 
@@ -15,6 +15,7 @@
 | `/scaffold-new-system` | `[system-name]` | Create a system design with auto SYS-### ID |
 | `/scaffold-new-reference` | `[authority\|interfaces\|states\|entities\|resources\|signals\|balance]` | Populate one reference doc from systems |
 | `/scaffold-new-engine` | `[coding\|ui\|input\|scene-architecture\|performance]` | Fill out one engine doc interactively |
+| `/scaffold-new-input` | `[action-map\|bindings-kbm\|bindings-gamepad\|ui-navigation\|input-philosophy]` | Fill out one input doc interactively |
 | `/scaffold-new-roadmap` | — | Create the project roadmap |
 | `/scaffold-new-phase` | `[phase-name]` | Create a phase scope gate with auto P#-### ID |
 | `/scaffold-new-slice` | `[slice-name]` | Create a vertical slice with auto SLICE-### ID |
@@ -23,7 +24,8 @@
 | `/scaffold-bulk-seed-style` | — | Seed all style docs from design doc |
 | `/scaffold-bulk-seed-systems` | — | Seed glossary + system stubs from design doc |
 | `/scaffold-bulk-seed-references` | — | Seed all 7 reference docs from systems |
-| `/scaffold-bulk-seed-engine` | — | Select engine, then seed all 5 engine docs |
+| `/scaffold-bulk-seed-engine` | — | Select engine, then seed all 5 engine docs (Godot 4, Unity, Unreal 5, or custom) |
+| `/scaffold-bulk-seed-input` | — | Seed all 5 input docs from design doc |
 | `/scaffold-bulk-seed-slices` | — | Seed slice stubs from phases + systems + interfaces |
 | `/scaffold-bulk-seed-specs` | — | Seed spec stubs from slices + systems + states |
 | `/scaffold-bulk-seed-tasks` | — | Seed task stubs from specs + engine docs + signals |
@@ -50,6 +52,7 @@
 | `/scaffold-iterate` | `[document-path] [--focus "..."] [--iterations N]` | Adversarial two-loop review via external LLM |
 | `/scaffold-complete` | `[document-path\|ID]` | Mark a planning doc as Complete; ripples up through parents |
 | `/scaffold-update-doc` | `[doc-name\|path]` | Add, remove, or modify entries in any scaffold doc |
+| `/scaffold-validate` | — | Run cross-reference validation across all scaffold docs |
 
 ---
 
@@ -206,6 +209,39 @@ Guides user through filling one engine doc by reading the design doc for scope, 
 **See Also**
 
 `/scaffold-bulk-seed-engine`, `/scaffold-review-engine`, `/scaffold-bulk-review-engine`
+
+---
+
+### /scaffold-new-input
+
+Fill out one input document interactively.
+
+**Synopsis**
+
+    /scaffold-new-input [action-map|bindings-kbm|bindings-gamepad|ui-navigation|input-philosophy]
+
+**Description**
+
+Interactively fills one input document by reading the design doc for context (Player Verbs, Core Loop, Input Feel) and theory docs (UX heuristics for accessibility, game design principles for agency). Asks one section at a time and writes answers immediately. For action-map: walks through namespaces then actions per namespace. For bindings: reads the action-map and proposes defaults, checking for conflicts. For ui-navigation: walks through navigation model, focus flow, and mouse behavior. For input-philosophy: walks through principles, responsiveness targets, accessibility, and constraints.
+
+**Arguments**
+
+| Argument | Required | Description |
+|----------|----------|-------------|
+| `action-map\|bindings-kbm\|bindings-gamepad\|ui-navigation\|input-philosophy` | No | Which input doc to fill. If omitted, asks interactively. |
+
+**Examples**
+
+    /scaffold-new-input action-map
+    /scaffold-new-input bindings-kbm
+    /scaffold-new-input bindings-gamepad
+    /scaffold-new-input ui-navigation
+    /scaffold-new-input input-philosophy
+    /scaffold-new-input
+
+**See Also**
+
+`/scaffold-bulk-seed-input`, `/scaffold-review-input`, `/scaffold-bulk-review-input`
 
 ---
 
@@ -442,6 +478,28 @@ Asks which engine the project uses (Godot 4, Unity, Unreal 5, or custom), then c
 **See Also**
 
 `/scaffold-new-engine`, `/scaffold-bulk-review-engine`
+
+---
+
+### /scaffold-bulk-seed-input
+
+Seed all 5 input docs from the design doc.
+
+**Synopsis**
+
+    /scaffold-bulk-seed-input
+
+**Description**
+
+Reads the completed design doc and bulk-seeds all 5 input documents in 5 sequential phases. Phase 1 extracts player verbs and proposes action-map entries with namespaces. Phase 2 derives input philosophy from the design doc's Input Feel and Accessibility sections. Phase 3 proposes default keyboard/mouse bindings from the action-map. Phase 4 proposes default gamepad bindings. Phase 5 proposes UI navigation model and focus flow from the action-map and UI kit. Presents each phase to user for confirmation; writes confirmed content only.
+
+**Examples**
+
+    /scaffold-bulk-seed-input
+
+**See Also**
+
+`/scaffold-new-input`, `/scaffold-bulk-review-input`
 
 ---
 
@@ -1147,3 +1205,33 @@ Updates cross-references automatically: glossary term renames propagate, system 
     /scaffold-update-doc SYS-001
     /scaffold-update-doc reference/signal-registry.md
     /scaffold-update-doc
+
+---
+
+## Validate
+
+Cross-reference validation across the entire scaffold.
+
+---
+
+### /scaffold-validate
+
+Run cross-reference validation across all scaffold documents.
+
+**Synopsis**
+
+    /scaffold-validate
+
+**Description**
+
+Runs `validate-refs.py` to check referential integrity across all scaffold documents. Reports broken references, missing registrations, glossary NOT-column violations, and orphaned entries. Checks: system IDs registered in `systems/_index.md`, authority ↔ entity ownership, signal emitters/consumers, interface sources/targets, state machine authorities, glossary NOT-column usage, bidirectional system registration (index ↔ design doc), spec ↔ slice coverage, and task ↔ spec links.
+
+Presents results as a summary table with PASS/FAIL per check and lists each failing issue with file, line, and message. Suggests specific fixes for each issue. Read-only — does not modify any files.
+
+**Examples**
+
+    /scaffold-validate
+
+**See Also**
+
+`/scaffold-review-design`, `/scaffold-bulk-review-references`, `/scaffold-update-doc`

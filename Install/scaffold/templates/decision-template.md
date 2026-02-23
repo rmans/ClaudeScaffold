@@ -12,6 +12,14 @@
 
 <!-- What was decided, and what document(s) were updated as a result? -->
 
+## Updated Documents
+
+<!-- List every document modified as a result of this decision. -->
+
+| Document | What Changed |
+|----------|-------------|
+| ... | ... |
+
 ## Alternatives Considered
 
 <!-- What other options were evaluated? Why were they rejected? -->

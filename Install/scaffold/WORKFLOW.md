@@ -120,15 +120,23 @@ To review a single reference doc in detail:
 
 ## Inputs
 
-### Step 11 — Fill in input documents
+### Step 11 — Create input documents
 
-Fill in the input documents manually:
+```
+/scaffold-bulk-seed-input
+```
 
-- `inputs/action-map.md` — every player action with a unique name
-- `inputs/default-bindings-kbm.md` — keyboard/mouse defaults
-- `inputs/default-bindings-gamepad.md` — gamepad defaults
-- `inputs/input-philosophy.md` — responsiveness targets, dead zones, buffering
-- `inputs/ui-navigation.md` — focus flow and navigation
+Reads the design doc and pre-fills action-map, input-philosophy, keyboard/mouse bindings, gamepad bindings, and UI navigation. Phases are sequential: action-map informs bindings, which informs navigation.
+
+For any sections the bulk seed couldn't derive, fill them interactively:
+
+```
+/scaffold-new-input action-map
+/scaffold-new-input bindings-kbm
+/scaffold-new-input bindings-gamepad
+/scaffold-new-input ui-navigation
+/scaffold-new-input input-philosophy
+```
 
 ### Step 12 — Review all input docs
 
@@ -282,10 +290,12 @@ Continue the implement → ADR → update cycle for each task until the slice is
 | `/scaffold-new-system` | Create a system design |
 | `/scaffold-new-reference` | Seed one reference doc from system designs |
 | `/scaffold-new-engine` | Fill out one engine doc interactively |
+| `/scaffold-new-input` | Fill out one input doc interactively |
 | `/scaffold-bulk-seed-style` | Seed all style docs from design doc |
 | `/scaffold-bulk-seed-systems` | Glossary + all system stubs from design doc |
 | `/scaffold-bulk-seed-references` | All reference docs from system designs |
 | `/scaffold-bulk-seed-engine` | Select engine, then seed all 5 engine docs |
+| `/scaffold-bulk-seed-input` | Seed all input docs from design doc |
 | `/scaffold-review-design` | Audit design doc completeness |
 | `/scaffold-review-style` | Audit one Rank 2 style doc |
 | `/scaffold-review-system` | Audit one system's quality |
@@ -317,3 +327,4 @@ Continue the implement → ADR → update cycle for each task until the slice is
 | `/scaffold-complete` | Mark a planning doc as Complete; ripples up through parents |
 | `/scaffold-update-doc` | Add, remove, or modify entries in any scaffold doc |
 | `/scaffold-iterate` | Adversarial review of any doc via external LLM (`--focus`, `--iterations`) |
+| `/scaffold-validate` | Run cross-reference validation across all scaffold docs |

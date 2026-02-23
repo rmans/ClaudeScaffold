@@ -8,6 +8,7 @@
 |------|-------------|
 | `doc-review.py` | Adversarial document reviewer — multi-provider (OpenAI / Anthropic) |
 | `review_config.json` | Configuration for doc-review.py (provider, model, temperature) |
+| `validate-refs.py` | Cross-reference validator — checks referential integrity across all scaffold docs |
 
 ## doc-review.py
 
@@ -61,3 +62,58 @@ Configured via `review_config.json` in the same directory. Supports OpenAI and A
 ### Dependencies
 
 None — uses Python standard library only (`urllib`, `json`, `argparse`).
+
+## validate-refs.py
+
+Cross-reference validator that checks referential integrity across all scaffold documents. Detects broken references, missing registrations, glossary violations, and orphaned entries. Used by `/scaffold-validate`.
+
+### Commands
+
+```
+python scaffold/tools/validate-refs.py [--format json|text]
+```
+
+### Checks Performed
+
+| Check | What It Validates |
+|-------|------------------|
+| `system-ids` | Every SYS-### reference points to a registered system in systems/_index.md |
+| `authority-entities` | Entity authorities match authority.md owners |
+| `signals-systems` | Signal emitters/consumers are registered systems |
+| `interfaces-systems` | Interface sources/targets are registered systems |
+| `states-systems` | State machine authorities are registered systems |
+| `glossary-not` | No non-theory doc uses a term from the glossary NOT column |
+| `bidirectional-registration` | systems/_index.md and design-doc.md System Design Index match |
+| `spec-slice` | Every spec appears in at least one slice |
+| `task-spec` | Every task references a valid spec |
+
+### Usage
+
+```
+python scaffold/tools/validate-refs.py                  # Human-readable text output
+python scaffold/tools/validate-refs.py --format json     # JSON array of issues
+python scaffold/tools/validate-refs.py --format text     # Human-readable text output
+```
+
+### Output Format (JSON)
+
+```json
+[
+  {
+    "check": "system-ids",
+    "severity": "ERROR",
+    "message": "SYS-005 referenced in authority.md but not registered in systems/_index.md",
+    "file": "design/authority.md",
+    "line": 12
+  }
+]
+```
+
+### Exit Codes
+
+- `0` — All checks pass (no errors)
+- `1` — One or more errors found
+
+### Dependencies
+
+None — uses Python standard library only (`pathlib`, `re`, `json`, `argparse`).
