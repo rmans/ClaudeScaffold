@@ -84,6 +84,7 @@ When a phase completes:
    - Does it invalidate any existing specs? → Flag for rewrite.
    - Does it require new slices or tasks? → Add them to the affected phase.
 2. **Update the ADR Feedback Log** with a summary of each ADR's impact.
+2b. **Review playtest feedback** — check `decisions/playtest-feedback.md` for Pattern-status entries. Playtest patterns alongside ADRs inform the next phase's scope.
 3. **Move the phase to Completed Phases** with delivery notes and lessons learned.
 4. **Re-scope the next phase** based on:
    - ADR impacts

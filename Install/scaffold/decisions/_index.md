@@ -17,6 +17,7 @@
 |------|---------|
 | [known-issues.md](known-issues.md) | TBDs, gaps, conflicts found during design or extraction |
 | [design-debt.md](design-debt.md) | Intentional design compromises — deferred mechanics, tuning hacks |
+| [playtest-feedback.md](playtest-feedback.md) | Playtester observations, patterns, and actions taken |
 
 ## Adding a Decision
 

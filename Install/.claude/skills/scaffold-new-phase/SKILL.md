@@ -21,6 +21,7 @@ Create a new phase document for: **$ARGUMENTS**
 6. **Read all ADRs** — Glob `scaffold/decisions/ADR-*.md` and read each one. These are critical input for phase planning.
 7. **Read known issues** at `scaffold/decisions/known-issues.md`.
 8. **Read design debt** at `scaffold/decisions/design-debt.md`.
+9. **Read playtest feedback** at `scaffold/decisions/playtest-feedback.md` — check for Pattern-status entries that may affect this phase's scope.
 
 ### 2. ADR Impact Analysis
 
@@ -31,6 +32,16 @@ Before defining scope, analyze all ADRs for their impact on this phase:
 - **Did any ADR change a system design that affects what this phase needs to build?** — Look for design changes that ripple into this phase's systems or features.
 
 Present the ADR impact summary to the user before proceeding. If no ADRs exist, say so explicitly and move on.
+
+### 2b. Playtest Feedback Analysis
+
+Check `scaffold/decisions/playtest-feedback.md` for Pattern-status entries that affect this phase:
+
+- **Which patterns relate to systems in this phase's scope?** — Identify feedback patterns whose System/Spec overlaps with what this phase will build.
+- **Are there ACT NOW patterns that should be addressed in this phase?** — High-severity, high-frequency patterns demand action.
+- **Are there Delight entries to protect?** — If this phase touches systems that players love, flag them so scope decisions don't break what works.
+
+Present the playtest feedback summary to the user alongside the ADR summary. If no playtest feedback exists, say so explicitly and move on.
 
 ### 3. Define the Phase
 

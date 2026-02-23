@@ -20,6 +20,7 @@ Create a new behavior spec for: **$ARGUMENTS**
 5. **Read the system design(s)** this spec is derived from (`scaffold/design/systems/SYS-###-*.md`).
 6. **Read state transitions** at `scaffold/design/state-transitions.md` for relevant state machines.
 7. **Read all ADRs** — Glob `scaffold/decisions/ADR-*.md`. ADRs may have changed system behavior that affects this spec.
+8. **Read playtest feedback** at `scaffold/decisions/playtest-feedback.md` — filter for entries matching this spec's system. Playtest patterns may inform behavior requirements.
 
 ### 2. ADR Impact Check
 
@@ -30,6 +31,8 @@ Check if any ADRs affect this spec's domain:
 - Did an ADR from a previous task change how this behavior should work?
 
 If ADRs apply, present them to the user before defining the spec. Summarize the relevant ADR decisions and explain how they influence this spec.
+
+Also check playtest feedback for this system: Are there Pattern-status entries or high-severity observations that should inform this spec's behavior, edge cases, or acceptance criteria? Present relevant playtest feedback alongside ADR impacts.
 
 ### 3. Assign to System and Slice
 

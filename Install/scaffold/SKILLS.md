@@ -1,6 +1,6 @@
 # Skills Reference
 
-> Man-page reference for all 43 scaffold slash commands. Each entry shows synopsis, description, arguments, examples, and related skills.
+> Man-page reference for all 45 scaffold slash commands. Each entry shows synopsis, description, arguments, examples, and related skills.
 >
 > **When to use each skill** — see [WORKFLOW.md](WORKFLOW.md) for the step-by-step pipeline order.
 
@@ -53,6 +53,8 @@
 | `/scaffold-complete` | `[document-path\|ID]` | Mark a planning doc as Complete; ripples up through parents |
 | `/scaffold-update-doc` | `[doc-name\|path]` | Add, remove, or modify entries in any scaffold doc |
 | `/scaffold-validate` | — | Run cross-reference validation across all scaffold docs |
+| `/scaffold-playtest-log` | `[session-type]` | Log playtester observations into the feedback tracker |
+| `/scaffold-playtest-review` | — | Analyze playtest feedback patterns with priority grid |
 
 ---
 
@@ -1235,3 +1237,61 @@ Presents results as a summary table with PASS/FAIL per check and lists each fail
 **See Also**
 
 `/scaffold-review-design`, `/scaffold-bulk-review-references`, `/scaffold-update-doc`
+
+---
+
+## Playtest
+
+Skills for capturing and analyzing playtester feedback. Observations are logged with `/scaffold-playtest-log` and analyzed with `/scaffold-playtest-review`.
+
+---
+
+### /scaffold-playtest-log
+
+Log playtester observations into the feedback tracker.
+
+**Synopsis**
+
+    /scaffold-playtest-log [session-type]
+
+**Description**
+
+Captures playtester observations into `decisions/playtest-feedback.md`. Creates or identifies a playtest session, then walks through observations one at a time — Type, Observation, System/Spec, Severity, Frequency. Checks for duplicates before adding (aggregates frequency if the same issue is already logged). After all observations are entered, scans for entries with 3+ reports and prompts to promote them to Patterns per the Rule of Three. Reports entries logged, duplicates merged, and patterns promoted.
+
+**Arguments**
+
+| Argument | Required | Description |
+|----------|----------|-------------|
+| `session-type` | No | Session type hint (e.g., `in-person`, `remote`, `self-play`). If omitted, asks interactively. |
+
+**Examples**
+
+    /scaffold-playtest-log in-person
+    /scaffold-playtest-log remote
+    /scaffold-playtest-log
+
+**See Also**
+
+`/scaffold-playtest-review`, `/scaffold-update-doc`
+
+---
+
+### /scaffold-playtest-review
+
+Analyze playtest feedback patterns with severity x frequency grid.
+
+**Synopsis**
+
+    /scaffold-playtest-review
+
+**Description**
+
+Read-only analysis of `decisions/playtest-feedback.md`. Groups feedback by system to identify hot spots, classifies entries into a severity x frequency priority grid (ACT NOW / WATCH CLOSELY / MONITOR / NOTE & MOVE ON), recommends actions for high-priority entries, cross-references with known issues, design debt, and ADRs for overlaps, checks for stale entries, and produces a delight inventory of positive observations to protect. Does not modify any files.
+
+**Examples**
+
+    /scaffold-playtest-review
+
+**See Also**
+
+`/scaffold-playtest-log`, `/scaffold-review-roadmap`, `/scaffold-new-phase`

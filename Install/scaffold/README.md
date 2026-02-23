@@ -17,7 +17,7 @@ This is the document pipeline for your game. Every design decision, style rule, 
 | [_index.md](_index.md) | Master entry point — directory map, ID system, retrieval protocol |
 | [doc-authority.md](doc-authority.md) | Precedence rules — which document wins when they conflict |
 | [WORKFLOW.md](WORKFLOW.md) | Step-by-step recipe — 24 steps from design through implementation |
-| [SKILLS.md](SKILLS.md) | Man-page reference — all 43 skills with arguments, descriptions, and examples |
+| [SKILLS.md](SKILLS.md) | Man-page reference — all 45 skills with arguments, descriptions, and examples |
 
 ## The Pipeline
 

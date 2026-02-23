@@ -12,6 +12,7 @@
 | [task-template.md](task-template.md) | TASK-### | [tasks/](../tasks/_index.md) |
 | [decision-template.md](decision-template.md) | ADR-### | [decisions/](../decisions/_index.md) |
 | [slice-template.md](slice-template.md) | SLICE-### | [slices/](../slices/_index.md) |
+| [playtest-session-template.md](playtest-session-template.md) | PT-YYYY-MM-DD | [decisions/](../decisions/_index.md) |
 
 ## Engine Templates
 

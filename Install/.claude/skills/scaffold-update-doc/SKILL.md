@@ -27,6 +27,7 @@ Make targeted edits to a scaffold document: **$ARGUMENTS**
 | `balance` | `scaffold/reference/balance-params.md` | Parameter table rows |
 | `known-issues` | `scaffold/decisions/known-issues.md` | Issue entries |
 | `design-debt` | `scaffold/decisions/design-debt.md` | Debt entries |
+| `playtest-feedback` | `scaffold/decisions/playtest-feedback.md` | Feedback entries |
 | `action-map` | `scaffold/inputs/action-map.md` | Action entries |
 | Any `SYS-###` ID | `scaffold/design/systems/SYS-###-*.md` | System design sections |
 | Any file path | Direct path within `scaffold/` | Depends on doc type |

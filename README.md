@@ -22,7 +22,7 @@ Every design decision, visual style rule, system behavior, interface contract, a
 - **ADR feedback loop.** When implementation reality conflicts with the plan, Architecture Decision Records capture why and feed back into upcoming phases, specs, and tasks.
 - **Draft → Review → Approved → Complete lifecycle.** Documents start as `Draft`, move to `Review` for adversarial scrutiny, are set to `Approved` by `/scaffold-iterate`, and marked `Complete` by `/scaffold-complete` when implementation is done. Completion ripples up from tasks through specs, slices, and phases. Documents can also be `Deprecated` via ADR when no longer active — they remain in place (IDs are permanent) but reviews flag references to them.
 - **Token-efficient retrieval.** Index files in every directory let Claude find what it needs without loading entire folders.
-- **43 skills automate the pipeline.** Create, seed, review, iterate, and edit documents with slash commands — no manual file wrangling.
+- **45 skills automate the pipeline.** Create, seed, review, iterate, and edit documents with slash commands — no manual file wrangling.
 
 ## How It Works
 
@@ -102,7 +102,7 @@ cp Install/CLAUDE.md /path/to/your/project/
 This gives your project:
 
 ```
-.claude/skills/       ← 43 Claude Code skills
+.claude/skills/       ← 45 Claude Code skills
 scaffold/             ← Document pipeline with templates and indexes
 CLAUDE.md             ← Instructions that tell Claude Code how to use the scaffold
 ```
@@ -111,7 +111,7 @@ See [Install/README.md](Install/README.md) for full installation details.
 
 ## Skills
 
-43 slash commands organized by workflow:
+45 slash commands organized by workflow:
 
 **Create (11):** `/scaffold-new-design`, `/scaffold-new-style`, `/scaffold-new-system`, `/scaffold-new-reference`, `/scaffold-new-engine`, `/scaffold-new-input`, `/scaffold-new-roadmap`, `/scaffold-new-phase`, `/scaffold-new-slice`, `/scaffold-new-spec`, `/scaffold-new-task`
 
@@ -126,6 +126,8 @@ See [Install/README.md](Install/README.md) for full installation details.
 **Edit (1):** `/scaffold-update-doc`
 
 **Validate (1):** `/scaffold-validate`
+
+**Playtest (2):** `/scaffold-playtest-log`, `/scaffold-playtest-review`
 
 ### Recommended Workflow
 

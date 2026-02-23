@@ -1,12 +1,12 @@
 # ClaudeScaffold — Installation
 
-This is the installable overlay. Copy its contents into any game project to give Claude Code a structured document pipeline, strict design authority, and 43 skills that automate the workflow from concept to code.
+This is the installable overlay. Copy its contents into any game project to give Claude Code a structured document pipeline, strict design authority, and 45 skills that automate the workflow from concept to code.
 
 ## What Gets Installed
 
 ```
 your-project/
-├── .claude/skills/       ← 43 slash commands (create, seed, review, iterate, complete, edit)
+├── .claude/skills/       ← 45 slash commands (create, seed, review, iterate, complete, edit)
 ├── scaffold/             ← Document pipeline with indexes and templates
 └── CLAUDE.md             ← Rules that tell Claude Code how to use the scaffold
 ```
@@ -15,7 +15,7 @@ your-project/
 
 **`scaffold/`** — A structured document hierarchy with 11 authority ranks. Every design decision, style rule, system behavior, interface contract, and implementation constraint has a home. Start at `scaffold/_index.md` — it's the master entry point.
 
-**`.claude/skills/`** — 43 slash commands that automate document creation, bulk seeding, review audits, adversarial iteration, completion tracking, and editing. Skills read higher-authority documents to pre-fill lower ones, check ADRs before scoping new work, and cross-reference everything.
+**`.claude/skills/`** — 45 slash commands that automate document creation, bulk seeding, review audits, adversarial iteration, completion tracking, and editing. Skills read higher-authority documents to pre-fill lower ones, check ADRs before scoping new work, and cross-reference everything.
 
 ## Prerequisites
 
@@ -103,7 +103,7 @@ Build. When implementation conflicts with the plan, file an ADR. After completin
 
 See `scaffold/WORKFLOW.md` for the full 24-step recipe.
 
-## All 43 Skills
+## All 45 Skills
 
 | Category | Skills |
 |----------|--------|
@@ -115,6 +115,7 @@ See `scaffold/WORKFLOW.md` for the full 24-step recipe.
 | **Complete** | `complete` |
 | **Edit** | `update-doc` |
 | **Validate** | `validate` |
+| **Playtest** | `playtest-log`, `playtest-review` |
 
 All skill names are prefixed with `/scaffold-` (e.g., `/scaffold-new-design`).
 

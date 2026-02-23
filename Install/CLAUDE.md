@@ -63,6 +63,7 @@ Never load entire directories. Follow this protocol:
 
 - Follow the order: Roadmap → Phases → Slices → Specs → Tasks.
 - Before creating a phase, spec, or task, read all ADRs filed during prior work. ADRs may change scope.
+- Before creating a phase, read `scaffold/decisions/playtest-feedback.md` for Pattern-status entries. Playtest patterns may affect phase scope alongside ADRs.
 - Slices define vertical end-to-end chunks within a phase. Specs define behavior within a slice. Tasks implement specs.
 - Specs describe BEHAVIOR (what it does). Tasks describe IMPLEMENTATION (how to build it in the engine).
 - After completing a phase, follow the Phase Transition Protocol in `scaffold/phases/roadmap.md` to update the roadmap.

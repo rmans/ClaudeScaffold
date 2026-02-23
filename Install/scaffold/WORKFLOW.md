@@ -271,8 +271,9 @@ After completing a phase, follow the Phase Transition Protocol in `phases/roadma
 
 1. Review all ADRs filed during the phase.
 2. Update the ADR Feedback Log with each ADR's impact.
+2b. Review playtest feedback patterns — check `decisions/playtest-feedback.md` for Pattern-status entries before scoping the next phase.
 3. Move the phase to Completed Phases with delivery notes.
-4. Re-scope the next phase based on ADR impacts and lessons learned.
+4. Re-scope the next phase based on ADR impacts, playtest patterns, and lessons learned.
 5. Update the Phase Overview and set the new Current Phase.
 
 ### Step 24 — Repeat
@@ -328,3 +329,5 @@ Continue the implement → ADR → update cycle for each task until the slice is
 | `/scaffold-update-doc` | Add, remove, or modify entries in any scaffold doc |
 | `/scaffold-iterate` | Adversarial review of any doc via external LLM (`--focus`, `--iterations`) |
 | `/scaffold-validate` | Run cross-reference validation across all scaffold docs |
+| `/scaffold-playtest-log` | Log playtester observations into the feedback tracker |
+| `/scaffold-playtest-review` | Analyze playtest feedback patterns with priority grid |
