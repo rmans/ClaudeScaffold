@@ -27,17 +27,42 @@ your-project/
 Download and run — no need to clone the repo:
 
 ```bash
-# Download install.py (once)
-curl -O https://raw.githubusercontent.com/rmans/ClaudeScaffold/main/install.py
+# Download claudescaffold.py (once)
+curl -O https://raw.githubusercontent.com/rmans/ClaudeScaffold/main/claudescaffold.py
 
 # Install into your project
-python install.py /path/to/your/project
+python claudescaffold.py --install /path/to/your/project
 ```
 
-Options:
+## Upgrade
+
+Replace infrastructure (skills, templates, theory, tools) while preserving your design work:
+
+```bash
+python claudescaffold.py --upgrade /path/to/your/project
+```
+
+Upgrade replaces `theory/`, `templates/`, `tools/`, root index files, and all scaffold skills. Your `design/`, `inputs/`, `reference/`, `decisions/`, `phases/`, `specs/`, `tasks/`, `slices/`, and `engine/` directories are never touched.
+
+## Remove
+
+Remove the scaffold from a project (creates a backup zip first):
+
+```bash
+python claudescaffold.py --remove --force /path/to/your/project
+```
+
+This backs up everything to `claudescaffold-backup-YYYYMMDD-HHMMSS.zip`, then removes `scaffold/`, scaffold skills, `CLAUDE.md`, and the version stamp. Your `.claude/settings.local.json` and non-scaffold skills are preserved.
+
+## Options
+
+- `--install` — first-time installation
+- `--upgrade` — upgrade infrastructure, preserve user content
+- `--remove` — remove scaffold (requires `--force`)
+- `--version` — print version and exit
 - `--branch <name>` — download a specific branch or tag (default: `main`)
-- `--dry-run` — preview what would be copied without making changes
-- `--force` — overwrite an existing `scaffold/` directory
+- `--dry-run` — preview what would happen without making changes
+- `--force` — overwrite existing `scaffold/` (install) or confirm removal (remove)
 - `--verbose` — list every file as it's copied
 
 **Manual alternative** (requires cloning the repo):

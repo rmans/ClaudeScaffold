@@ -94,17 +94,27 @@ The `theory/` directory contains 16 documents covering game design principles, c
 Download and run the installer — no need to clone the repo:
 
 ```bash
-# Download install.py (once)
-curl -O https://raw.githubusercontent.com/rmans/ClaudeScaffold/main/install.py
+# Download claudescaffold.py (once)
+curl -O https://raw.githubusercontent.com/rmans/ClaudeScaffold/main/claudescaffold.py
 
 # Install into your project
-python install.py /path/to/your/project
+python claudescaffold.py --install /path/to/your/project
+
+# Upgrade infrastructure (preserves your design work)
+python claudescaffold.py --upgrade /path/to/your/project
+
+# Remove scaffold (creates backup zip first)
+python claudescaffold.py --remove --force /path/to/your/project
 ```
 
 Options:
+- `--install` — first-time installation into a project
+- `--upgrade` — replace infrastructure (skills, templates, theory, tools) while preserving user content
+- `--remove` — remove scaffold from the project (requires `--force`, creates backup zip)
+- `--version` — print version and exit
 - `--branch <name>` — download a specific branch or tag (default: `main`)
-- `--dry-run` — preview what would be copied without making changes
-- `--force` — overwrite an existing `scaffold/` directory
+- `--dry-run` — preview what would happen without making changes
+- `--force` — overwrite existing `scaffold/` (install) or confirm removal (remove)
 - `--verbose` — list every file as it's copied
 
 **Manual alternative** (requires cloning the repo):
