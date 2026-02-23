@@ -22,7 +22,7 @@ Every design decision, visual style rule, system behavior, interface contract, a
 - **ADR feedback loop.** When implementation reality conflicts with the plan, Architecture Decision Records capture why and feed back into upcoming phases, specs, and tasks.
 - **Draft → Review → Approved → Complete lifecycle.** Documents start as `Draft`, move to `Review` for adversarial scrutiny, are set to `Approved` by `/scaffold-iterate`, and marked `Complete` by `/scaffold-complete` when implementation is done. Completion ripples up from tasks through specs, slices, and phases. Documents can also be `Deprecated` via ADR when no longer active — they remain in place (IDs are permanent) but reviews flag references to them.
 - **Token-efficient retrieval.** Index files in every directory let Claude find what it needs without loading entire folders.
-- **45 skills automate the pipeline.** Create, seed, review, iterate, and edit documents with slash commands — no manual file wrangling.
+- **63 skills automate the pipeline.** Create, seed, review, iterate, prototype, generate art/audio, and edit documents with slash commands — no manual file wrangling.
 
 ## How It Works
 
@@ -84,6 +84,8 @@ Documents are separated into layers. No document may mix layers.
 | Slices | What proves this phase works end-to-end? | `slices/` |
 | Engine | How do we build in this engine? | `engine/` |
 | Theory | What do experts recommend? | `theory/` |
+| Validation | Does this approach actually work? | `prototypes/` |
+| Content | What does the game look/sound like? | `art/`, `audio/` |
 
 ### Theory as Advisory Context
 
@@ -129,7 +131,7 @@ cp ClaudeScaffold/Install/CLAUDE.md /path/to/your/project/
 This gives your project:
 
 ```
-.claude/skills/       ← 45 Claude Code skills
+.claude/skills/       ← 63 Claude Code skills
 scaffold/             ← Document pipeline with templates and indexes
 CLAUDE.md             ← Instructions that tell Claude Code how to use the scaffold
 ```
@@ -138,13 +140,13 @@ See [Install/README.md](Install/README.md) for full installation details.
 
 ## Skills
 
-45 slash commands organized by workflow:
+63 slash commands organized by workflow:
 
-**Create (11):** `/scaffold-new-design`, `/scaffold-new-style`, `/scaffold-new-system`, `/scaffold-new-reference`, `/scaffold-new-engine`, `/scaffold-new-input`, `/scaffold-new-roadmap`, `/scaffold-new-phase`, `/scaffold-new-slice`, `/scaffold-new-spec`, `/scaffold-new-task`
+**Create (12):** `/scaffold-new-design`, `/scaffold-new-style`, `/scaffold-new-system`, `/scaffold-new-reference`, `/scaffold-new-engine`, `/scaffold-new-input`, `/scaffold-new-roadmap`, `/scaffold-new-phase`, `/scaffold-new-slice`, `/scaffold-new-spec`, `/scaffold-new-task`, `/scaffold-new-prototype`
 
-**Bulk seed (8):** `/scaffold-bulk-seed-style`, `/scaffold-bulk-seed-systems`, `/scaffold-bulk-seed-references`, `/scaffold-bulk-seed-engine`, `/scaffold-bulk-seed-input`, `/scaffold-bulk-seed-slices`, `/scaffold-bulk-seed-specs`, `/scaffold-bulk-seed-tasks`
+**Bulk seed (9):** `/scaffold-bulk-seed-style`, `/scaffold-bulk-seed-systems`, `/scaffold-bulk-seed-references`, `/scaffold-bulk-seed-engine`, `/scaffold-bulk-seed-input`, `/scaffold-bulk-seed-slices`, `/scaffold-bulk-seed-specs`, `/scaffold-bulk-seed-tasks`, `/scaffold-bulk-seed-prototypes`
 
-**Review (20):** `/scaffold-review-design`, `/scaffold-review-style`, `/scaffold-review-system`, `/scaffold-review-reference`, `/scaffold-review-engine`, `/scaffold-review-input`, `/scaffold-review-roadmap`, `/scaffold-review-phase`, `/scaffold-review-slice`, `/scaffold-review-spec`, `/scaffold-review-task`, `/scaffold-bulk-review-style`, `/scaffold-bulk-review-systems`, `/scaffold-bulk-review-references`, `/scaffold-bulk-review-engine`, `/scaffold-bulk-review-input`, `/scaffold-bulk-review-phases`, `/scaffold-bulk-review-slices`, `/scaffold-bulk-review-specs`, `/scaffold-bulk-review-tasks`
+**Review (22):** `/scaffold-review-design`, `/scaffold-review-style`, `/scaffold-review-system`, `/scaffold-review-reference`, `/scaffold-review-engine`, `/scaffold-review-input`, `/scaffold-review-roadmap`, `/scaffold-review-phase`, `/scaffold-review-slice`, `/scaffold-review-spec`, `/scaffold-review-task`, `/scaffold-review-prototype`, `/scaffold-bulk-review-style`, `/scaffold-bulk-review-systems`, `/scaffold-bulk-review-references`, `/scaffold-bulk-review-engine`, `/scaffold-bulk-review-input`, `/scaffold-bulk-review-phases`, `/scaffold-bulk-review-slices`, `/scaffold-bulk-review-specs`, `/scaffold-bulk-review-tasks`, `/scaffold-bulk-review-prototypes`
 
 **Iterate (1):** `/scaffold-iterate`
 
@@ -155,6 +157,12 @@ See [Install/README.md](Install/README.md) for full installation details.
 **Validate (1):** `/scaffold-validate`
 
 **Playtest (2):** `/scaffold-playtest-log`, `/scaffold-playtest-review`
+
+**Prototype (1):** `/scaffold-prototype-log`
+
+**Art (8):** `/scaffold-art-concept`, `/scaffold-art-ui-mockup`, `/scaffold-art-character`, `/scaffold-art-environment`, `/scaffold-art-sprite`, `/scaffold-art-icon`, `/scaffold-art-promo`, `/scaffold-review-art`
+
+**Audio (5):** `/scaffold-audio-music`, `/scaffold-audio-sfx`, `/scaffold-audio-ambience`, `/scaffold-audio-voice`, `/scaffold-review-audio`
 
 ### Recommended Workflow
 
@@ -215,6 +223,9 @@ scaffold/
 ├── engine/                          # Engine-specific constraints (rank 10)
 ├── theory/                          # Advisory only — no authority (rank 11)
 ├── reviews/                         # Adversarial review logs from /scaffold-iterate
+├── prototypes/                      # Throwaway code spikes (PROTO-###)
+├── art/                             # Generated art assets (concept, UI, character, etc.)
+├── audio/                           # Generated audio assets (music, SFX, ambience, voice)
 ├── templates/                       # Document + engine templates
 └── tools/                           # Scripts and utilities
 ```

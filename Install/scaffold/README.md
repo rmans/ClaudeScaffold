@@ -62,6 +62,9 @@ The top row defines the game. The bottom row builds it. ADRs close the loop — 
 | `engine/` | Implementation | 10 | Engine-specific best practices and constraints |
 | `theory/` | Advisory | 11 | Game design principles, UX heuristics, architecture patterns — no authority |
 | `prototypes/` | Validation | — | Throwaway code spikes that answer specific questions |
+| `reviews/` | Tooling | — | Adversarial review logs from `/scaffold-iterate` |
+| `art/` | Content | — | Generated art assets from art skills |
+| `audio/` | Content | — | Generated audio assets from audio skills |
 | `templates/` | Meta | — | Templates for all document types and engine docs |
 | `tools/` | Tooling | — | Scripts and utilities |
 

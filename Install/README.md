@@ -1,12 +1,12 @@
 # ClaudeScaffold — Installation
 
-This is the installable overlay. Copy its contents into any game project to give Claude Code a structured document pipeline, strict design authority, and 45 skills that automate the workflow from concept to code.
+This is the installable overlay. Copy its contents into any game project to give Claude Code a structured document pipeline, strict design authority, and 63 skills that automate the workflow from concept to code.
 
 ## What Gets Installed
 
 ```
 your-project/
-├── .claude/skills/       ← 45 slash commands (create, seed, review, iterate, complete, edit)
+├── .claude/skills/       ← 63 slash commands (create, seed, review, iterate, prototype, art, audio)
 ├── scaffold/             ← Document pipeline with indexes and templates
 └── CLAUDE.md             ← Rules that tell Claude Code how to use the scaffold
 ```
@@ -15,7 +15,7 @@ your-project/
 
 **`scaffold/`** — A structured document hierarchy with 11 authority ranks. Every design decision, style rule, system behavior, interface contract, and implementation constraint has a home. Start at `scaffold/_index.md` — it's the master entry point.
 
-**`.claude/skills/`** — 45 slash commands that automate document creation, bulk seeding, review audits, adversarial iteration, completion tracking, and editing. Skills read higher-authority documents to pre-fill lower ones, check ADRs before scoping new work, and cross-reference everything.
+**`.claude/skills/`** — 63 slash commands that automate document creation, bulk seeding, review audits, adversarial iteration, prototyping, art/audio generation, completion tracking, and editing. Skills read higher-authority documents to pre-fill lower ones, check ADRs before scoping new work, and cross-reference everything.
 
 ## Prerequisites
 
@@ -146,19 +146,22 @@ Build. When implementation conflicts with the plan, file an ADR. After completin
 
 See `scaffold/WORKFLOW.md` for the full 24-step recipe.
 
-## All 45 Skills
+## All 63 Skills
 
 | Category | Skills |
 |----------|--------|
-| **Create** | `new-design`, `new-style`, `new-system`, `new-reference`, `new-engine`, `new-input`, `new-roadmap`, `new-phase`, `new-slice`, `new-spec`, `new-task` |
-| **Bulk seed** | `bulk-seed-style`, `bulk-seed-systems`, `bulk-seed-references`, `bulk-seed-engine`, `bulk-seed-input`, `bulk-seed-slices`, `bulk-seed-specs`, `bulk-seed-tasks` |
-| **Review** | `review-design`, `review-style`, `review-system`, `review-reference`, `review-engine`, `review-input`, `review-roadmap`, `review-phase`, `review-slice`, `review-spec`, `review-task` |
-| **Bulk review** | `bulk-review-style`, `bulk-review-systems`, `bulk-review-references`, `bulk-review-engine`, `bulk-review-input`, `bulk-review-phases`, `bulk-review-slices`, `bulk-review-specs`, `bulk-review-tasks` |
+| **Create** | `new-design`, `new-style`, `new-system`, `new-reference`, `new-engine`, `new-input`, `new-roadmap`, `new-phase`, `new-slice`, `new-spec`, `new-task`, `new-prototype` |
+| **Bulk seed** | `bulk-seed-style`, `bulk-seed-systems`, `bulk-seed-references`, `bulk-seed-engine`, `bulk-seed-input`, `bulk-seed-slices`, `bulk-seed-specs`, `bulk-seed-tasks`, `bulk-seed-prototypes` |
+| **Review** | `review-design`, `review-style`, `review-system`, `review-reference`, `review-engine`, `review-input`, `review-roadmap`, `review-phase`, `review-slice`, `review-spec`, `review-task`, `review-prototype` |
+| **Bulk review** | `bulk-review-style`, `bulk-review-systems`, `bulk-review-references`, `bulk-review-engine`, `bulk-review-input`, `bulk-review-phases`, `bulk-review-slices`, `bulk-review-specs`, `bulk-review-tasks`, `bulk-review-prototypes` |
 | **Iterate** | `iterate` |
 | **Complete** | `complete` |
 | **Edit** | `update-doc` |
 | **Validate** | `validate` |
 | **Playtest** | `playtest-log`, `playtest-review` |
+| **Prototype** | `prototype-log` |
+| **Art** | `art-concept`, `art-ui-mockup`, `art-character`, `art-environment`, `art-sprite`, `art-icon`, `art-promo`, `review-art` |
+| **Audio** | `audio-music`, `audio-sfx`, `audio-ambience`, `audio-voice`, `review-audio` |
 
 All skill names are prefixed with `/scaffold-` (e.g., `/scaffold-new-design`).
 
@@ -176,7 +179,10 @@ All skill names are prefixed with `/scaffold-` (e.g., `/scaffold-new-design`).
 | `slices/` | Integration | Vertical slice contracts |
 | `engine/` | Implementation (rank 10) | Engine-specific best practices and constraints |
 | `theory/` | Advisory (rank 11) | 16 docs on game design, UX, architecture — no authority |
+| `prototypes/` | Validation | Throwaway code spikes that answer specific questions |
 | `reviews/` | Logs | Adversarial review logs from `/scaffold-iterate` |
+| `art/` | Content | Generated art assets from art skills |
+| `audio/` | Content | Generated audio assets from audio skills |
 | `templates/` | Meta | Templates for all document types |
 
 ## Customization
