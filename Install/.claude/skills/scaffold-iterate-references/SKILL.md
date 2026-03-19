@@ -343,7 +343,20 @@ Include these detection patterns in the reviewer's system prompt. They represent
 
 ## Per-Doc Mandatory Interrogation
 
-For every Step 3 doc in scope, the reviewer must run the doc's specialized failure-mode check **in addition to** the topic questions. This is not optional — it is mandatory. Each doc owns a different dimension of the simulation contract.
+For every Step 3 doc in scope, the reviewer must run the doc's specialized failure-mode check **in addition to** the topic questions. This is not optional — it is mandatory and high-priority. If iteration budget is constrained, run per-doc interrogation for docs in scope even if some lower-priority topic coverage is reduced. Topics find structured correctness; per-doc interrogation finds real implementation failures.
+
+Each doc section ends with a **First Failure Scenario** (required) and a **Top Risk** (required).
+
+**Doc priority order** (when budget is tight, interrogate in this order):
+1. architecture.md — the engineering skeleton everything depends on
+2. authority.md — single-writer discipline governs all state
+3. interfaces.md — cross-system contracts define integration surface
+4. state-transitions.md — discrete states govern entity lifecycle
+5. entity-components.md — data shapes define what's implementable
+6. signal-registry.md — event vocabulary defines communication
+7. resource-definitions.md — economic model defines production/logistics
+8. balance-params.md — tunable numbers govern feel
+9. enums-and-statuses.md — shared vocabulary prevents drift
 
 ### architecture.md
 
@@ -361,6 +374,10 @@ For every Step 3 doc in scope, the reviewer must run the doc's specialized failu
 1. Where would ordering bugs appear first?
 2. What assumption about timing is most likely wrong?
 3. What behavior depends on undocumented "same tick" guarantees?
+
+**First Failure Scenario (required):** Describe the first realistic implementation failure this doc would allow — e.g., a same-tick stale-read bug where System B reads state that System A mutated earlier in the same tick, producing incorrect behavior because ordering assumptions were undocumented.
+
+**Top Risk (required):** The single most dangerous issue in this doc and why.
 
 ---
 
@@ -380,6 +397,10 @@ For every Step 3 doc in scope, the reviewer must run the doc's specialized failu
 2. What lifecycle has no single owner across time?
 3. What breaks during interruption or cleanup — who clears stale state?
 
+**First Failure Scenario (required):** Describe the first realistic implementation failure — e.g., two systems each "legally" mutating different fields that jointly control the same visible behavior, producing incoherent player-visible state with no authority violation.
+
+**Top Risk (required):** The single most dangerous issue in this doc and why.
+
 ---
 
 ### interfaces.md
@@ -398,6 +419,10 @@ For every Step 3 doc in scope, the reviewer must run the doc's specialized failu
 2. Where is fallback behavior undefined?
 3. Which contract will be implemented differently by two developers?
 
+**First Failure Scenario (required):** Describe the first realistic implementation failure — e.g., a request rejection path handled differently by two developers because fallback behavior was undefined, producing inconsistent recovery across systems.
+
+**Top Risk (required):** The single most dangerous issue in this doc and why.
+
 ---
 
 ### state-transitions.md
@@ -415,6 +440,10 @@ For every Step 3 doc in scope, the reviewer must run the doc's specialized failu
 1. Which transition is ambiguous under interruption?
 2. Which state machine is missing illegal transitions?
 3. Which transitions depend on timing not guaranteed by architecture.md?
+
+**First Failure Scenario (required):** Describe the first realistic implementation failure — e.g., an interrupted transition leaving an actor in an undefined state because the cancellation path was not listed as a legal transition.
+
+**Top Risk (required):** The single most dangerous issue in this doc and why.
 
 ---
 
@@ -435,6 +464,10 @@ For every Step 3 doc in scope, the reviewer must run the doc's specialized failu
 2. Which fields have unclear lifecycle — created but never explicitly managed?
 3. Where will stale references accumulate fastest?
 
+**First Failure Scenario (required):** Describe the first realistic implementation failure — e.g., a stale handle surviving save/load and silently pointing at a reused slot, causing System A to read System B's entity data.
+
+**Top Risk (required):** The single most dangerous issue in this doc and why.
+
 ---
 
 ### resource-definitions.md
@@ -452,6 +485,10 @@ For every Step 3 doc in scope, the reviewer must run the doc's specialized failu
 1. Which resource cannot actually flow through the sim as designed?
 2. Which production chain is incomplete or broken?
 3. Which resource is defined but unused by any system?
+
+**First Failure Scenario (required):** Describe the first realistic implementation failure — e.g., a resource chain that exists on paper but is operationally impossible because no hauling contract can move the intermediate resource to the next station.
+
+**Top Risk (required):** The single most dangerous issue in this doc and why.
 
 ---
 
@@ -472,6 +509,10 @@ For every Step 3 doc in scope, the reviewer must run the doc's specialized failu
 2. Which critical events are missing signal coverage entirely?
 3. Which signals should not exist (duplicates, unused, or misclassified)?
 
+**First Failure Scenario (required):** Describe the first realistic implementation failure — e.g., a critical gameplay event never emitted as a signal, causing a consumer system to silently starve for data and produce incorrect behavior.
+
+**Top Risk (required):** The single most dangerous issue in this doc and why.
+
 ---
 
 ### balance-params.md
@@ -490,6 +531,10 @@ For every Step 3 doc in scope, the reviewer must run the doc's specialized failu
 2. Which parameters don't map to player-visible behavior?
 3. Which important numbers are secretly defined elsewhere (in prose, in system docs, in state-transition triggers)?
 
+**First Failure Scenario (required):** Describe the first realistic implementation failure — e.g., a hidden hardcoded threshold in a system design overriding a "tunable" balance parameter, making tuning ineffective without anyone noticing.
+
+**Top Risk (required):** The single most dangerous issue in this doc and why.
+
 ---
 
 ### enums-and-statuses.md
@@ -507,6 +552,10 @@ For every Step 3 doc in scope, the reviewer must run the doc's specialized failu
 1. Where is vocabulary split across abstraction layers (simulation vs interpretation vs UI)?
 2. Which enums are presentation, not simulation — and shouldn't be here?
 3. Where will naming drift reappear first?
+
+**First Failure Scenario (required):** Describe the first realistic implementation failure — e.g., a UI label enum treated as simulation truth, causing a system to use a display-facing value for gameplay logic that breaks when localized.
+
+**Top Risk (required):** The single most dangerous issue in this doc and why.
 
 ---
 
@@ -730,7 +779,8 @@ Create review log in `scaffold/decisions/review/`:
 - **Sleep between API calls.** Add `sleep 10` between topic transitions.
 - **Clean up temporary files** after use.
 - **If the Python script fails, report the error and stop.**
-- **Cross-doc consistency (Topic 5) is the highest-value topic.** If time or iteration budget is limited, prioritize Topics 5 and 6 over per-doc topics.
+- **Per-doc interrogation is highest priority.** If iteration budget is constrained, run per-doc mandatory interrogation even if some topic coverage is reduced. Topics find structured correctness; per-doc interrogation finds real implementation failures.
+- **Among topics, 5 and 6 are highest-value.** If time or iteration budget is limited within the topic pass, prioritize Topics 5 and 6 over per-doc topics (1–4).
 - **Ambiguous upstream design is not an architecture defect.** When the design doc genuinely permits multiple valid architectural interpretations and a Step 3 doc chose a reasonable one, do not treat the Step 3 doc as incorrect. Flag for user decision to lock the interpretation in the design doc. The reviewer's preferred reading is not automatically correct — design ambiguity often means the design doc needs tightening, not the architecture.
 - **Practicality check before finalizing changes.** Before accepting any reviewer-proposed change, ask: (a) would this change make the reference doc harder to use during implementation? (b) does this improve clarity for developers, or does it just enforce internal consistency for the review system's benefit? Reject changes that increase rigidity without improving implementability, optimize for review criteria over practical development guidance, or reduce readability to satisfy a formal check. Over iterations, the review system can overfit — producing reference docs that are hyper-consistent but less practical, readable, or flexible. The goal is reference docs developers can implement from, not ones that score perfectly on an internal consistency audit.
 - **Scope collapse guard.** Before accepting any change, apply three tests: (1) Upward leakage — does this introduce behavioral decisions belonging in system designs or the design doc? If yes, reject or flag upstream. (2) Downward leakage — does this introduce engine-specific implementation detail? Step 3 docs are engine-agnostic contracts — no Godot nodes, GDScript patterns, or engine APIs. (3) "Would this survive engine change?" — if the project switched engines, would this decision still hold? If no, it's engine leakage, not architecture.
