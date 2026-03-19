@@ -50,7 +50,7 @@ This is distinct from:
 
 ## Preconditions
 
-1. **Step 5 docs exist** — verify at least 3 of the 6 Step 5 docs exist. If fewer, stop: "Not enough style docs to revise. Run `/scaffold-bulk-seed-style` first."
+1. **Step 5 docs exist** — if `--target` is set, verify the targeted doc exists. If not set, verify at least 1 Step 5 doc exists. If none exist, stop: "No style docs to revise. Run `/scaffold-bulk-seed-style` first." Cross-doc checks that require a missing peer doc are downgraded to partial coverage warnings (e.g., "color-system not found — skipping token resolution checks").
 2. **Step 5 docs have been through pipeline** — verify at least one fix-style or iterate-style log exists in `scaffold/decisions/review/`. If none, stop: "Style docs haven't been stabilized yet. Run the Step 5 pipeline first."
 3. **Implementation feedback exists** — if `--signals` is provided, at least one signal must resolve. If not provided, at least one feedback source must exist (ADRs, KIs, system doc changes, Step 3 doc changes, playtest feedback, task completions). If none exist, report: "No implementation feedback found. Nothing to revise."
 
@@ -104,7 +104,7 @@ Playtest patterns are a unique feedback source for Step 5 — player-visible iss
 
 ### 1d. Design doc changes
 
-**Baseline mechanism:** Use the `Revision Timestamp` field from the latest `REVISION-style-YYYY-MM-DD.md` as the canonical baseline. Treat the design doc as a candidate if modified after that timestamp. If no revision log exists, treat as a candidate (first revision pass).
+**Baseline mechanism:** Use the latest `REVISION-style-YYYY-MM-DD.md` for baselines. The global `Revision Timestamp` field sets the overall baseline. Additionally, the `Docs affected` list and `Updates Applied` table track which Step 5 docs were actually revised in each run. For per-doc staleness, use the last revision log that lists the specific Step 5 doc in its `Docs affected` — not just the global timestamp. This prevents masking per-doc staleness when only some docs were revised in the latest run. If no revision log exists, treat all docs as candidates (first revision pass).
 
 Compare current design doc against baseline. For sections that changed:
 - Core Fantasy changed → style-guide tone registers may be stale
@@ -115,10 +115,10 @@ Compare current design doc against baseline. For sections that changed:
 
 ### 1e. System doc changes
 
-**Baseline mechanism:** Same as 1d — use latest revision timestamp.
+**Baseline mechanism:** Same per-doc-aware mechanism as 1d — for each Step 5 doc that would be affected by a system change, use that Step 5 doc's last revision baseline (the most recent revision log that lists it in `Docs affected`), not just the global revision timestamp. A system doc change is a candidate only if it post-dates the relevant Step 5 doc's baseline.
 
 Compare current system docs against baseline. For each system where relevant sections changed:
-- New Player Actions → interaction-model may need new commands, feedback-system may need new events
+- New Player Actions → interaction-model may need new commands, feedback-system may need new events. **Gate:** only if the action is explicitly marked as player-facing in the system doc and the system doc is Approved. Internal, conditional, or provisional actions are logged as advisory drift, not auto-update candidates.
 - New Owned State entries → color-system may need new state tokens
 - New Visibility to Player content → ui-kit may need new display components
 - New Failure / Friction States → feedback-system may need new error/warning events
@@ -126,7 +126,7 @@ Compare current system docs against baseline. For each system where relevant sec
 
 ### 1f. Step 3 doc changes
 
-**Baseline mechanism:** Same as 1d.
+**Baseline mechanism:** Same per-doc-aware mechanism as 1d — for each Step 5 doc that would be affected by a Step 3 change, use that Step 5 doc's last revision baseline, not the global timestamp.
 
 Compare current Step 3 docs against baseline. For sections that changed:
 - state-transitions.md states added/changed → color-system state tokens may be stale
@@ -154,7 +154,7 @@ Search code review logs for findings that suggest Step 5 doc drift:
 - Feedback events implemented without matching feedback-system entries
 - Interaction patterns in code that aren't documented in interaction-model
 
-**Evidence threshold:** Code review findings corroborate other evidence, not standalone authority.
+**Evidence threshold:** Code review findings are **candidate drift only** — they cannot independently justify auto-editing Step 5 docs. A code review finding upgrades to actionable drift only when paired with at least one of: an approved upstream change (ADR, system doc, Step 3 doc), a completed and approved implementation artifact (spec, task), or a playtest pattern (3+ reports). Without corroboration, code review findings are logged as advisory in the revision log but do not trigger auto-updates or escalations.
 
 ### 1i. Early exit check
 
@@ -175,7 +175,7 @@ Do not proceed to Steps 2–7. Write a minimal revision log noting the scan was 
 | New entity type in entity-components.md | style-guide (visual description), ui-kit (display component) |
 | New resource in resource-definitions.md | ui-kit (resource display) |
 | New signal in signal-registry.md | feedback-system (Event-Response Table) |
-| New player action in system design | interaction-model, feedback-system |
+| New player action in system design (explicitly player-facing, approved, and intended to remain in the player contract) | interaction-model, feedback-system |
 | New system with player visibility | ui-kit, feedback-system |
 | Failure Philosophy changed | feedback-system (Critical event handling) |
 | Player Control Model changed | interaction-model |
@@ -200,6 +200,8 @@ Lower-ranked evidence cannot override higher-ranked evidence. Conflicting eviden
 
 **Playtest pattern note:** Playtest patterns rank higher than individual specs/tasks because they represent observed player experience across multiple sessions. A player repeatedly misunderstanding a visual cue is stronger evidence than a single task's implementation choice.
 
+**Playtest upstream anchor rule:** Playtest patterns can justify additive documentation of already-approved behavior (e.g., adding a missing feedback entry for an event that already exists in signal-registry.md). Playtest patterns cannot create new semantic categories, gameplay-significant event types, or interaction primitives unless the underlying behavior already exists upstream. If the playtest pattern implies a new concept not yet defined in systems or Step 3, escalate — the upstream definition must come first.
+
 ### 2c. Severity classification
 
 | Severity | Meaning | Action |
@@ -207,8 +209,8 @@ Lower-ranked evidence cannot override higher-ranked evidence. Conflicting eviden
 | **Stale reference** | Doc references renamed system, state, entity, or signal | Auto-update: fix reference |
 | **Missing token/entry** | New state, entity, resource, or signal exists upstream but has no Step 5 representation — AND the upstream change is already approved | Auto-update: add entry with provenance |
 | **Token value update** | An existing token's upstream reference changed (e.g., state renamed, entity restructured) | Auto-update: update to match upstream |
-| **Cross-doc alignment** | One Step 5 doc changed and a peer doc needs to track it (e.g., color-system token added, ui-kit needs to reference it) | Auto-update: align peer doc |
-| **Feedback table entry** | New signal or player action needs a feedback-system Event-Response Table row | Auto-update: add row with reasonable defaults if upstream is approved |
+| **Cross-doc alignment** | One Step 5 doc changed and a peer doc has a deterministic reference to sync (e.g., renamed token reference, new token that fills an existing reference slot) | Auto-update only for deterministic reference sync. Escalate if alignment requires semantic assignment (choosing which token, priority, or affordance pattern). |
+| **Feedback table entry** | New signal or player action needs a feedback-system Event-Response Table row | Auto-update: add row with constrained defaults if upstream is approved AND a closely analogous existing row exists in the same table. Escalate if no analogous pattern exists. |
 | **Aesthetic direction change** | Core Fantasy, tone, or visual identity shifted — affects style-guide pillars, tone registers, or overall direction | Escalate: aesthetic changes are subjective and affect all downstream docs |
 | **Interaction model change** | Player control model or interaction approach changed fundamentally | Escalate: interaction changes affect ui-kit, feedback-system, and audio-direction |
 | **Priority hierarchy change** | Feedback priority ordering or audio hierarchy needs restructuring | Escalate: priority changes affect how the player perceives event importance |
@@ -236,13 +238,13 @@ For each **Stale reference**, **Missing token/entry**, **Token value update**, *
 4. Add provenance: `<!-- REVISED: [date] — [trigger] -->`
 
 **Safety rules:**
-- **Step 5 docs follow upstream authority.** When design doc, systems, or Step 3 docs change, the Step 5 doc aligns. Never update a Step 5 doc in a way that contradicts upstream authority.
+- **Step 5 docs follow upstream for referential truth, not aesthetic wholesale.** When design doc changes creative intent (Core Fantasy, tone, player experience), Step 5 aligns aesthetically. When systems or Step 3 docs change factual data (state names, entity names, signal names, resource names, approved player actions), Step 5 aligns referentially. Never let a lower-ranked doc's change drive Step 5 aesthetic or UX decisions — only vocabulary and data updates propagate automatically.
 - **Respect the Step 5 authority flow.** style-guide → color-system → ui-kit. interaction-model and feedback-system are peers. audio-direction derives priority from feedback-system. When updating, follow this direction — never let a downstream doc's change propagate backward.
 - **When `--target` is set, only edit the targeted doc.** Flag cross-doc implications for fix-style.
 - **Never change aesthetic direction without escalation.** Auto-updates may add tokens, entries, and references — but tone registers, aesthetic pillars, visual identity decisions, and interaction philosophy are aesthetic-level changes that must escalate.
 - **Never change priority hierarchies without escalation.** Adding a new feedback entry with a reasonable priority is safe. Restructuring the priority hierarchy is not.
 - **New tokens follow existing naming patterns.** When auto-adding a color token, follow the existing token naming convention in color-system (prefix pattern, semantic grouping). If the naming pattern is unclear, escalate.
-- **New feedback entries use conservative defaults.** When auto-adding an Event-Response Table row, use the lowest reasonable priority and single-channel feedback. The user can escalate priority later. Never auto-add a Critical event.
+- **New feedback entries use constrained defaults.** Auto-adding an Event-Response Table row is only safe when a closely analogous row already exists in the table (same event category, similar trigger pattern). Copy the analogous row's structure with: non-critical priority, low or medium severity, single conservative channel. Never auto-add a Critical event. Never auto-assign priority that would reshuffle the existing hierarchy. If no analogous row exists, escalate — the skill should not invent feedback patterns.
 - **No duplicate tokens or entries.** Before adding any entry, check for existing entries with the same semantic meaning (exact name match or same state/entity/signal reference).
 - **Cross-doc alignment follows canonical direction.** color-system is canonical for token definitions. ui-kit references tokens, not the reverse. feedback-system is canonical for event-response mappings. audio-direction references feedback priorities, not the reverse.
 
@@ -287,7 +289,7 @@ c) Defer — log in known-issues.md for future resolution
 
 **For accessibility changes:** note compliance implications. Present WCAG level targets if applicable. List which docs are affected (typically color-system for contrast, feedback-system for redundancy, interaction-model for input alternatives).
 
-**For component removal:** verify no specs, tasks, or engine docs reference the component. List any that do.
+**For component removal:** verify no specs, tasks, engine docs, or other Step 5 docs reference the component. Specifically check: interaction-model affordances that imply the component, feedback-system UI channel entries that reference it, style-guide visual language examples that describe it, and color-system tokens scoped to it. List all references found.
 
 ## Step 5 — Cross-Doc Consistency Check
 
@@ -301,7 +303,21 @@ After applying updates and resolving escalations, verify:
 - **feedback-system ↔ color-system** — if feedback-system priorities changed, do color token assignments still reflect the visual hierarchy?
 - **All Step 5 docs ↔ design doc** — if design doc Core Fantasy, Failure Philosophy, or Player Control Model changed, do Step 5 docs still align?
 
-Apply safe alignment updates within Step 5 docs following the authority flow direction (style-guide → color-system → ui-kit; feedback-system → audio-direction). Flag cross-layer updates (system docs, Step 3 docs, engine docs) for human action.
+Apply **deterministic alignment updates** only — these are safe to auto-apply:
+- Renamed token/entity/state/signal/resource reference → update the reference to the new name
+- New cross-reference where the mapping already exists upstream (e.g., color-system added a token, ui-kit table already references that token category) → add the reference
+- Syncing table references after an approved additive change from Step 3
+
+**Escalate or log as advisory** — these involve semantic choices:
+- Assigning which token a new component should use
+- Assigning which sound category matches a new feedback row
+- Assigning priority level to a new entry
+- Assigning presentation weight or visual hierarchy position
+- Deciding interaction affordance shape or pattern for a new action
+
+Do not lump semantic choices into "reasonable defaults." If no closely analogous existing pattern exists in the same doc, escalate rather than guess.
+
+Flag cross-layer updates (system docs, Step 3 docs, engine docs) for human action.
 
 **Do not auto-heal around unresolved escalations.** If a cross-doc inconsistency depends on an unresolved escalation from Step 4, do not auto-align yet.
 
@@ -327,6 +343,10 @@ This is a lightweight post-edit validation, not a full `/scaffold-validate --sco
 **Escalated:** N issues
 **Deferred:** N issues
 **Docs affected:** [list]
+**Per-doc baselines used:**
+- style-guide.md: last revised YYYY-MM-DD (REVISION-style-YYYY-MM-DD)
+- color-system.md: last revised YYYY-MM-DD (REVISION-style-YYYY-MM-DD)
+- [etc. — only list docs that were checked in this run]
 
 ## Updates Applied
 | # | Doc | Section/Entry | Change | Trigger | Classification |
@@ -386,20 +406,21 @@ If no drift detected:
 ## Rules
 
 - **Only edit Step 5 docs.** Never edit design doc, system designs, Step 3 docs, engine docs, specs, tasks, or planning docs.
-- **Step 5 docs follow upstream authority.** When design doc (Rank 1), systems (Rank 5), or Step 3 docs (Rank 3-6) change, Step 5 docs (Rank 2) align. Step 5 docs have high authority but still conform to the design doc. If a Step 5 doc seems right and the design doc seems wrong, flag for revise-design — do not edit the design doc.
+- **Step 5 docs follow upstream authority — but only for specific reasons.** Step 5 docs (Rank 2) follow the design doc (Rank 1) for **creative intent**: Core Fantasy, aesthetic direction, tone, player experience goals. Step 5 docs follow systems (Rank 5) and Step 3 docs (Rank 3-6) only for **factual referential truth**: state names, entity names, signal names, resource names, and player-visible actions already approved upstream. Lower-ranked docs do not drive Step 5 aesthetic or UX decisions wholesale — they supply the vocabulary and data that Step 5 docs present. If a Step 5 doc seems right and the design doc seems wrong, flag for revise-design — do not edit the design doc.
 - **Respect the Step 5 authority flow.** style-guide → color-system → ui-kit. feedback-system → audio-direction. interaction-model and feedback-system are peers. Update in flow direction — never propagate changes backward.
 - **When `--target` is set, only edit the targeted doc.** Cross-doc implications are flagged for fix-style.
 - **Aesthetic direction is sacred until the user changes it.** Never auto-change tone registers, aesthetic pillars, visual identity principles, or mood descriptors. These are subjective creative decisions.
 - **Priority hierarchies are sacred until the user changes it.** Never auto-change the ordering of feedback priorities or audio hierarchy. Adding entries at reasonable priorities is safe. Restructuring the hierarchy is not.
 - **Token naming follows existing patterns.** Auto-added tokens must follow the established prefix/grouping convention. If the convention is unclear, escalate.
-- **New feedback entries use conservative defaults.** Never auto-add Critical events. Use the lowest reasonable priority. Single-channel initially.
+- **New feedback entries require an analogous pattern.** Only auto-add when a closely analogous row exists in the table. **"Closely analogous" means:** same event family (e.g., both are resource events, both are alert events), same trigger class (e.g., both triggered by state transitions, both triggered by player actions), and same player-facing urgency band (e.g., both are informational, both are warnings). All three must match. Copy structure from the analogous row with constrained defaults (non-critical, low/medium, single channel). Never auto-add Critical events. If no analogous row exists, escalate.
 - **Only accepted or corroborated signals count as drift.** Accepted decisions (ADR, triage, user approval) count directly. Playtest patterns (3+ reports) count for additive changes. Observed implementation reality counts only when corroborated.
 - **Design-led changes catch up. Implementation-led divergence escalates.** If upstream authority changed (design-led), Step 5 docs follow. If code diverged from Step 5 docs without authority (implementation-led), escalate to decide which is right. Playtest-led changes allow auto-update for additive entries but escalate for modifications.
 - **No duplicate tokens or entries.** Check for semantic equivalence before adding.
 - **Deletion is riskier than addition.** Never delete tokens, components, feedback entries, or sound categories without ADR or upstream authority change backing the removal. Prefer marking as deprecated over deleting.
 - **Evidence precedence resolves conflicts.** When sources disagree: accepted ADR > user decision > higher-authority doc > playtest pattern > completed spec > code review > known issue.
 - **Cross-doc updates follow authority flow.** style-guide is the aesthetic source. color-system is the token source. feedback-system is the event source. Downstream docs conform to their upstream, not the reverse.
-- **Revision suppression when upstream is unstable.** If the design doc has unresolved escalations (from revise-design), suppress auto-updates to Step 5 docs that depend on those decisions. Same for Step 3 docs with unresolved escalations from revise-references. **Partial instability:** if an upstream doc changed but is not stabilized (Status is Draft or Review, not Approved), treat drift signals from that doc as **advisory only** — log them but do not auto-update Step 5 docs.
+- **Revision suppression when upstream is unstable.** If the design doc has unresolved escalations (from revise-design), suppress auto-updates to Step 5 docs that depend on those decisions. Same for Step 3 docs with unresolved escalations from revise-references. **Partial instability:** if an upstream doc changed but is not stabilized (Status is Draft or Review, not Approved), treat drift signals from that doc as **advisory only** — log them but do not auto-update Step 5 docs. **Exception — referential breakage is always repairable:** if an unstable upstream doc renamed a state, signal, entity, or resource and the old name no longer resolves anywhere in the project, the stale reference in the Step 5 doc can be fixed as hygiene even though the upstream is Draft. The test: does the old reference still exist anywhere? If not, the project has effectively adopted the new name and preserving the broken reference helps no one. Semantic drift (new interpretation, changed meaning) from unstable upstream remains advisory only.
 - **Accessibility changes always escalate.** Even when backed by ADR, accessibility changes have compliance implications that require explicit user confirmation.
+- **Accessibility findings are never suppressed by instability.** The upstream instability suppression rule (Draft/Review → advisory only) does not apply to accessibility risks. If a code review or implementation reveals an accessibility barrier (color-only state, hover-only cue, single-channel critical event), surface it as an advisory finding even when the upstream doc is Draft. Design alignment drift from unstable upstream should be suppressed; accessibility risk to players should always be visible.
 - **Always write a revision log.** Every run produces a dated record.
-- **Confidence heuristic.** Improved: mostly auto-updates, aesthetic direction held, playtest patterns addressed. Stable: mix of auto-updates and escalations, token system intact. Decreased: aesthetic shifts, priority restructure, accessibility changes, or multiple docs affected by the same upstream drift.
+- **Confidence heuristic is advisory only.** Improved: mostly auto-updates, aesthetic direction held, playtest patterns addressed. Stable: mix of auto-updates and escalations, token system intact. Decreased: aesthetic shifts, priority restructure, accessibility changes, or multiple docs affected by the same upstream drift. **This heuristic is for human reporting only.** No downstream skill (fix-style, iterate-style, validate, approve) should use the confidence level as gating input. It is a subjective summary, not a machine-readable signal.
