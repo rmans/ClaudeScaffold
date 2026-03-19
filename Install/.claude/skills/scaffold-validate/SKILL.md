@@ -692,6 +692,28 @@ These compare Step 5 docs against each other. Require at least 3 Step 5 docs to 
 |-------|------------------|----------|
 | `style-review-freshness` | For each Step 5 doc, check for matching review logs in `scaffold/decisions/review/`. Match by filename pattern (`ITERATE-style-*`, `FIX-style-*`) or log body containing the doc name. | See status matrix |
 
+**Design Intent Alignment:**
+
+| Check | What It Validates | Severity |
+|-------|------------------|----------|
+| `style-design-intent-alignment` | Style-guide tone registers align with design doc Core Fantasy and Tone. Feedback-system intensity aligns with design doc Failure Philosophy (high-stakes systems need strong feedback; low-stakes need subtle). Interaction-model complexity aligns with Player Control Model. Check by extracting key terms from design doc sections and verifying they appear in or are reflected by the corresponding Step 5 docs. | WARN [ADVISORY] if misaligned |
+| `style-interaction-ui-mapping` | Every player action defined in interaction-model has a corresponding UI affordance in ui-kit (button, cursor state, selection indicator, contextual element). No "invisible interactions" where the player can act but there's no visual representation. No orphan UI elements with no interaction meaning. | WARN per unmapped action or orphan element |
+
+**Signal Clarity & Conflict:**
+
+| Check | What It Validates | Severity |
+|-------|------------------|----------|
+| `style-feedback-signal-overload` | No event in feedback-system Event-Response Table has all three channels (Visual, Audio, UI) at maximum intensity simultaneously. At least one channel should be supportive/secondary, not competing. Check for events where all channels use Critical/High-severity treatments. | WARN per overloaded event |
+| `style-feedback-channel-conflict` | No event in feedback-system has conflicting emotional signals across channels — e.g., visual treatment suggests success (green, positive animation) while audio suggests failure (error tone, alert sound). Extract semantic tone from token names and audio category names. | WARN [ADVISORY] per conflicting event |
+| `style-visual-hierarchy-consistency` | Critical states use highest-contrast color tokens (from color-system signal palette). Non-critical states do NOT use the same visual weight as critical states. Check that Critical events in feedback-system map to signal-palette danger/alert tokens, and that Info/Low events map to subdued tokens. | WARN if hierarchy violated |
+
+**System Health:**
+
+| Check | What It Validates | Severity |
+|-------|------------------|----------|
+| `style-unused-tokens` | Every color token defined in color-system is referenced by at least one other Step 5 doc (ui-kit, interaction-model, feedback-system). Tokens defined but never used are dead weight. | WARN per unused token |
+| `style-scalability` | Token system can accommodate new states without breaking hierarchy (check that signal palette has room — fewer than 80% of distinct hue slots occupied). UI-kit component definitions follow a pattern that supports addition without redefinition. Feedback-system Event-Response Table has a clear category structure that new events can slot into. | WARN [ADVISORY] if extensibility concerns |
+
 ---
 
 **How to run these checks:**
@@ -719,6 +741,13 @@ These compare Step 5 docs against each other. Require at least 3 Step 5 docs to 
 21. For `style-priority-hierarchy-alignment`: Extract ordered priority lists from both feedback-system and audio-direction. Compare ordering.
 22. For accessibility checks: Run specific pattern checks as described per check.
 23. For `style-review-freshness`: Glob `scaffold/decisions/review/ITERATE-style-*` and `FIX-style-*`. Match to docs. Apply status matrix.
+24. For `style-design-intent-alignment`: Read design doc Core Fantasy, Tone, Failure Philosophy, and Player Control Model sections. Extract key terms and intensity descriptors. Check style-guide tone registers reflect the same mood. Check feedback-system uses strong feedback for high-stakes systems and subtle feedback for low-stakes. Check interaction-model complexity matches Player Control Model. Label `[ADVISORY]`.
+25. For `style-interaction-ui-mapping`: Extract player actions from interaction-model (selection, commands, drag, cancel, mode switches). For each, check ui-kit defines a corresponding visual affordance (component, cursor state, indicator). Also scan ui-kit for components with no matching interaction-model action.
+26. For `style-feedback-signal-overload`: For each Event-Response Table row, check if all three channels (Visual, Audio, UI) use high-severity/critical treatments simultaneously. Flag events where no channel is secondary.
+27. For `style-feedback-channel-conflict`: For each Event-Response Table row, extract semantic tone from the Visual column (token names like `success`, `danger`, `warning`) and the Audio column (category names like `error`, `confirmation`, `alert`). Flag rows where visual and audio imply opposite emotional signals.
+28. For `style-visual-hierarchy-consistency`: Map feedback-system Critical events to their color tokens. Verify Critical events use signal-palette danger/alert tokens. Map Info/Low events to their tokens. Verify they use subdued/neutral tokens, not the same visual weight as Critical.
+29. For `style-unused-tokens`: Collect all token names defined in color-system. Grep ui-kit, interaction-model, feedback-system, and audio-direction for each token name. Tokens with zero references outside color-system are unused.
+30. For `style-scalability`: Count distinct hue categories in color-system signal palette. WARN if >80% of reasonable hue slots are occupied. Check ui-kit component definitions for a repeatable pattern (consistent structure across components). Check feedback-system Event-Response Table for clear category grouping.
 
 **Maturity-aware activation:**
 - If no Step 5 docs exist → SKIP all style checks.
@@ -729,6 +758,12 @@ These compare Step 5 docs against each other. Require at least 3 Step 5 docs to 
 - Entity/resource coverage → SKIP if entity-components.md or resource-definitions.md doesn't exist.
 - Feedback coherence → SKIP if either interaction-model or feedback-system doesn't exist.
 - Priority alignment → SKIP if either feedback-system or audio-direction doesn't exist.
+- Design intent alignment → SKIP if design-doc doesn't exist or is at template defaults.
+- Interaction-UI mapping → SKIP if either interaction-model or ui-kit doesn't exist.
+- Feedback signal overload/conflict → SKIP if feedback-system doesn't exist or has no Event-Response Table.
+- Visual hierarchy consistency → SKIP if either feedback-system or color-system doesn't exist.
+- Unused tokens → SKIP if color-system doesn't exist or fewer than 3 other Step 5 docs exist.
+- Scalability → SKIP if fewer than 4 Step 5 docs exist (not enough to assess system extensibility).
 
 ---
 
@@ -937,6 +972,14 @@ For each failing check, suggest the specific edit needed:
 - Style ui-kit scope guard → "Remove screen map / scene hierarchy / HUD layout content from ui-kit — belongs in engine UI doc"
 - Style duplicate tokens → "Merge duplicate token entries in color-system, keeping the more complete version"
 - Style malformed hex → "Fix hex value to #RRGGBB or #RRGGBBAA format"
+- Style design intent misalignment → "Review style-guide tone vs design doc Core Fantasy. Run `/scaffold-fix-style` then `/scaffold-iterate-style --topics 1,7` to realign"
+- Style unmapped interaction → "Add a UI affordance in ui-kit for the player action, or remove the action from interaction-model if it's not real"
+- Style orphan UI element → "Remove the UI element from ui-kit or add its interaction in interaction-model"
+- Style feedback signal overload → "Designate one channel as primary and others as supportive for the event in feedback-system"
+- Style feedback channel conflict → "Align emotional tone across Visual and Audio columns in the Event-Response Table"
+- Style visual hierarchy violation → "Update feedback-system to use signal-palette danger tokens for Critical events and subdued tokens for Info/Low events"
+- Style unused token → "Remove the unused token from color-system, or add a reference in the appropriate Step 5 doc"
+- Style scalability concern → "Review token system for extensibility. Consider consolidating overlapping tokens or restructuring the Event-Response Table for clearer category boundaries"
 
 ## Rules
 
