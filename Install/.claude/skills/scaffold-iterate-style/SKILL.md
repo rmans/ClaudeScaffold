@@ -38,6 +38,7 @@ After each topic's review cycle completes, the reviewer must answer these 5 ques
 | 3 | **Where will two developers diverge?** Same spec, different implementation — identify the exact ambiguity. |
 | 4 | **What is most likely to drift over time?** Where future changes will silently break consistency with other Step 5 docs. |
 | 5 | **What is the hardest edge case this doc must define — but currently doesn't?** The scenario that exposes the biggest gap. |
+| 6 | **What does this doc assume another doc defines — but that doc does not actually define?** The hidden cross-doc dependency that will break at implementation. |
 
 Failure probe findings are deduplicated against topic findings by root cause. New issues discovered via the probe are added to the topic's issue list and adjudicated normally.
 
@@ -65,6 +66,7 @@ This doc gets hammered on whether the visual identity holds together and support
 2. Do the tone registers cover calm, tension, crisis, and transition states?
 3. Are the visual pillars operational, or just moodboard language?
 4. Would two artists produce assets that look like the same game from this doc alone?
+5. At maximum zoom-out, can entity silhouettes alone communicate type and state?
 
 ---
 
@@ -90,6 +92,9 @@ This doc gets attacked on whether color carries stable, learnable meaning — no
 3. Do theme variants preserve meaning?
 4. Is critical information ever color-only?
 5. Are contrast targets concrete and enforceable?
+6. Are any semantic colors (danger, warning, success) reused decoratively elsewhere?
+
+**Player learning check:** If a player learns "red = danger" in one context, does red mean danger everywhere? Flag any context where a semantic color carries a different meaning.
 
 ---
 
@@ -116,6 +121,7 @@ This doc gets attacked on whether the building blocks are sufficient and properl
 3. Is the kit sufficient to build all major panels without inventing new atoms?
 4. Does the doc stay at component level instead of drifting into screen layout?
 5. Would two UI devs build the same kinds of panels from this kit?
+6. Can 3+ components coexist in the same panel without visual conflict (overlapping states, competing colors, crowded spacing)?
 
 ---
 
@@ -142,6 +148,9 @@ This doc gets attacked on whether the player can act clearly and consistently �
 3. Are build/zone/inspect/command mode transitions clear?
 4. What persists when switching context?
 5. Where would two developers diverge most when implementing the same interaction?
+6. What happens when the player clicks the wrong thing? Is misclick recovery defined (undo, deselect, cancel)?
+
+**Player learning check:** If a player learns "right-click = command" in one mode, does right-click mean command in every mode? Flag mode-specific exceptions that break learned behavior.
 
 ---
 
@@ -169,6 +178,14 @@ This doc gets attacked under realistic gameplay conditions, not tidy table check
 3. Is the timing believable relative to the simulation model?
 4. Are critical failures explained clearly enough for recovery?
 5. Does every critical event use redundant channels?
+6. What happens when the same event fires repeatedly in rapid succession? Does the feedback system handle spam (debounce, collapse, count), or does it overwhelm the player?
+
+**Failure recovery test (mandatory):** For at least one failed action:
+1. Is the cause of failure clear to the player?
+2. Is the path to correction obvious?
+3. Does the UI guide the next valid action?
+4. Is recovery faster than trial-and-error?
+If the player knows something failed but not how to fix it → **fail**.
 
 ---
 
@@ -195,6 +212,7 @@ This doc gets attacked on whether sound reinforces the visual experience — not
 3. Does silence mean anything, or is it accidental?
 4. Can music coexist with alert readability?
 5. Does audio-direction define character, while feedback-system defines timing?
+6. Does repeated exposure to the same sounds degrade clarity or become annoying? Are audio fatigue mitigation rules defined (variation, cooldown, volume ducking)?
 
 ---
 
@@ -247,6 +265,33 @@ Trace through:
 6. **style-guide** — does the visual treatment (animation timing, tone register) match?
 
 If any step is unclear, undefined, or contradictory → **fail**. Report which doc and which step broke. This is the highest-signal check in the entire review.
+
+**If the end-to-end scenario test fails → stop further per-doc topics and force a fix cycle before continuing.** If the system doesn't work end-to-end, per-doc polish is wasted.
+
+**Information load stress test (mandatory):**
+
+Simulate a high-load scenario: multiple entities in critical states, several simultaneous alerts, UI panels open with dense information.
+
+The reviewer must answer:
+1. What does the player see first?
+2. What gets visually suppressed or lost?
+3. Which signals compete instead of stacking cleanly?
+4. Is priority communicated consistently across color, animation, UI, and audio?
+5. At 10+ simultaneous alerts, does the feedback system degrade gracefully or become noise?
+
+If priority is unclear under load → **fail**.
+
+**Spec derivation test (mandatory):**
+
+Pick one interaction and attempt to write a behavior spec from the 6 docs.
+
+If any of the following are missing → **fail**:
+- Exact input mechanism (interaction-model)
+- Exact UI representation (ui-kit + color-system)
+- Exact feedback response (feedback-system — visual + audio + UI)
+- Exact state transitions involved (mapped across all docs)
+
+This test is binary. If you cannot write a complete spec from the docs alone, the docs are insufficient.
 
 **Questions the reviewer must answer:**
 1. Does style-guide mood actually map into color-system and audio-direction?
