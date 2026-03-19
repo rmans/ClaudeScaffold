@@ -48,20 +48,28 @@ Present the playtest feedback summary to the user alongside the ADR summary. If 
 Walk the user through each section of the phase template, asking one question at a time. Write answers into the phase document immediately after each response.
 
 1. **Goal** — Ask: *"In one sentence, what does this phase deliver?"*
+1b. **Capability Unlocked** — Ask: *"When this phase ends, what can you now do that you couldn't before? Not a system — a capability. If QA ran a scenario, what new behavior would they see?"*
 2. **Entry Criteria** — Ask: *"What must be true before this phase can start? Previous phases complete? Specific systems designed?"* Entry criteria should reference specific phase IDs (e.g., P1-001) or system IDs (e.g., SYS-003), not vague conditions.
 3. **In Scope** — Ask: *"What systems, features, or slices are included in this phase?"* Reference ADR impacts from Step 2 to help the user think through scope.
 4. **Out of Scope** — Ask: *"What is explicitly deferred to later phases?"*
 5. **Deliverables** — Ask: *"What concrete outputs does this phase produce? What can you show or play?"*
 6. **Exit Criteria** — Ask: *"What must be true for this phase to be complete?"*
-7. **Dependencies** — Ask: *"What does this phase depend on — other phases, systems, decisions?"*
+7. **Non-Goals** — Ask: *"What is intentionally NOT solved in this phase? What scope creep should this prevent?"*
+8. **Slice Strategy** — Ask: *"How should slices look in this phase? What verticality, size, and proof style are expected?"*
+9. **Risk Focus** — Ask: *"What are the major risks or unknowns this phase should reduce?"*
+10. **Phase Demo** — Ask: *"How would you demonstrate this phase is complete in a dev demo or playtest? Walk me through the steps."*
+11. **System Readiness** — Ask: *"For each system in scope, what maturity level is expected by the end of this phase?"*
+12. **Architectural Constraints** — Ask: *"Are there architecture rules slices must respect during this phase? Foundation decisions that constrain implementation?"*
+13. **Dependencies** — Ask: *"What does this phase depend on — other phases, systems, decisions?"*
 
 ### 4. Create the Phase File
 
-Create `scaffold/phases/P#-###-<name>.md` where:
+Create `scaffold/phases/P#-###-<name>_draft.md` where:
 
 - `P#` is the phase number from the roadmap.
 - `###` is the next sequential ID from `scaffold/phases/_index.md`.
 - `<name>` is a lowercase-kebab-case version of the phase name.
+- `_draft` is the status suffix (all new documents start as Draft).
 
 Use the phase template with the user's answers filled in.
 

@@ -1,39 +1,73 @@
 # [Engine] — Scene Architecture
 
 > **Layer:** Implementation
-> **Authority:** Rank 10
+> **Authority:** Rank 9
 > **Conforms to:** [design/design-doc.md](../design/design-doc.md)
 > **Status:** Draft
+> **Created:** YYYY-MM-DD
+> **Last Updated:** YYYY-MM-DD
+> **Changelog:**
+> - YYYY-MM-DD: Initial creation from template.
 
-## Scene / Level Structure
+## Purpose
 
-<!-- Top-level scene organization, main scene, world structure. -->
+<!-- Why this document exists. What decisions it captures and who should read it. -->
 
-*TODO: Define scene and level structure.*
+*TODO: Describe the purpose of this scene-architecture document and its intended audience.*
 
-## Entity / Object Patterns
+## Scene Tree Philosophy
 
-<!-- Common object compositions, prefab/scene/blueprint patterns. When to compose vs extend. -->
+<!-- High-level approach to the scene tree. Top-level organization (root, world, UI, services). How the tree reflects the game's logical structure. -->
 
-*TODO: Define entity and object patterns.*
+*TODO: Define the scene tree philosophy and top-level structure.*
 
-## Scene Transitions
+## Node Lifecycle and Ownership
 
-<!-- How scenes or levels are loaded, switched, and freed. Loading screens, streaming. -->
+<!-- Who creates, owns, and frees nodes. Ownership transfer rules. Rules for add_child/remove_child timing. Queue-free vs immediate-free. Orphan prevention. -->
 
-*TODO: Define scene transition approach.*
+*TODO: Define node lifecycle and ownership rules.*
 
-## Composition vs Inheritance
+## Service vs Node Distinction
 
-<!-- When to use composition (child objects, components) vs inheritance (subclasses, extended scripts). -->
+<!-- What qualifies as a "service" (stateless or singleton logic) vs a "node" (scene-tree entity with visual/physical presence). How services are accessed. -->
 
-*TODO: Define composition vs inheritance guidelines.*
+*TODO: Define the service vs node distinction.*
 
-## Dependency Management
+## Instantiation Patterns
 
-<!-- How objects find and communicate with dependencies. Service locators, dependency injection, direct references. -->
+<!-- How scenes and nodes are instantiated at runtime. Factory patterns. When to use PackedScene.instantiate() vs direct construction. Deferred instantiation. -->
 
-*TODO: Define dependency patterns.*
+*TODO: Define instantiation patterns.*
+
+## Packed Scene Conventions
+
+<!-- Naming, directory structure, and composition rules for .tscn files. When to split a scene into sub-scenes. Inheritance vs composition of packed scenes. -->
+
+*TODO: Define packed scene conventions.*
+
+## Pooling and Reuse
+
+<!-- When to pool objects vs create/free on demand. Pool sizing rules. Reset-on-return contracts. Which entity types are candidates for pooling. -->
+
+*TODO: Define pooling and reuse rules.*
+
+## Singleton / Autoload Policy
+
+<!-- Which systems qualify as autoloads. Naming conventions. Initialization order. Rules limiting autoload count. Alternatives to autoloads (service locators, dependency injection). -->
+
+*TODO: Define singleton and autoload policy.*
+
+## Allowed Communication Paths
+
+<!-- Approved patterns for node-to-node communication: signals, direct reference via get_node, service locator, event bus. When each is appropriate. -->
+
+*TODO: Define allowed communication paths and when to use each.*
+
+## Forbidden Communication Patterns
+
+<!-- Banned patterns: deep get_node paths across unrelated branches, global mutable state, circular signal chains, polling for references every frame. Rationale for each ban. -->
+
+*TODO: Define forbidden communication patterns and rationale.*
 
 ## Project Overrides
 
@@ -41,3 +75,9 @@
 
 | Convention | Default | Override | Rationale |
 |------------|---------|----------|-----------|
+
+## Rules
+
+<!-- Binding rules derived from this document. These are enforced during code review. -->
+
+1. *TODO: Add binding rules that reviewers and implementers must follow.*

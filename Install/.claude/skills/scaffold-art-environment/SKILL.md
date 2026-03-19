@@ -1,31 +1,22 @@
 ---
 name: scaffold-art-environment
-description: Generate environment art using DALL-E, informed by the project's style guide and color system.
-argument-hint: [prompt or document-path]
+description: Generate environment art using OpenArt (default) or DALL-E, informed by the project's style guide and color system.
+argument-hint: [prompt or document-path] [--model dalle|openart]
 allowed-tools: Read, Bash, Glob, Write
 ---
 
 # /scaffold-art-environment
 
-Generate environment art using DALL-E, informed by the project's style guide and color system.
+Generate environment art using OpenArt (default) or DALL-E, informed by the project's style guide and color system.
 
 ## Steps
 
-### 1. Check API key
+### 1. Check provider and API key
 
-Check that `OPENAI_API_KEY` is set (environment variable or `scaffold/.env`). If not found, explain how to set it:
+Parse the `--model` flag from the arguments. Supported values: `openart` (default), `dalle`.
 
-```
-export OPENAI_API_KEY="sk-..."
-```
-
-Or add to `scaffold/.env`:
-
-```
-OPENAI_API_KEY=sk-...
-```
-
-Stop here if the key is not available.
+- **If `--model dalle`:** Check that `OPENAI_API_KEY` is set (environment variable or `scaffold/.env`). If not found, explain how to set it and stop.
+- **If `--model openart` (or no --model flag):** No API key needed. OpenArt is browser-based.
 
 ### 2. Read design context
 
@@ -49,7 +40,7 @@ Check the argument passed to the skill:
 
 ### 4. Build prompt
 
-Combine the style context from Step 2 with the user's prompt or document-extracted description into a single DALL-E prompt.
+Combine the style context from Step 2 with the user's prompt or document-extracted description into a single image generation prompt.
 
 **Prompt focus:** Emphasize depth and sense of scale, atmosphere and lighting, walkable vs decorative space, environmental storytelling, and mood. Frame the image as a game environment or landscape concept.
 
@@ -57,27 +48,37 @@ Combine the style context from Step 2 with the user's prompt or document-extract
 
 ### 5. Generate image
 
-1. Ensure `scaffold/art/environment-art/` directory exists (create it if needed).
+1. Ensure the output directory exists (create if needed). The directory is `scaffold/art/environment-art/`.
 
 2. Generate a kebab-case filename from the prompt:
    - Take the first few meaningful words (max 40 characters)
    - Append a timestamp: `-YYYYMMDD-HHMMSS`
    - Add `.png` extension
-   - Example: `misty-forest-clearing-20260223-143022.png`
 
-3. Run the generation command:
+3. Determine the provider from the `--model` flag (default: `openart`).
+
+4. Run the generation command:
 
 ```bash
 python scaffold/tools/image-gen.py generate \
     --prompt "<approved prompt>" \
     --style-context "<style context from step 2>" \
     --output "scaffold/art/environment-art/<filename>.png" \
+    --provider <dalle|openart> \
     --size 1792x1024 \
     --model dall-e-3 \
     --quality standard
 ```
 
-4. Parse the JSON result from stdout. If `status` is `"error"`, report the error message and stop.
+5. Parse the JSON result from stdout:
+   - If `"status"` is `"error"`, report the error message and stop.
+   - If `"status"` is `"ok"` (dalle), the image was saved automatically. Continue to step 6.
+   - If `"status"` is `"manual"` (openart), show the user the composed prompt and instructions:
+     1. Go to https://openart.ai/
+     2. Paste the prompt into the generation field
+     3. Generate and download the image
+     4. Save to the output path shown
+     Wait for the user to confirm the image is saved before continuing to step 6.
 
 ### 6. Update index
 
@@ -94,13 +95,13 @@ Create the index file from the template if it doesn't exist yet.
 Show the user:
 
 - File path where the image was saved
-- DALL-E's `revised_prompt` (how DALL-E interpreted the prompt)
+- The provider's `revised_prompt` (dalle only — openart has no revised prompt)
 - Ask if they want another variation or a different size/quality
 
 ## Rules
 
 - **Always read style guide and color system first** — even if the user provides a detailed prompt, the style context ensures brand consistency.
 - **Show composed prompt before calling API** — the user must confirm or edit the prompt. Never generate without explicit approval.
-- **If `OPENAI_API_KEY` is not set, explain how to set it and stop** — do not attempt generation.
+- **If using dalle and `OPENAI_API_KEY` is not set, explain how to set it and stop. OpenArt requires no API key.**
 - **Kebab-case filenames with timestamps** — avoids collisions and keeps the directory scannable.
 - **Do not modify any design documents** — this skill only creates images and updates the art index.

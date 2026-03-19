@@ -26,16 +26,18 @@ Never load entire directories. Follow this protocol:
 | Rank | Document | Layer |
 |------|----------|-------|
 | 1 | `design/design-doc.md` | Canon — core vision |
-| 2 | `design/style-guide.md`, `color-system.md`, `ui-kit.md`, `glossary.md` | Canon — visual style, colors, UI, terminology |
+| 2 | `design/style-guide.md`, `color-system.md`, `ui-kit.md`, `glossary.md`, `interaction-model.md`, `feedback-system.md`, `audio-direction.md` | Canon — visual identity, terminology, interaction, feedback, audio |
 | 3 | `inputs/*` | Canon — input actions and bindings |
-| 4 | `design/interfaces.md`, `design/authority.md` | Canon — contracts, data ownership |
+| 4 | `design/architecture.md`, `design/interfaces.md`, `design/authority.md` | Canon — engineering conventions, contracts, data ownership |
 | 5 | `design/systems/SYS-###`, `design/state-transitions.md` | Canon — systems, states |
 | 6 | `reference/*` | Reference — data tables |
-| 7 | `phases/P#-###` | Scope — phase gates |
-| 8 | `specs/SPEC-###` | Behavior — atomic specs |
-| 9 | `tasks/TASK-###` | Execution — implementation steps |
+| 7 | `phases/roadmap.md`, `phases/P#-###` | Scope — roadmap and phase gates |
+| 8 | `slices/SLICE-###` | Integration — vertical slice contracts |
+| 9 | `specs/SPEC-###` | Behavior — atomic specs |
 | 10 | `engine/*` | Implementation — engine constraints |
-| 11 | `theory/*` | Advisory only — no authority |
+| 11 | `tasks/TASK-###` | Execution — implementation steps |
+| — | `theory/*` | Advisory only — no authority |
+| — | `decisions/*` | Pipeline influence — drives changes to ranked docs (see `scaffold/doc-authority.md` Decision Influence Model) |
 
 ## Key Directories
 
@@ -49,8 +51,7 @@ Never load entire directories. Follow this protocol:
 - `scaffold/slices/` — Vertical slice contracts within phases
 - `scaffold/engine/` — Engine-specific constraints (seeded from templates)
 - `scaffold/theory/` — Advisory reference: game design, UX, architecture patterns (no authority)
-- `scaffold/reviews/` — Adversarial review logs from `/scaffold-iterate`
-- `scaffold/prototypes/` — Throwaway code spikes that answer specific questions, findings feed back through ADRs
+- `scaffold/decisions/review/` — Adversarial review logs from `/scaffold-iterate`
 - `scaffold/audio/` — Generated audio from audio skills (music, SFX, ambience, voice)
 - `scaffold/templates/` — Templates for all document types and engine docs
 
@@ -66,18 +67,9 @@ Never load entire directories. Follow this protocol:
 - Follow the order: Roadmap → Phases → Slices → Specs → Tasks.
 - Before creating a phase, spec, or task, read all ADRs filed during prior work. ADRs may change scope.
 - Before creating a phase, read `scaffold/decisions/playtest-feedback.md` for Pattern-status entries. Playtest patterns may affect phase scope alongside ADRs.
-- When facing specific technical or design uncertainty, consider creating a prototype (`/scaffold-new-prototype`) to answer the question with a throwaway code spike before committing to a design.
 - Slices define vertical end-to-end chunks within a phase. Specs define behavior within a slice. Tasks implement specs.
 - Specs describe BEHAVIOR (what it does). Tasks describe IMPLEMENTATION (how to build it in the engine).
 - After completing a phase, follow the Phase Transition Protocol in `scaffold/phases/roadmap.md` to update the roadmap.
-
-## When Prototyping
-
-- Prototypes are throwaway code spikes that answer ONE specific question. The document (findings + ADRs) is the output — not the code.
-- Use `/scaffold-new-prototype` to create a prototype with a question, hypothesis, and scoped approach.
-- After completing the spike, use `/scaffold-prototype-log` to capture findings, file ADR stubs, and set disposition.
-- Prototypes have no authority rank. Findings feed back through ADRs only — a prototype never directly changes a design document.
-- Default disposition is Discarded. Only archive or absorb spike code when there's a specific reason.
 
 ## Document Status
 
@@ -90,6 +82,28 @@ Every scaffold document carries a `> **Status:**` field in its blockquote header
 - **Deprecated** — set via ADR when a document is no longer active. The document remains in its directory (IDs are permanent) but reviews flag references to it.
 
 ADRs use their own status lifecycle (`Proposed | Accepted | Deprecated | Superseded`) and are not part of this system.
+
+### Document Date Tracking
+
+Every scaffold document carries `> **Created:**`, `> **Last Updated:**`, and `> **Changelog:**` fields in its blockquote header (ADRs use `> **Date:**` instead of `> **Created:**`).
+
+**When creating a document** (seed, new, init skills): set `Created` and `Last Updated` to today's date. Add an initial Changelog entry: `- YYYY-MM-DD: Created.`
+
+**When editing a document** (fix, revise, iterate, triage, approve, complete, update-doc, implement-task, code-review skills): update `Last Updated` to today's date. Append a Changelog entry describing what changed and **which decision doc triggered the change**: `- YYYY-MM-DD: [brief description] ([decision doc reference]).` Keep entries concise — one line per change, not per line edited. The decision doc reference closes the traceability loop: decision docs point to which ranked docs changed, ranked docs point back to which decision doc caused the change.
+
+**Changelog entry examples:**
+- `- 2026-03-18: Created.`
+- `- 2026-03-19: Fixed authority.md alignment — added NeedsSystem as mood reader (REVISION-references-2026-03-19).`
+- `- 2026-03-20: Status → Approved after iterate-spec pass (ITERATE-spec-SPEC-042-2026-03-20).`
+- `- 2026-03-21: Resolved constrained TODO — tick model locked in architecture.md (ADR-004).`
+- `- 2026-03-22: Added save format versioning section (KI-011 resolution).`
+- `- 2026-03-23: Narrowed scope — removed expedition system (DD-005 payoff, TRIAGE-SLICE-009-2026-03-23).`
+
+**Do not back-fill dates on existing docs.** Documents created before this rule will gain these fields naturally when next edited by a skill. Skills should add the fields if they're missing during any edit pass.
+
+### Document Influence Map
+
+Before creating or revising any scaffold document, check the **Document Influence Map** in `scaffold/doc-authority.md` to identify what upstream docs should be read as context. The map defines "Influenced By" (what to read) and "Influences" (what reads this doc) for every document type. Skills with explicit Context Files tables may be a subset — the influence map is the complete reference. When in doubt, read the map.
 
 ## Workflow
 

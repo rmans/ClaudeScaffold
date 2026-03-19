@@ -1,45 +1,98 @@
 # [Engine] — Coding Best Practices
 
 > **Layer:** Implementation
-> **Authority:** Rank 10
+> **Authority:** Rank 9
 > **Conforms to:** [design/design-doc.md](../design/design-doc.md)
 > **Status:** Draft
+> **Created:** YYYY-MM-DD
+> **Last Updated:** YYYY-MM-DD
+> **Changelog:**
+> - YYYY-MM-DD: Initial creation from template.
 
-## Language Conventions
+## Purpose
 
-<!-- Typing, formatting, naming, file structure for the engine's primary language. -->
+<!-- Why this document exists. What decisions it captures and who should read it. -->
 
-*TODO: Define language coding conventions.*
+*TODO: Describe the purpose of this coding-practices document and its intended audience.*
 
-## Event / Message Patterns
+## C++ vs Scripting Boundary
 
-<!-- When to use the engine's event system (signals, delegates, events) vs direct calls. Naming conventions. -->
+<!-- Define the boundary between native (C++/GDExtension) code and scripted (GDScript) code. Which responsibilities belong in each layer. When to escalate logic from script to native. -->
 
-*TODO: Define event and message patterns.*
+*TODO: Define the C++ vs scripting boundary rules.*
 
-## Globals / Singletons
+## Naming Conventions
 
-<!-- What goes into global scope (autoloads, managers, service locators) and what doesn't. -->
+<!-- Naming rules for classes, functions, variables, signals, files, and directories. Casing style per language. Prefixes or suffixes for special types (e.g., I_ for interfaces, _System for systems). -->
 
-*TODO: Define global and singleton policy.*
+*TODO: Define naming conventions for all code and file artifacts.*
 
-## Asset / Resource Management
+## Signal Usage Policy
 
-<!-- Loading, preloading, caching, streaming strategies. -->
+<!-- When to use signals vs direct calls. Signal naming conventions. One-to-many vs one-to-one patterns. Rules for signal registration and connection lifetime. -->
 
-*TODO: Define asset and resource management patterns.*
+*TODO: Define signal usage policy and naming rules.*
 
-## Error Handling
+## Node Ownership and Lifetime
 
-<!-- Assertions, logging, error reporting conventions. -->
+<!-- Who creates and frees nodes. Ownership transfer rules. Orphan prevention. Rules for add_child/remove_child timing. Queue-free vs immediate-free. -->
 
-*TODO: Define error handling conventions.*
+*TODO: Define node ownership and lifetime management rules.*
 
-## Testing
+## Serialization-Safe Coding
 
-<!-- Testing approach, tools, expectations. -->
+<!-- Rules that keep runtime state serializable. Which types are safe to persist. Avoiding closures, lambdas, or engine objects in saved state. Handle vs raw-reference policy. -->
 
-*TODO: Define testing strategy.*
+*TODO: Define serialization-safe coding rules.*
+
+## Testing Expectations
+
+<!-- Testing approach, tools, and coverage expectations. Unit test framework. What must be tested vs what is tested manually. Test naming and organization. -->
+
+*TODO: Define testing strategy and expectations.*
+
+## Allowed Patterns
+
+<!-- Explicitly approved patterns: composition, observer, state machine, command, etc. For each, state when to use it and link to the engine-implementation-patterns doc if available. -->
+
+*TODO: List allowed coding and architecture patterns.*
+
+## Forbidden Patterns
+
+<!-- Explicitly banned patterns and why. Examples: global mutable state outside autoloads, direct cross-system writes, circular signal chains, polling in _process when signals suffice. -->
+
+*TODO: List forbidden patterns and rationale.*
+
+## Project Coding Patterns
+
+<!-- Prescribed coding patterns that are project-specific — not universal engine conventions, but mandated by architecture decisions. These translate architecture.md Code Patterns (design-layer WHAT) into engine-level implementation (HOW). Each pattern should include: name, when to use, structure/template, and a concrete code example.
+
+Common project coding patterns include:
+- System resolution (how systems find each other — e.g., get_parent()->get_node_or_null() in _ready())
+- Entity handle validation (how code checks handle validity before use)
+- Query API return conventions (Dictionary returns, null/empty conventions)
+- Entity storage access (SlotPool usage, iteration patterns)
+- Signal wiring patterns (where and how signals are connected)
+- Intent/request object patterns (how intents flow from UI to simulation)
+- Error recovery patterns (what code does when a dependency is null, a handle is stale, or state is invalid)
+
+These patterns are derived from architecture.md but expressed as concrete engine-level code. If a pattern here conflicts with architecture.md, architecture wins — update this section. If a pattern becomes broadly useful beyond this project, consider whether it belongs in Allowed Patterns instead. -->
+
+### Pattern: [Name]
+
+**When to use:** ...
+**Structure:**
+```
+// code template
+```
+**Example:**
+```
+// concrete usage
+```
+
+*TODO: Add project coding patterns derived from architecture.md.*
+
+---
 
 ## Project Overrides
 
@@ -47,3 +100,9 @@
 
 | Convention | Default | Override | Rationale |
 |------------|---------|----------|-----------|
+
+## Rules
+
+<!-- Binding rules derived from this document. These are enforced during code review. -->
+
+1. *TODO: Add binding rules that reviewers and implementers must follow.*

@@ -21,13 +21,12 @@
 | [phases/](phases/_index.md) | Scope | Phase gates and milestones |
 | [specs/](specs/_index.md) | Behavior | Atomic behavior definitions |
 | [tasks/](tasks/_index.md) | Execution | Executable implementation steps |
-| [decisions/](decisions/_index.md) | History | Architecture Decision Records, known issues, design debt |
+| [decisions/](decisions/_index.md) | History | ADRs, known issues, design debt, playtest feedback, cross-cutting findings, code reviews, revision logs, triage logs |
 | [slices/](slices/_index.md) | Integration | Vertical slice contracts |
 | [templates/](templates/_index.md) | Meta | Document templates for all ID'd types and engine docs |
-| [reviews/](reviews/_index.md) | Tooling | Adversarial review logs from `/scaffold-iterate` |
+| [decisions/review/](decisions/review/_index.md) | Tooling | Adversarial review logs from `/scaffold-iterate` |
 | [art/](art/_index.md) | Content | Generated art from art skills (`/scaffold-art-concept`, `/scaffold-art-ui-mockup`, etc.) |
 | [audio/](audio/_index.md) | Content | Generated audio from audio skills (`/scaffold-audio-music`, `/scaffold-audio-sfx`, etc.) |
-| [prototypes/](prototypes/_index.md) | Validation | Throwaway code spikes — each answers one specific question |
 | [tools/](tools/_index.md) | Tooling | Scripts and utilities for the pipeline |
 
 ## Key Files
@@ -47,7 +46,6 @@
 | Task | TASK-### | TASK-001 |
 | ADR | ADR-### | ADR-001 |
 | Slice | SLICE-### | SLICE-001 |
-| Prototype | PROTO-### | PROTO-001 |
 | Playtester Feedback | PF-### | PF-001 |
 
 IDs are permanent. They never change even if the document is renamed.

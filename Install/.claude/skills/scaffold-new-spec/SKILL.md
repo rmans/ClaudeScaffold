@@ -46,17 +46,23 @@ If both can be confidently inferred from the argument and the documents read in 
 Walk the user through the spec template, pre-filling from the system design where possible. Ask one section at a time and write answers into the spec doc immediately after each confirmation.
 
 1. **Summary** — Ask: *"In one sentence, what behavior does this spec define?"*
-2. **Preconditions** — Ask: *"What must be true before this behavior can occur?"* Pre-fill from system design's Player Actions prerequisites if available.
-3. **Behavior** — Ask: *"Step by step, what happens? Be precise — each step should be testable."* Pre-fill from system design's Player Actions and System Resolution.
-4. **Postconditions** — Ask: *"What must be true after this behavior completes?"*
-5. **Edge Cases** — Ask: *"What unusual inputs or boundary conditions exist?"* Pre-fill from system design's Edge Cases section.
-6. **Acceptance Criteria** — Ask: *"How do you verify this is correctly implemented? What tests would you run?"*
+2. **Proof Intent** — Ask: *"What does this spec prove within its parent slice? What uncertainty does it reduce?"*
+3. **Trigger** — Ask: *"What causes this behavior to start? Player action, system event, or simulation tick?"*
+4. **Preconditions** — Ask: *"What must be true before this behavior can occur?"* Pre-fill from system design's Player Actions prerequisites if available.
+5. **Behavior** — Ask: *"Step by step, what happens? Be precise — each step should be testable."* Pre-fill from system design's Player Actions and System Resolution.
+6. **Observable Outcome** — Ask: *"What can the player or tester visibly see when this behavior succeeds?"*
+7. **Failure Outcome** — Ask: *"What happens when this behavior is rejected or fails? What should the player see?"*
+8. **Postconditions** — Ask: *"What must be true after this behavior completes?"*
+9. **Edge Cases** — Ask: *"What unusual inputs or boundary conditions exist?"* Pre-fill from system design's Edge Cases section.
+10. **Secondary Effects** — Ask: *"Does this behavior trigger reactions in other systems? UI refreshes, recalculations, state propagation?"*
+11. **Acceptance Criteria** — Ask: *"How do you verify this is correctly implemented? What tests would you run?"*
+12. **Out of Scope** — Ask: *"What does this spec intentionally NOT cover?"*
 
 Pre-filled content is a starting point. Always present pre-filled content for user confirmation — never treat it as final.
 
 ### 5. Create the Spec File
 
-Create `scaffold/specs/SPEC-###-<name>.md` where `<name>` is a lowercase-kebab-case version of the spec name.
+Create `scaffold/specs/SPEC-###-<name>_draft.md` where `<name>` is a lowercase-kebab-case version of the spec name.
 
 - Replace `SPEC-###` in the title with the actual ID.
 - Replace any placeholder names with the provided spec name.

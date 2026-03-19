@@ -28,6 +28,7 @@ Make targeted edits to a scaffold document: **$ARGUMENTS**
 | `known-issues` | `scaffold/decisions/known-issues.md` | Issue entries |
 | `design-debt` | `scaffold/decisions/design-debt.md` | Debt entries |
 | `playtest-feedback` | `scaffold/decisions/playtest-feedback.md` | Feedback entries |
+| `architecture` | `scaffold/design/architecture.md` | Sections with content |
 | `action-map` | `scaffold/inputs/action-map.md` | Action entries |
 | Any `SYS-###` ID | `scaffold/design/systems/SYS-###-*.md` | System design sections |
 | Any file path | Direct path within `scaffold/` | Depends on doc type |
@@ -121,6 +122,10 @@ After making the edit, check and update related docs:
 
 **Balance param changes:**
 - If a parameter is added/removed, check the owning system for references.
+
+**Architecture changes:**
+- If the scene tree, dependency graph, tick order, signal wiring, or code patterns change, check that `scaffold/engine/scene-architecture.md` and `scaffold/engine/coding-best-practices.md` don't contradict.
+- If a new system is added/removed from the dependency graph or tick order, check that the system is registered in `scaffold/design/systems/_index.md` and `scaffold/reference/signal-registry.md`.
 
 **State machine changes:**
 - If a state machine is added/removed, check `scaffold/reference/entity-components.md` for matching state/status fields.

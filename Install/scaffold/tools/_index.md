@@ -11,6 +11,7 @@
 | `audio_config.json` | Configuration for audio-gen.py (provider per audio type, model/voice defaults) |
 | `doc-review.py` | Adversarial document reviewer — multi-provider (OpenAI / Anthropic) |
 | `review_config.json` | Configuration for doc-review.py (provider, model, temperature) |
+| `code-review.py` | Adversarial code review — multi-provider LLM review for implementation code |
 | `validate-refs.py` | Cross-reference validator — checks referential integrity across all scaffold docs |
 
 ## image-gen.py
@@ -238,6 +239,48 @@ The script detects document type from its path. Use `--type` to override. Suppor
 ### Configuration
 
 Configured via `review_config.json` in the same directory. Supports OpenAI and Anthropic providers. API key is read from the environment variable specified in config, or from `scaffold/.env`.
+
+### Dependencies
+
+None — uses Python standard library only (`urllib`, `json`, `argparse`).
+
+## code-review.py
+
+Adversarial code reviewer that sends source code to an external LLM for review across 7 sequential topics, with multi-turn conversation until consensus. Used by `/scaffold-code-review`.
+
+### Topics
+
+| # | Topic | Focus |
+|---|-------|-------|
+| 1 | Architecture | System responsibilities and boundaries |
+| 2 | Code Structure | Class layout, function organization, coupling |
+| 3 | Simulation Design | Pipeline robustness, edge cases, state machines |
+| 4 | Performance | Scaling, tick cost, hot paths |
+| 5 | Project Org | File placement, repo conventions |
+| 6 | Engine Correctness | Memory, signals, node lifecycle |
+| 7 | Maintainability | Long-term health, readability, growth resilience |
+
+### Commands
+
+| Command | Description |
+|---------|-------------|
+| `review <path>` | Start a fresh review for a specific topic — returns structured issues JSON |
+| `respond <path>` | Continue conversation within a topic (inner loop exchange) |
+| `consensus <path>` | Request final consensus summary for a topic |
+| `check-config` | Verify configuration and API key |
+
+### Usage
+
+```
+python scaffold/tools/code-review.py review <path> --topic 1 --iteration 1 --context-files <file1> <file2>
+python scaffold/tools/code-review.py respond <path> --topic 1 --iteration 1 --message-file <file>
+python scaffold/tools/code-review.py consensus <path> --topic 1 --iteration 1
+python scaffold/tools/code-review.py check-config
+```
+
+### Configuration
+
+Uses `review_config.json` (shared with doc-review.py). Supports OpenAI and Anthropic providers. Conversation state is saved to `.reviews/` so exchanges can continue across calls.
 
 ### Dependencies
 

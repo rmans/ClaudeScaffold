@@ -1,12 +1,12 @@
 # ClaudeScaffold — Installation
 
-This is the installable overlay. Copy its contents into any game project to give Claude Code a structured document pipeline, strict design authority, and 63 skills that automate the workflow from concept to code.
+This is the installable overlay. Copy its contents into any game project to give Claude Code a structured document pipeline, strict design authority, and 71 skills that automate the workflow from concept to code.
 
 ## What Gets Installed
 
 ```
 your-project/
-├── .claude/skills/       ← 63 slash commands (create, seed, review, iterate, prototype, art, audio)
+├── .claude/skills/       ← 71 slash commands (create, seed, fix, iterate, revise, approve, implement, art, audio)
 ├── scaffold/             ← Document pipeline with indexes and templates
 └── CLAUDE.md             ← Rules that tell Claude Code how to use the scaffold
 ```
@@ -15,7 +15,7 @@ your-project/
 
 **`scaffold/`** — A structured document hierarchy with 11 authority ranks. Every design decision, style rule, system behavior, interface contract, and implementation constraint has a home. Start at `scaffold/_index.md` — it's the master entry point.
 
-**`.claude/skills/`** — 63 slash commands that automate document creation, bulk seeding, review audits, adversarial iteration, prototyping, art/audio generation, completion tracking, and editing. Skills read higher-authority documents to pre-fill lower ones, check ADRs before scoping new work, and cross-reference everything.
+**`.claude/skills/`** — 71 slash commands that automate document creation, bulk seeding, mechanical fixes, adversarial iteration, revision, approval gates, implementation, art/audio generation, completion tracking, and editing. Skills read higher-authority documents to pre-fill lower ones, check ADRs before scoping new work, and cross-reference everything.
 
 ## Prerequisites
 
@@ -81,106 +81,90 @@ Follow the pipeline in order. Each step builds on the last.
 ### Phase 1 — Define the game
 
 ```
-/scaffold-new-design              ← core vision, pillars, mechanics, loops, scope
-/scaffold-bulk-seed-style         ← seed style-guide, color-system, ui-kit from design doc
-/scaffold-bulk-seed-systems       ← glossary + system stubs from design doc
+/scaffold-init-design               ← core vision, pillars, mechanics, loops, scope
+/scaffold-fix-design                 ← mechanical cleanup
+/scaffold-iterate-design             ← adversarial review
+/scaffold-validate --scope design    ← gate check
 ```
 
-Fill in each system design manually, then:
+Then seed the rest of the pipeline:
 
 ```
-/scaffold-bulk-seed-references    ← extract signals, entities, resources, balance params
-/scaffold-bulk-seed-engine        ← select your engine, seed all 5 engine docs
+/scaffold-bulk-seed-systems          ← glossary + system stubs from design doc
+/scaffold-bulk-seed-references       ← extract signals, entities, resources, balance params
+/scaffold-bulk-seed-engine           ← select your engine, seed engine docs
+/scaffold-bulk-seed-style            ← seed style-guide, color-system, ui-kit, interaction-model, feedback-system, audio-direction
+/scaffold-bulk-seed-input            ← seed input docs
 ```
 
-### Phase 2 — Review everything
+Each seeded layer follows the same stabilization loop: `fix → iterate → validate`.
+
+### Phase 2 — Foundation gate
 
 ```
-/scaffold-review-design           ← audit the design doc
-/scaffold-bulk-review-style       ← audit all style docs + cross-consistency
-/scaffold-bulk-review-systems     ← audit all systems + cross-consistency
-/scaffold-bulk-review-references  ← audit all reference docs + cross-consistency
-/scaffold-bulk-review-engine      ← audit all engine docs + cross-consistency
-/scaffold-bulk-review-input       ← audit all input docs + cross-consistency
+/scaffold-revise-foundation          ← verify Steps 1-6 are stable
+/scaffold-fix-cross-cutting          ← resolve cross-document issues
+/scaffold-validate --scope foundation
 ```
-
-For deeper adversarial review using an external LLM:
-
-```
-/scaffold-iterate <document-path>
-```
-
-Fix anything the reviews flag before moving on.
-
-Documents start as `Draft` when created. Set status to `Review` before running `/scaffold-iterate` — a passing review sets status to `Approved`. Run `/scaffold-complete` after implementation and testing — completion ripples up from tasks through specs, slices, and phases.
 
 ### Phase 3 — Plan and build
 
 ```
-/scaffold-new-roadmap             ← define phases from start to ship
-/scaffold-new-phase [name]        ← create a phase scope gate (checks ADRs)
-/scaffold-new-slice [name]        ← define a vertical slice within the phase
-/scaffold-new-spec [name]         ← write an atomic behavior spec for the slice
-/scaffold-new-task [name]         ← create an implementation task tied to the spec
+/scaffold-new-roadmap                ← define phases from start to ship
+/scaffold-bulk-seed-phases           ← seed phase scope gates from roadmap
+/scaffold-approve-phases             ← lifecycle gate for the first phase
 ```
 
-Or bulk-seed planning docs from higher-level documents:
+For each approved phase:
 
 ```
-/scaffold-bulk-seed-slices        ← seed slice stubs from phases + interfaces
-/scaffold-bulk-seed-specs         ← seed spec stubs from slices + system designs
-/scaffold-bulk-seed-tasks         ← seed task stubs from specs + engine docs
+/scaffold-bulk-seed-slices           ← seed vertical slices from phase
+/scaffold-approve-slices             ← lifecycle gate for the first slice
+/scaffold-bulk-seed-specs            ← seed behavior specs from slice
+/scaffold-bulk-seed-tasks            ← seed implementation tasks from specs
+/scaffold-approve-specs              ← lifecycle gate
+/scaffold-approve-tasks              ← lifecycle gate
+/scaffold-implement-task             ← code, test, review, complete
 ```
-
-Review planning docs for completeness and cross-doc consistency:
-
-```
-/scaffold-review-roadmap          ← audit roadmap completeness and ADR currency
-/scaffold-bulk-review-phases      ← audit all phases + entry/exit chains
-/scaffold-bulk-review-slices      ← audit all slices + phase/interface coverage
-/scaffold-bulk-review-specs       ← audit all specs + system/state alignment
-/scaffold-bulk-review-tasks       ← audit all tasks + file conflicts + ordering
-```
-
-Build. When implementation conflicts with the plan, file an ADR. After completing a phase, ADRs feed back into the roadmap and re-scope upcoming work.
 
 See `scaffold/WORKFLOW.md` for the full 24-step recipe.
 
-## All 63 Skills
+## All 71 Skills
 
 | Category | Skills |
 |----------|--------|
-| **Create** | `new-design`, `new-style`, `new-system`, `new-reference`, `new-engine`, `new-input`, `new-roadmap`, `new-phase`, `new-slice`, `new-spec`, `new-task`, `new-prototype` |
-| **Bulk seed** | `bulk-seed-style`, `bulk-seed-systems`, `bulk-seed-references`, `bulk-seed-engine`, `bulk-seed-input`, `bulk-seed-slices`, `bulk-seed-specs`, `bulk-seed-tasks`, `bulk-seed-prototypes` |
-| **Review** | `review-design`, `review-style`, `review-system`, `review-reference`, `review-engine`, `review-input`, `review-roadmap`, `review-phase`, `review-slice`, `review-spec`, `review-task`, `review-prototype` |
-| **Bulk review** | `bulk-review-style`, `bulk-review-systems`, `bulk-review-references`, `bulk-review-engine`, `bulk-review-input`, `bulk-review-phases`, `bulk-review-slices`, `bulk-review-specs`, `bulk-review-tasks`, `bulk-review-prototypes` |
-| **Iterate** | `iterate` |
+| **Init** | `init-design` |
+| **Bulk seed** | `bulk-seed-style`, `bulk-seed-systems`, `bulk-seed-references`, `bulk-seed-engine`, `bulk-seed-input`, `bulk-seed-phases`, `bulk-seed-slices`, `bulk-seed-specs`, `bulk-seed-tasks` |
+| **Create** | `new-roadmap`, `new-phase`, `new-slice`, `new-spec`, `new-task` |
+| **Fix** | `fix-design`, `fix-systems`, `fix-references`, `fix-engine`, `fix-roadmap`, `fix-phase`, `fix-slice`, `fix-spec`, `fix-task`, `fix-foundation`, `fix-cross-cutting` |
+| **Iterate** | `iterate-design`, `iterate-systems`, `iterate-references`, `iterate-engine`, `iterate-roadmap`, `iterate-phase`, `iterate-slice`, `iterate-spec`, `iterate-task` |
+| **Revise** | `revise-design`, `revise-systems`, `revise-references`, `revise-engine`, `revise-foundation`, `revise-roadmap`, `revise-phases`, `revise-slices` |
+| **Approve** | `approve-phases`, `approve-slices`, `approve-specs`, `approve-tasks` |
+| **Triage** | `triage-specs`, `triage-tasks`, `reorder-tasks` |
+| **Implement** | `implement-task`, `build-and-test`, `code-review`, `add-regression-tests` |
 | **Complete** | `complete` |
-| **Edit** | `update-doc` |
+| **Edit** | `update-doc`, `sync-reference-docs` |
 | **Validate** | `validate` |
 | **Playtest** | `playtest-log`, `playtest-review` |
-| **Prototype** | `prototype-log` |
-| **Art** | `art-concept`, `art-ui-mockup`, `art-character`, `art-environment`, `art-sprite`, `art-icon`, `art-promo`, `review-art` |
-| **Audio** | `audio-music`, `audio-sfx`, `audio-ambience`, `audio-voice`, `review-audio` |
+| **Art** | `art-concept`, `art-ui-mockup`, `art-character`, `art-environment`, `art-sprite`, `art-icon`, `art-promo` |
+| **Audio** | `audio-music`, `audio-sfx`, `audio-ambience`, `audio-voice` |
 
-All skill names are prefixed with `/scaffold-` (e.g., `/scaffold-new-design`).
+All skill names are prefixed with `/scaffold-` (e.g., `/scaffold-init-design`).
 
 ## Key Directories
 
 | Directory | Layer | What Goes Here |
 |-----------|-------|---------------|
-| `design/` | Canon (ranks 1–5) | Vision, style, colors, UI, glossary, systems, interfaces, authority, states |
+| `design/` | Canon (ranks 1–5) | Vision, style, colors, UI, glossary, architecture, interaction model, feedback system, audio direction, systems, interfaces, authority, states |
 | `inputs/` | Canon (rank 3) | Action map, key bindings, gamepad bindings, navigation, input philosophy |
-| `reference/` | Reference (rank 6) | Signals, entities, resources, balance params |
-| `decisions/` | History | ADRs, known issues, design debt |
+| `reference/` | Reference (rank 6) | Signals, entities, resources, balance params, enums/statuses |
+| `decisions/` | History | ADRs, known issues, design debt, playtest feedback, cross-cutting findings, code reviews, revision logs, triage logs |
 | `phases/` | Scope (rank 7) | Roadmap, phase scope gates |
-| `specs/` | Behavior (rank 8) | Atomic behavior specs |
-| `tasks/` | Execution (rank 9) | Implementation tasks |
-| `slices/` | Integration | Vertical slice contracts |
+| `slices/` | Integration (rank 8) | Vertical slice contracts |
+| `specs/` | Behavior (rank 9) | Atomic behavior specs |
 | `engine/` | Implementation (rank 10) | Engine-specific best practices and constraints |
-| `theory/` | Advisory (rank 11) | 16 docs on game design, UX, architecture — no authority |
-| `prototypes/` | Validation | Throwaway code spikes that answer specific questions |
-| `reviews/` | Logs | Adversarial review logs from `/scaffold-iterate` |
+| `tasks/` | Execution (rank 11) | Implementation tasks |
+| `theory/` | Advisory | 16 docs on game design, UX, architecture — no authority |
 | `art/` | Content | Generated art assets from art skills |
 | `audio/` | Content | Generated audio assets from audio skills |
 | `templates/` | Meta | Templates for all document types |

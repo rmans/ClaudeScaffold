@@ -19,6 +19,7 @@ Create a new implementation task tied to a spec, consuming ADRs.
 6. Read relevant engine docs from `scaffold/engine/` — especially coding best practices and any engine doc relevant to the task's domain (UI, input, scene architecture, performance).
 7. **Read all ADRs** — Glob `scaffold/decisions/ADR-*.md`. ADRs may have changed implementation approach.
 8. Read `scaffold/design/interfaces.md` and `scaffold/reference/signal-registry.md` if the task involves system communication.
+9. **Read `scaffold/design/architecture.md`** — tick processing order, signal wiring map, data flow rules, recurring code patterns (entity storage, UI panel, renderer), and component checklists. Use these to inform step formulation and file lists.
 
 ## 2. ADR Impact Check
 
@@ -40,14 +41,21 @@ If ADRs apply, present them to the user before defining the task.
 Walk the user through the task template:
 
 1. **Objective** — Ask: *"In one sentence, what does this task produce?"*
-2. **Steps** — Ask: *"What are the concrete implementation steps? Each step should be verifiable."* Pre-fill from the spec's Behavior section, translating behavior into implementation using engine doc patterns.
-3. **Files Affected** — Ask: *"What files will be created or modified?"* Suggest based on engine scene architecture and coding conventions.
-4. **Verification** — Ask: *"How do you confirm this task is done? What tests or checks?"* Pre-fill from the spec's Acceptance Criteria.
-5. **Notes** — Ask: *"Any implementation gotchas, engine quirks, or references?"* Pre-fill from relevant engine docs.
+2. **Task Type** — Ask: *"What kind of task is this?"* (e.g., System, UI, Data, Integration, Infrastructure, Test)
+3. **Depends on** — Ask: *"Does this task depend on any other TASK-### being completed first?"* Check for explicit prerequisites from the spec and from other tasks in the same slice.
+4. **Steps** — Ask: *"What are the concrete implementation steps? Each step should be verifiable."* Pre-fill from the spec's Behavior section, translating behavior into implementation using engine doc patterns. Reference architecture.md code patterns and checklists when drafting steps — especially the "Adding a New C++ System / UI Panel / Renderer" checklists.
+5. **Files Created** — Ask: *"What new files will this task create?"* Suggest based on engine scene architecture and coding conventions.
+6. **Files Modified** — Ask: *"What existing files will this task modify?"* Suggest based on engine scene architecture and coding conventions.
+7. **Deliverable** — Ask: *"What is the concrete output of this task?"* (e.g., a new class, a wired signal, a populated CSV, a working UI panel)
+8. **Verification** — Ask: *"How do you confirm this task is done? What tests or checks?"* Pre-fill from the spec's Acceptance Criteria.
+9. **Verification Mapping** — Map each verification step back to specific spec acceptance criteria. Every AC the task claims to implement should have at least one verification step.
+10. **Out of Scope** — Ask: *"What is explicitly NOT part of this task?"* Clarify boundaries to prevent scope creep during implementation.
+11. **Risks** — Ask: *"What could go wrong? Any technical risks, unknowns, or dependencies on external factors?"*
+12. **Notes** — Ask: *"Any implementation gotchas, engine quirks, or references?"* Pre-fill from relevant engine docs.
 
 ## 5. Create the Task File
 
-Create `scaffold/tasks/TASK-###-<name>.md` with the user's answers.
+Create `scaffold/tasks/TASK-###-<name>_draft.md` with the user's answers.
 
 ## 6. Register
 

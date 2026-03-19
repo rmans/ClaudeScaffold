@@ -11,11 +11,14 @@ Read the completed design doc and use it to pre-fill action-map, input-philosoph
 ## Prerequisites
 
 1. **Read the design doc** at `scaffold/design/design-doc.md`.
-2. **Verify it's sufficiently filled out.** The following sections must have content (not just TODO markers):
+2. **Read the interaction model** at `scaffold/design/interaction-model.md`. This is the Rank 2 canon document that defines how the player interacts with the game — action-map, bindings, and navigation all derive from it. If this file does not exist, stop and tell the user to create it first (e.g., via `/scaffold-new-design` or the interaction-model template).
+3. **Read the engine input doc** at `scaffold/engine/godot4-input-system.md` for input routing, device handling, and pause behavior constraints.
+4. **Read the document authority map** at `scaffold/doc-authority.md` for the influence relationships between input documents and their parent canon docs.
+5. **Verify the design doc is sufficiently filled out.** The following sections must have content (not just TODO markers):
    - Player Verbs
    - Core Loop
    - Input Feel (if present)
-3. If the design doc is too empty, stop and tell the user to run `/scaffold-new-design` first.
+6. If the design doc is too empty, stop and tell the user to run `/scaffold-new-design` first.
 
 ## Phase 1 — Seed Action Map
 

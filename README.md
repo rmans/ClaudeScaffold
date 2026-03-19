@@ -20,35 +20,43 @@ Every design decision, visual style rule, system behavior, interface contract, a
 - **11-rank precedence chain.** When a system design says one thing and a task says another, the system design wins. No ambiguity.
 - **Genre-agnostic design, engine-specific implementation.** The design layer works for any game. The engine layer adapts to Godot, Unity, Unreal, or anything else.
 - **ADR feedback loop.** When implementation reality conflicts with the plan, Architecture Decision Records capture why and feed back into upcoming phases, specs, and tasks.
-- **Draft → Review → Approved → Complete lifecycle.** Documents start as `Draft`, move to `Review` for adversarial scrutiny, are set to `Approved` by `/scaffold-iterate`, and marked `Complete` by `/scaffold-complete` when implementation is done. Completion ripples up from tasks through specs, slices, and phases. Documents can also be `Deprecated` via ADR when no longer active — they remain in place (IDs are permanent) but reviews flag references to them.
+- **Two-loop stabilization.** Every document type follows the same pattern: create → fix → iterate → validate (initial), then revise → fix → iterate → validate (after implementation feedback). Foundation architecture is gated before planning begins.
+- **Draft → Review → Approved → Complete lifecycle.** Documents start as `Draft`, move through adversarial review via `/scaffold-iterate-*`, are set to `Approved` by approval gates, and marked `Complete` by `/scaffold-complete` when implementation is done. Completion ripples up from tasks through specs, slices, and phases.
 - **Token-efficient retrieval.** Index files in every directory let Claude find what it needs without loading entire folders.
-- **63 skills automate the pipeline.** Create, seed, review, iterate, prototype, generate art/audio, and edit documents with slash commands — no manual file wrangling.
+- **71 skills automate the pipeline.** Create, seed, fix, iterate, revise, approve, implement, generate art/audio, and edit documents with slash commands — no manual file wrangling.
 
 ## How It Works
 
 ### The Pipeline
 
-The scaffold follows a strict pipeline from vision to code:
+The scaffold follows a two-loop pipeline from vision to code:
 
 ```
-Design Doc → Style Docs → Systems → Reference Docs → Engine Docs
-    ↓
-Roadmap → Phases → Slices → Specs → Tasks → Code
-    ↑                                         |
-    └──────── ADR Feedback Loop ──────────────┘
+OUTER LOOP (architecture stability)
+├─ Design → Systems → References → Engine → Visual/UX → Inputs
+├─ Foundation Architecture Gate
+│
+├─ INNER LOOP (per phase, per slice)
+│   Roadmap → Phases → Slices → Specs → Tasks → Implementation
+│   ↑                                                |
+│   └──────── ADR / Triage / Revision Feedback ──────┘
+│
+└─ Foundation Recheck → next phase
 ```
 
 1. **Design** — Define the game: vision, pillars, mechanics, loops, scope
-2. **Style** — Lock in visual identity: art style, colors, UI components, terminology
-3. **Systems** — Design each system as player-visible behavior (no engine code)
-4. **Reference** — Extract data tables: signals, entities, resources, balance params
-5. **Engine** — Define how to build it in your target engine
-6. **Plan** — Create a roadmap, break it into phases, slice each phase vertically
-7. **Spec** — Write atomic behavior specs for each slice
-8. **Build** — Create implementation tasks, write code, file ADRs when reality diverges
-9. **Feedback** — ADRs update the roadmap, re-scope upcoming phases and specs
+2. **Systems** — Design each system as player-visible behavior (no engine code)
+3. **References** — Extract data tables: signals, entities, resources, balance params, architecture
+4. **Engine** — Define how to build it in your target engine
+5. **Visual/UX** — Lock in visual identity, interaction model, feedback system, audio direction
+6. **Inputs** — Define player input actions and bindings
+7. **Foundation Gate** — Verify Steps 1–6 are architecturally stable before planning
+8. **Plan** — Create a roadmap, break it into phases, slice each phase vertically
+9. **Spec** — Write atomic behavior specs for each slice
+10. **Build** — Create implementation tasks, write code, run adversarial code review
+11. **Feedback** — ADRs, triage logs, and revision loops update the roadmap and re-scope upcoming work
 
-Each step has a skill that automates it. Each document has a clear authority rank. Nothing is ad-hoc.
+Each step has skills that automate it. Each document has a clear authority rank. Nothing is ad-hoc.
 
 ### Document Authority
 
@@ -57,16 +65,17 @@ When documents conflict, the higher-ranked document wins. Lower documents confor
 | Rank | Document | What It Controls |
 |------|----------|-----------------|
 | 1 | Design doc | Core vision, non-negotiables |
-| 2 | Style guide, color system, UI kit, glossary | Visual identity, terminology |
+| 2 | Style guide, color system, UI kit, glossary, interaction model, feedback system, audio direction | Visual identity, terminology, interaction, audio |
 | 3 | Input docs | Player actions and bindings |
-| 4 | Interfaces, authority table | System contracts, data ownership |
+| 4 | Architecture, interfaces, authority table | Engineering conventions, contracts, data ownership |
 | 5 | System designs, state machines | Per-system behavior |
 | 6 | Reference tables | Signals, entities, resources, balance |
-| 7 | Phase gates | Scope and milestones |
-| 8 | Behavior specs | Atomic testable behaviors |
-| 9 | Implementation tasks | How to build each spec |
+| 7 | Roadmap, phase gates | Scope and milestones |
+| 8 | Slice contracts | Vertical integration |
+| 9 | Behavior specs | Atomic testable behaviors |
 | 10 | Engine docs | Engine-specific constraints |
-| 11 | Theory docs | Advisory only — no authority |
+| 11 | Implementation tasks | How to build each spec |
+| — | Theory docs | Advisory only — no authority |
 
 ### Layer Separation
 
@@ -84,7 +93,6 @@ Documents are separated into layers. No document may mix layers.
 | Slices | What proves this phase works end-to-end? | `slices/` |
 | Engine | How do we build in this engine? | `engine/` |
 | Theory | What do experts recommend? | `theory/` |
-| Validation | Does this approach actually work? | `prototypes/` |
 | Content | What does the game look/sound like? | `art/`, `audio/` |
 
 ### Theory as Advisory Context
@@ -131,7 +139,7 @@ cp ClaudeScaffold/Install/CLAUDE.md /path/to/your/project/
 This gives your project:
 
 ```
-.claude/skills/       ← 63 Claude Code skills
+.claude/skills/       ← 71 Claude Code skills
 scaffold/             ← Document pipeline with templates and indexes
 CLAUDE.md             ← Instructions that tell Claude Code how to use the scaffold
 ```
@@ -140,42 +148,44 @@ See [Install/README.md](Install/README.md) for full installation details.
 
 ## Skills
 
-63 slash commands organized by workflow:
+71 slash commands organized by workflow:
 
-**Create (12):** `/scaffold-new-design`, `/scaffold-new-style`, `/scaffold-new-system`, `/scaffold-new-reference`, `/scaffold-new-engine`, `/scaffold-new-input`, `/scaffold-new-roadmap`, `/scaffold-new-phase`, `/scaffold-new-slice`, `/scaffold-new-spec`, `/scaffold-new-task`, `/scaffold-new-prototype`
+| Category | Skills |
+|----------|--------|
+| **Init** | `init-design` |
+| **Bulk seed (9)** | `bulk-seed-style`, `bulk-seed-systems`, `bulk-seed-references`, `bulk-seed-engine`, `bulk-seed-input`, `bulk-seed-phases`, `bulk-seed-slices`, `bulk-seed-specs`, `bulk-seed-tasks` |
+| **Create (5)** | `new-roadmap`, `new-phase`, `new-slice`, `new-spec`, `new-task` |
+| **Fix (11)** | `fix-design`, `fix-systems`, `fix-references`, `fix-engine`, `fix-roadmap`, `fix-phase`, `fix-slice`, `fix-spec`, `fix-task`, `fix-foundation`, `fix-cross-cutting` |
+| **Iterate (9)** | `iterate-design`, `iterate-systems`, `iterate-references`, `iterate-engine`, `iterate-roadmap`, `iterate-phase`, `iterate-slice`, `iterate-spec`, `iterate-task` |
+| **Revise (8)** | `revise-design`, `revise-systems`, `revise-references`, `revise-engine`, `revise-foundation`, `revise-roadmap`, `revise-phases`, `revise-slices` |
+| **Approve (4)** | `approve-phases`, `approve-slices`, `approve-specs`, `approve-tasks` |
+| **Triage (3)** | `triage-specs`, `triage-tasks`, `reorder-tasks` |
+| **Implement (4)** | `implement-task`, `build-and-test`, `code-review`, `add-regression-tests` |
+| **Complete (1)** | `complete` |
+| **Edit (2)** | `update-doc`, `sync-reference-docs` |
+| **Validate (1)** | `validate` |
+| **Playtest (2)** | `playtest-log`, `playtest-review` |
+| **Art (7)** | `art-concept`, `art-ui-mockup`, `art-character`, `art-environment`, `art-sprite`, `art-icon`, `art-promo` |
+| **Audio (4)** | `audio-music`, `audio-sfx`, `audio-ambience`, `audio-voice` |
 
-**Bulk seed (9):** `/scaffold-bulk-seed-style`, `/scaffold-bulk-seed-systems`, `/scaffold-bulk-seed-references`, `/scaffold-bulk-seed-engine`, `/scaffold-bulk-seed-input`, `/scaffold-bulk-seed-slices`, `/scaffold-bulk-seed-specs`, `/scaffold-bulk-seed-tasks`, `/scaffold-bulk-seed-prototypes`
-
-**Review (22):** `/scaffold-review-design`, `/scaffold-review-style`, `/scaffold-review-system`, `/scaffold-review-reference`, `/scaffold-review-engine`, `/scaffold-review-input`, `/scaffold-review-roadmap`, `/scaffold-review-phase`, `/scaffold-review-slice`, `/scaffold-review-spec`, `/scaffold-review-task`, `/scaffold-review-prototype`, `/scaffold-bulk-review-style`, `/scaffold-bulk-review-systems`, `/scaffold-bulk-review-references`, `/scaffold-bulk-review-engine`, `/scaffold-bulk-review-input`, `/scaffold-bulk-review-phases`, `/scaffold-bulk-review-slices`, `/scaffold-bulk-review-specs`, `/scaffold-bulk-review-tasks`, `/scaffold-bulk-review-prototypes`
-
-**Iterate (1):** `/scaffold-iterate`
-
-**Complete (1):** `/scaffold-complete`
-
-**Edit (1):** `/scaffold-update-doc`
-
-**Validate (1):** `/scaffold-validate`
-
-**Playtest (2):** `/scaffold-playtest-log`, `/scaffold-playtest-review`
-
-**Prototype (1):** `/scaffold-prototype-log`
-
-**Art (8):** `/scaffold-art-concept`, `/scaffold-art-ui-mockup`, `/scaffold-art-character`, `/scaffold-art-environment`, `/scaffold-art-sprite`, `/scaffold-art-icon`, `/scaffold-art-promo`, `/scaffold-review-art`
-
-**Audio (5):** `/scaffold-audio-music`, `/scaffold-audio-sfx`, `/scaffold-audio-ambience`, `/scaffold-audio-voice`, `/scaffold-review-audio`
+All skill names are prefixed with `/scaffold-` (e.g., `/scaffold-init-design`).
 
 ### Recommended Workflow
 
 ```
-1.  /scaffold-new-design              ← fill out the design doc
-2.  /scaffold-bulk-seed-style         ← seed style, color, and UI docs
-3.  /scaffold-bulk-seed-systems       ← glossary + system stubs
-4.  Fill in each system design
-5.  /scaffold-bulk-seed-references    ← populate reference docs
-6.  /scaffold-bulk-seed-engine        ← select engine, seed engine docs
-7.  Review skills                     ← audit everything
-8.  /scaffold-new-roadmap             ← create the project roadmap
-9.  /scaffold-new-phase → /scaffold-new-slice → /scaffold-new-spec → /scaffold-new-task
+1.  /scaffold-init-design              ← fill out the design doc
+2.  /scaffold-fix-design               ← mechanical cleanup
+3.  /scaffold-iterate-design           ← adversarial review
+4.  /scaffold-bulk-seed-systems        ← glossary + system stubs
+5.  Fill in each system design
+6.  /scaffold-bulk-seed-references     ← populate reference docs
+7.  /scaffold-bulk-seed-engine         ← select engine, seed engine docs
+8.  /scaffold-bulk-seed-style          ← seed visual/UX docs
+9.  /scaffold-revise-foundation        ← verify architecture stability
+10. /scaffold-new-roadmap              ← create the project roadmap
+11. /scaffold-bulk-seed-phases         ← seed phases from roadmap
+12. /scaffold-approve-phases           ← gate first phase
+13. Per phase: seed slices → approve → seed specs/tasks → approve → implement
 ```
 
 See `scaffold/WORKFLOW.md` for the full 24-step recipe.
@@ -194,42 +204,41 @@ scaffold/
 │   ├── color-system.md              #   Color palette and rules (rank 2)
 │   ├── ui-kit.md                    #   UI component definitions (rank 2)
 │   ├── glossary.md                  #   Canonical terminology + NOT column (rank 2)
+│   ├── interaction-model.md         #   Player interaction patterns (rank 2)
+│   ├── feedback-system.md           #   Game feel and feedback coordination (rank 2)
+│   ├── audio-direction.md           #   Audio philosophy and sound categories (rank 2)
+│   ├── architecture.md              #   Engineering conventions (rank 4)
 │   ├── interfaces.md                #   System interface contracts (rank 4)
 │   ├── authority.md                 #   Data ownership per variable (rank 4)
 │   ├── state-transitions.md         #   All state machines (rank 5)
 │   └── systems/                     #   Individual system designs (rank 5)
 │
 ├── inputs/                          # CANON: input control definitions (rank 3)
-│   ├── action-map.md                #   Canonical action IDs
-│   ├── default-bindings-kbm.md      #   Keyboard/mouse defaults
-│   ├── default-bindings-gamepad.md  #   Gamepad defaults
-│   ├── ui-navigation.md             #   Focus flow and navigation
-│   └── input-philosophy.md          #   Input design principles
-│
 ├── reference/                       # Canonical data tables (rank 6)
-│   ├── signal-registry.md           #   Cross-system signals + intents
-│   ├── entity-components.md         #   Entity fields, types, cadence
-│   ├── resource-definitions.md      #   Resources, tiers, production chains
-│   └── balance-params.md            #   Tunable numbers, ranges, units
 │
-├── decisions/                       # ADRs + tracking
-│   ├── known-issues.md              #   TBDs, gaps, conflicts
-│   └── design-debt.md               #   Intentional compromises
+├── decisions/                       # Decision tracking
+│   ├── architecture-decision-record/ #   ADRs (ADR-###)
+│   ├── known-issues/                #   TBDs, gaps, conflicts (KI-###)
+│   ├── design-debt/                 #   Intentional compromises (DD-###)
+│   ├── playtest-feedback/           #   Playtester observations (PF-###)
+│   ├── cross-cutting-finding/       #   Cross-doc integrity issues (XC-###)
+│   ├── code-review/                 #   Adversarial code review logs
+│   ├── revision-log/                #   Drift detection records
+│   ├── triage-log/                  #   Triage decision records
+│   └── review/                      #   Adversarial document review logs
 │
 ├── phases/                          # Scope gates (rank 7)
-├── specs/                           # Atomic behavior specs (rank 8)
-├── tasks/                           # Implementation steps (rank 9)
-├── slices/                          # Vertical slice contracts
+├── slices/                          # Vertical slice contracts (rank 8)
+├── specs/                           # Atomic behavior specs (rank 9)
 ├── engine/                          # Engine-specific constraints (rank 10)
-├── theory/                          # Advisory only — no authority (rank 11)
-├── reviews/                         # Adversarial review logs from /scaffold-iterate
-├── prototypes/                      # Throwaway code spikes (PROTO-###)
-├── art/                             # Generated art assets (concept, UI, character, etc.)
-├── audio/                           # Generated audio assets (music, SFX, ambience, voice)
-├── templates/                       # Document + engine templates
+├── tasks/                           # Implementation steps (rank 11)
+├── theory/                          # Advisory only — no authority
+├── art/                             # Generated art assets
+├── audio/                           # Generated audio assets
+├── templates/                       # Document + engine templates (44 total)
 └── tools/                           # Scripts and utilities
 ```
 
 ## License
 
-<!-- Add your license here. -->
+MIT License. See [LICENSE](LICENSE) for details.
