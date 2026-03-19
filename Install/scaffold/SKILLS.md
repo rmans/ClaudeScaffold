@@ -57,6 +57,7 @@
 | `/scaffold-revise-systems` | `[--source SLICE-###]` | Detect system design drift from implementation feedback |
 | `/scaffold-revise-references` | `[--source SLICE-###]` | Detect Step 3 doc drift from implementation feedback |
 | `/scaffold-revise-engine` | `[--source SLICE-###]` | Detect engine doc drift from implementation feedback |
+| `/scaffold-revise-style` | `[--source SLICE-###]` | Detect Step 5 visual/UX doc drift from implementation feedback |
 | `/scaffold-revise-foundation` | `[--mode initial\|recheck]` | Verify foundation stability, dispatch revision loops |
 | `/scaffold-revise-roadmap` | — | Update roadmap after phase completion |
 | `/scaffold-revise-phases` | `[--source P#-###]` | Update remaining phases from implementation feedback |

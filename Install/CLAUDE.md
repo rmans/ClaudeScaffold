@@ -146,3 +146,62 @@ The project version is tracked in `VERSION.md` in the project root. Format: `MAJ
 - `[Removed]` — removed features, deprecated systems, descoped content
 - `[Balanced]` — tuning changes, balance parameter adjustments
 - `[Resolved]` — closed known issues, addressed ADR feedback, resolved design debt
+
+## Cross-Reference Checklist
+
+When creating or modifying scaffold documents, check and update these related files as appropriate. Most of these are handled automatically by skills, but manual edits should follow the same discipline.
+
+### Design Layer (Steps 1–3)
+
+| When you change... | Also update... |
+|---------------------|---------------|
+| `design/design-doc.md` (Core Fantasy, Pillars, Invariants) | `design/style-guide.md` tone registers, `design/glossary.md` if new terms introduced |
+| `design/design-doc.md` System Design Index | `design/systems/_index.md` — must match bidirectionally |
+| `design/systems/SYS-###` (new system) | `design/systems/_index.md`, `design/design-doc.md` System Design Index, `design/authority.md` (owned state), `design/interfaces.md` (if it interacts with other systems) |
+| `design/systems/SYS-###` (Owned State changed) | `design/authority.md`, `reference/entity-components.md` |
+| `design/systems/SYS-###` (dependencies/consequences changed) | `design/interfaces.md`, `reference/signal-registry.md` |
+| `design/systems/SYS-###` (State Lifecycle changed) | `design/state-transitions.md`, `reference/enums-and-statuses.md` |
+| `design/architecture.md` | Engine docs that implement the changed section (scene-architecture, simulation-runtime, coding-best-practices) |
+| `design/authority.md` (ownership changed) | `reference/entity-components.md` Authority column |
+| `design/interfaces.md` (new contract) | `reference/signal-registry.md` if Realization Path is signal/intent |
+| `design/state-transitions.md` (states added) | `reference/enums-and-statuses.md`, `design/color-system.md` (state tokens) |
+| `design/glossary.md` (new term or NOT-column entry) | All docs — validate checks compliance |
+
+### Visual/UX Layer (Step 5)
+
+| When you change... | Also update... |
+|---------------------|---------------|
+| `design/style-guide.md` (tone, pillars) | `design/color-system.md` palette mood, `design/audio-direction.md` mood |
+| `design/color-system.md` (tokens added/renamed) | `design/ui-kit.md` token references, `design/feedback-system.md` visual column |
+| `design/ui-kit.md` (components added/removed) | `design/interaction-model.md` if interactive, `design/feedback-system.md` UI column |
+| `design/interaction-model.md` (actions added) | `design/feedback-system.md` Event-Response Table, `design/ui-kit.md` affordances |
+| `design/feedback-system.md` (events added) | `design/audio-direction.md` sound categories, `design/color-system.md` if new priority tokens needed |
+| `design/feedback-system.md` (priority hierarchy changed) | `design/audio-direction.md` hierarchy must match |
+
+### Reference Layer (Step 3 data)
+
+| When you change... | Also update... |
+|---------------------|---------------|
+| `reference/entity-components.md` (new entity) | `design/style-guide.md` visual description, `design/ui-kit.md` display component |
+| `reference/resource-definitions.md` (new resource) | `design/ui-kit.md` resource representation |
+| `reference/signal-registry.md` (new signal) | `design/feedback-system.md` Event-Response Table if player-visible |
+| `reference/balance-params.md` (new parameter) | Specs and tasks that use the parameter |
+
+### Planning Layer (Steps 7–11)
+
+| When you change... | Also update... |
+|---------------------|---------------|
+| `phases/roadmap.md` | `phases/_index.md` must match Phase Overview |
+| `phases/P#-###` (new phase) | `phases/_index.md`, `phases/roadmap.md` Phase Overview and Capability Ladder |
+| `slices/SLICE-###` (new slice) | `slices/_index.md`, parent phase file Slice Strategy section |
+| `specs/SPEC-###` (new spec) | `specs/_index.md`, parent slice Specs table |
+| `tasks/TASK-###` (new task) | `tasks/_index.md`, parent slice Tasks table |
+| Any planning doc status change | Filename suffix must match (`_draft`, `_approved`, `_complete`), parent tables must reflect new status |
+
+### Decision Layer
+
+| When you change... | Also update... |
+|---------------------|---------------|
+| `decisions/ADR-###` accepted | The upstream doc the ADR modifies, `VERSION.md` changelog |
+| `decisions/known-issues.md` entry resolved | The doc that was blocked, remove blocking reference |
+| Task/spec/slice/phase completed | `VERSION.md` — bump appropriate version segment |

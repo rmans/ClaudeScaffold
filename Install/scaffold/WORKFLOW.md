@@ -399,6 +399,14 @@ Validates Step 5 doc structural integrity, content health, cross-doc consistency
 
 > **Art & Audio:** With style docs in place, you can now generate visual and audio assets at any point. See the Quick Reference table for all art and audio skills.
 
+### 5e — Revise (post-implementation feedback loop)
+
+```
+/scaffold-revise-style [--source P#-###|SLICE-###|foundation-recheck] [--signals ADR-###,KI:keyword,PLAYTEST:keyword] [--target doc.md]
+```
+
+Detect Step 5 doc drift from implementation feedback. Reads ADRs, known issues, playtest feedback patterns, design doc changes, system doc changes, Step 3 doc changes, spec/task friction, and code review findings. Classifies each signal as design-led (upstream authority changed), playtest-led (player feedback pattern), or implementation-led (code diverged without approval). Auto-updates safe changes: missing tokens, stale references, new feedback entries (conservative defaults — never auto-adds Critical events), cross-doc alignment. Escalates aesthetic direction changes, interaction model changes, priority hierarchy changes, accessibility changes (always escalates even with ADR), component removals, and token system restructures. Follows Step 5 authority flow: style-guide → color-system → ui-kit; feedback-system → audio-direction. Supports `--target` for single-doc focus and `--signals` for targeted dispatch from revise-foundation.
+
 ---
 
 ## Step 6 — Input Model
@@ -979,7 +987,7 @@ The pipeline stops on failure — build errors, test failures, or unresolvable r
 
 After all slices in a phase are complete:
 
-6. **Run the foundation architecture pipeline (Step 7a–7d in recheck mode):** `/scaffold-revise-foundation --mode recheck` detects drift and dispatches doc revisions — including `/scaffold-revise-design` (Step 1 drift), `/scaffold-revise-systems` (Step 2 drift), `/scaffold-revise-references` (Step 3 drift), and `/scaffold-revise-engine` (Step 4 drift). Then `fix-foundation` runs cross-doc integration, `validate --scope foundation` gates, and `fix-cross-cutting` resolves any cross-cutting findings. If revise-design was dispatched, re-run the Step 1 stabilization loop. If revise-engine was dispatched, re-run: fix-engine → iterate-engine → validate --scope engine. If no drift, proceeds directly.
+6. **Run the foundation architecture pipeline (Step 7a–7d in recheck mode):** `/scaffold-revise-foundation --mode recheck` detects drift and dispatches doc revisions — including `/scaffold-revise-design` (Step 1 drift), `/scaffold-revise-systems` (Step 2 drift), `/scaffold-revise-references` (Step 3 drift), `/scaffold-revise-engine` (Step 4 drift), and `/scaffold-revise-style` (Step 5 drift). Then `fix-foundation` runs cross-doc integration, `validate --scope foundation` gates, and `fix-cross-cutting` resolves any cross-cutting findings. If revise-design was dispatched, re-run the Step 1 stabilization loop. If revise-engine was dispatched, re-run: fix-engine → iterate-engine → validate --scope engine. If revise-style was dispatched, re-run: fix-style → iterate-style → validate --scope style. If no drift, proceeds directly.
 7. **Revise the roadmap (Steps 8e–8h):** revise-roadmap → fix-roadmap → iterate-roadmap → validate --scope roadmap. Full stabilization loop on the revised roadmap before phase revision, so remaining phases are adjusted against the latest roadmap state rather than a stale macro plan.
 8. **Revise remaining phases:** `/scaffold-revise-phases P#-###` (Step 9f) — reads ADRs, KIs, playtest patterns, triage logs, foundation recheck results, slice review logs, implementation friction signals. Four-tier classification with direct-apply path. Approved phases stay Approved.
 9. Fix, iterate, validate, and approve the next phase (Steps 9g–9j).
@@ -1038,6 +1046,7 @@ The outer loop is a stability check. Most cycles pass through quickly — it onl
 | Skill | What | Why | How |
 |-------|------|-----|-----|
 | `bulk-seed-style` | Create style/UX docs (6 total) | Define visual language, interaction, feedback, audio | Seeds 6 docs in order: style-guide → color-system → ui-kit → interaction-model → feedback-system → audio-direction. Auto-writes high-confidence, tags medium in changelog, leaves low as TODO. Design doc and system designs are primary sources; architecture/reference/engine are secondary constraints. Pauses only on ambiguous or high-impact decisions. Reports confidence, assumptions, and cross-doc tensions. |
+| `revise-style` | Post-implementation drift (Step 5) | Keep style docs matching accepted reality | Signal-driven. Reads ADRs/KIs/playtest patterns/design doc changes/system changes/Step 3 changes/code review/task friction. Auto-updates safe changes (tokens, entries, alignment), escalates aesthetic/interaction/accessibility with CRITICAL/HIGH/MEDIUM priority. Playtest patterns rank above individual specs. Follows Step 5 authority flow. Supports `--target` and `--signals` |
 
 ### Step 6 — Input
 
@@ -1049,7 +1058,7 @@ The outer loop is a stability check. Most cycles pass through quickly — it onl
 
 | Skill | What | Why | How |
 |-------|------|-----|-----|
-| `revise-foundation` | Orchestrate foundation revisions | Dispatch to affected Step 1-6 skills | Initial: readiness check. Recheck: reads feedback, dispatches revision loops (revise-design, revise-systems, revise-references, revise-engine) with --signals. Explicit skill-by-skill dispatch |
+| `revise-foundation` | Orchestrate foundation revisions | Dispatch to affected Step 1-6 skills | Initial: readiness check. Recheck: reads feedback, dispatches revision loops (revise-design, revise-systems, revise-references, revise-engine, revise-style) with --signals. Explicit skill-by-skill dispatch |
 | `fix-foundation` | Cross-document integration | Resolve cross-doc contradictions | Auto-fixes authority-architecture mismatches, missing interfaces, signal gaps. Surfaces Lock/Partial/Defer decisions |
 | `validate --scope foundation` | Foundation gate | Verify cross-doc consistency | 8 checks: docs exist, area coverage, area status, authority consistency, interface completeness, signals, entities, freshness |
 | `fix-cross-cutting` | Resolve cross-cutting findings | Fix decision closure, workflow, staleness issues | Reads cross-cutting-findings.md. Auto-fixes safe items, dispatches missing pipeline steps, escalates judgment calls. Supports `--category` and `--id` |

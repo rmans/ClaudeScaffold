@@ -4,7 +4,7 @@
 > **Status:** Proposed | Accepted | Deprecated | Superseded by ADR-###
 > **Date:** YYYY-MM-DD
 > **Last Updated:** YYYY-MM-DD
-> **Triggered by:** <!-- What prompted this ADR? Examples: TASK-015 implementation friction, CODE-REVIEW finding, iterate-spec SPEC-042 escalation, KI-011 resolution, triage-tasks SLICE-009 upstream action, revise-references authority conflict. Be specific — this is how the pipeline traces why decisions exist. -->
+> **Triggered by:** <!-- What prompted this ADR? Examples: TASK-015 implementation friction, CODE-REVIEW finding, iterate-spec SPEC-042 escalation, KI-011 resolution, triage-tasks SLICE-009 upstream action, revise-references authority conflict, revise-style accessibility escalation. Be specific — this is how the pipeline traces why decisions exist. -->
 > **Changelog:**
 > - YYYY-MM-DD: Initial proposal.
 

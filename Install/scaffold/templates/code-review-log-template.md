@@ -57,6 +57,14 @@
 |-----------|---------|-------------|
 | <!-- e.g., coding-best-practices --> | <!-- e.g., Signal Naming --> | <!-- what the code does vs what the doc says --> |
 
+## Style Doc Drift Detected
+
+<!-- If the review revealed UI implementations, color values, or feedback patterns that differ from Step 5 doc definitions, note them here. These feed into revise-style. -->
+
+| Style Doc | Section | Observation |
+|-----------|---------|-------------|
+| <!-- e.g., ui-kit --> | <!-- e.g., Component States --> | <!-- what the code does vs what the doc says --> |
+
 ## Notes
 
 <!-- Any observations, patterns, or follow-up items. -->

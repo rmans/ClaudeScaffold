@@ -138,7 +138,7 @@ See `scaffold/WORKFLOW.md` for the full 24-step recipe.
 | **Create** | `new-roadmap`, `new-phase`, `new-slice`, `new-spec`, `new-task` |
 | **Fix** | `fix-design`, `fix-style`, `fix-systems`, `fix-references`, `fix-engine`, `fix-roadmap`, `fix-phase`, `fix-slice`, `fix-spec`, `fix-task`, `fix-foundation`, `fix-cross-cutting` |
 | **Iterate** | `iterate-design`, `iterate-style`, `iterate-systems`, `iterate-references`, `iterate-engine`, `iterate-roadmap`, `iterate-phase`, `iterate-slice`, `iterate-spec`, `iterate-task` |
-| **Revise** | `revise-design`, `revise-systems`, `revise-references`, `revise-engine`, `revise-foundation`, `revise-roadmap`, `revise-phases`, `revise-slices` |
+| **Revise** | `revise-design`, `revise-systems`, `revise-references`, `revise-engine`, `revise-style`, `revise-foundation`, `revise-roadmap`, `revise-phases`, `revise-slices` |
 | **Approve** | `approve-phases`, `approve-slices`, `approve-specs`, `approve-tasks` |
 | **Triage** | `triage-specs`, `triage-tasks`, `reorder-tasks` |
 | **Implement** | `implement-task`, `build-and-test`, `code-review`, `add-regression-tests` |

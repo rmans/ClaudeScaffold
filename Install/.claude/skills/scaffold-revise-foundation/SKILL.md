@@ -201,13 +201,17 @@ For each affected layer, run the following skills in sequence. Wait for each ski
 
 **Skills to run:**
 
-1. `/scaffold-bulk-review-style`
-   - **What:** Audits all Rank 2 docs for completeness and cross-doc consistency (style ↔ colors ↔ UI kit ↔ interaction model ↔ audio direction ↔ glossary ↔ design doc ↔ system designs ↔ engine docs).
-   - **Why:** Detects misalignment between visual/UX docs and the (potentially just-revised) design doc, system designs, architecture, or engine constraints.
-2. `/scaffold-iterate design/style-guide.md` (and/or color-system, ui-kit, interaction-model, audio-direction — whichever were flagged)
-   - **What:** Adversarial review of the affected visual/UX doc(s).
-   - **Why:** Bulk review catches structural issues; iterate catches conceptual drift.
-   - **When to skip:** If bulk-review found no issues, skip iterate.
+1. `/scaffold-revise-style --source foundation-recheck --signals [signals]`
+   - **What:** Reads only the specific drift signals passed via `--signals`. Classifies each as design-led, playtest-led, or implementation-led. Auto-updates safe changes (missing tokens, stale references, new feedback entries, cross-doc alignment). Escalates aesthetic direction changes, interaction model changes, priority hierarchy changes, accessibility changes, and component removals.
+   - **Why:** Targeted revision — doesn't re-scan everything, just processes signals this skill identified. Respects Step 5 authority flow (style-guide → color-system → ui-kit; feedback-system → audio-direction).
+2. `/scaffold-fix-style --target [affected-doc.md]`
+   - **What:** Mechanical cleanup targeted at the specific doc(s) that were revised. Per-doc structural checks plus cross-doc consistency across all 6 Step 5 docs. Auto-fixes alignment issues. Detects design signals.
+   - **Why:** Revise may have added tokens, feedback entries, or interaction mappings — fix-style catches mechanical inconsistencies introduced by those changes and propagates alignment fixes.
+   - **Target selection:** If drift affected a single doc, target it. If multiple docs affected, run without `--target` to fix all.
+3. `/scaffold-iterate-style --target [affected-doc.md] --topics "[affected topics]"`
+   - **What:** Adversarial review focused on the revised areas of the affected Step 5 doc(s).
+   - **Why:** Revise and fix catch mechanical issues; iterate catches conceptual drift in aesthetic direction, interaction design, and feedback coherence.
+   - **When to skip:** If revise-style and fix-style found no issues and no design signals, skip iterate.
 
 #### Step 6 — Inputs (if affected)
 
