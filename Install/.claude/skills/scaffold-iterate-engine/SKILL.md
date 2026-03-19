@@ -224,6 +224,11 @@ This topic compares engine docs against each other, looking for internal contrad
 - Are engine docs that share the same Step 3 dependency consistently constrained? If simulation-runtime is constrained on "tick model TBD," are ai-task-execution and save-load also constrained on the same dependency?
 - Are there engine docs that pre-fill sections that other docs correctly mark as constrained? That's a consistency error — one doc is guessing while another correctly waits.
 
+**Practical source-of-truth drift:**
+- Is any downstream or sibling engine doc becoming the de facto source of truth because it is more detailed, more actionable, or more current-looking than the doc that should own the convention? This is the most common form of cross-engine drift because it looks justified.
+- Example: coding-best-practices is more detailed and current than scene-architecture. Developers start following coding-best-practices for node lifecycle patterns even when scene-architecture should be canonical. Now practical truth has drifted.
+- Flag when: a doc is more detailed than its peer on a topic the peer should own; developers would naturally read doc A instead of doc B for a convention doc B is supposed to define; two docs both describe the same pattern at different levels of detail without cross-referencing.
+
 **Exemplar findings:**
 - "coding-best-practices says signal names use snake_case, but ai-task-execution uses camelCase for 3 signals."
 - "scene-architecture wires signals in `_ready()`, but simulation-runtime uses an autoload SignalBus. Two wiring patterns for the same project."
@@ -280,6 +285,23 @@ When a developer would need to guess, classify the gap to determine the correct 
 - "coding-best-practices assumes familiarity with GDExtension C++ that the project owner doesn't have. Needs more explanatory context."
 - "Rules section says 'follow SOLID principles' — that's not enforceable in a code review. What specific patterns are required or forbidden?"
 - "ui-best-practices has no Project Overrides, but the project uses a non-standard panel system described in the design doc's UI Kit."
+
+**Minimum implementable path test (mandatory):**
+
+Pick one representative gameplay flow and trace it through the engine docs end-to-end. Choose a flow that involves interruption, not just happy path.
+
+Example: *"Colonist gets hungry → task system chooses food task → food reserved → walk begins → food consumed by another colonist → task interrupted → state recovers → UI updates → debug trace explains it → save/load mid-flow still works"*
+
+Trace through:
+1. **simulation-runtime** — does the tick model handle this flow's ordering and timing?
+2. **ai-task-execution** — does task discovery, reservation, interruption, and recovery all work?
+3. **save-load-architecture** — if saved mid-walk, does the sim restore correctly?
+4. **scene-architecture** — are all nodes in the right lifecycle state during each step?
+5. **coding-best-practices** — do handle validation and error handling cover the interruption?
+6. **debugging-and-observability** — can a developer trace why the colonist is now idle?
+7. **ui-best-practices** — does the UI reflect the state change at each step?
+
+If any step is unclear, undefined, or contradictory across engine docs → **fail**. Report which doc and which step broke. This catches seam failures faster than any per-doc review.
 
 Core question: *if you handed this doc to a new developer on their first day, could they write correct code — or would they need to ask questions the doc should have answered?*
 
@@ -415,6 +437,23 @@ Include these detection patterns in the reviewer's system prompt. They represent
 For every engine doc in scope, the reviewer must run the doc's specialized failure-mode check **in addition to** the topic questions. This is not optional — it is mandatory and high-priority. If iteration budget is constrained, run per-doc interrogation even if some topics are skipped. Topics find structured correctness issues; per-doc interrogation finds real implementation failures.
 
 Each doc section ends with a **First Failure Scenario** (required) and a **Top Risk** (required).
+
+**Doc priority order** (when budget is tight, interrogate in this order):
+1. simulation-runtime — tick correctness affects every system
+2. save-load-architecture — persistence failures corrupt game state
+3. ai-task-execution — task lifecycle is the most interruption-heavy code path
+4. scene-architecture — boot races and lifecycle errors are invisible until they crash
+5. coding-best-practices — convention drift compounds across all implementation
+6. debugging-and-observability — without tracing, all other failures are opaque
+7. ui-best-practices — UI is the player's window into simulation state
+8. input-system — input routing errors block all player interaction
+9. performance-budget — budget math determines whether the game runs
+10. data-and-content-pipeline — content errors surface at runtime
+11. build-and-test-workflow — build failures block all validation
+12. asset-import-pipeline — import errors are caught late
+13. localization — translation issues are cosmetic until they break layout
+14. post-processing — visual effects rarely cause correctness failures
+15. implementation-patterns — patterns grow from implementation, not ahead of it
 
 ### simulation-runtime
 
