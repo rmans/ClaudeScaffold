@@ -34,7 +34,7 @@ After each topic's review cycle completes, the reviewer must answer these 5 ques
 | # | Question |
 |---|----------|
 | 1 | **What breaks if this doc is wrong?** Be concrete: player confusion, unreadable states, inconsistent UI, silent audio conflicts, impossible interactions. |
-| 2 | **What will developers guess here?** List 1–3 implicit decisions not explicitly defined that a developer would have to infer. |
+| 2 | **What will developers guess here — and guess differently?** Identify 1–3 decisions not explicitly defined that are likely to produce inconsistent implementations across developers. |
 | 3 | **Where will two developers diverge?** Same spec, different implementation — identify the exact ambiguity. |
 | 4 | **What is most likely to drift over time?** Where future changes will silently break consistency with other Step 5 docs. |
 | 5 | **What is the hardest edge case this doc must define — but currently doesn't?** The scenario that exposes the biggest gap. |
@@ -286,6 +286,31 @@ The reviewer must answer:
 
 If priority is unclear under load → **fail**.
 
+**Sustained play stress test (mandatory):**
+
+Simulate 5–10 minutes of continuous gameplay with repeated alerts, multiple system state changes, and frequent player commands.
+
+The reviewer must answer:
+1. What becomes background noise over time?
+2. Which signals lose meaning due to repetition?
+3. Which feedback becomes annoying or ignorable?
+4. Does the system escalate appropriately, or flatten into constant urgency?
+5. Do any channels (visual, audio, UI) become saturated?
+
+If the system loses clarity over sustained play → **fail**. Most UX systems pass moment-to-moment checks and fail over time.
+
+**First-time vs expert use test (mandatory):**
+
+For one interaction, evaluate both discovery and efficiency:
+
+The reviewer must answer:
+1. Is the action discoverable without prior knowledge?
+2. Is the feedback understandable without learned conventions?
+3. Does repeated use become faster or more efficient?
+4. Are there unnecessary confirmations or friction for expert use?
+
+If the system is only intuitive OR only efficient (but not both) → **fail**.
+
 **Spec derivation test (mandatory):**
 
 Pick one interaction and attempt to write a behavior spec from the 6 docs.
@@ -348,6 +373,8 @@ Include these detection patterns in the reviewer's system prompt.
 7. **Feedback coordination gap** — feedback-system describes coordinated responses, but the individual docs it coordinates were written independently without referencing the coordination rules.
 
 8. **Scope creep into engine territory** — UI-kit defines screen maps. Interaction-model defines input routing. Feedback-system defines signal dispatch. Audio-direction defines audio middleware. Each drifts from "what" into "how."
+
+9. **False precision** — the docs contain highly specific rules (exact timings, rigid token systems, detailed spacing values, strict priority orders) that appear precise but are not grounded in actual gameplay needs or are inconsistent across scenarios. Test: does this rule still make sense under stress, variation, or edge cases? Fake precision is more dangerous than vagueness because it looks authoritative but breaks silently.
 
 ## Arguments
 
@@ -470,6 +497,17 @@ Every issue raised by the reviewer must be classified into exactly one outcome:
 | **Flag for revise-design** | Design doc is likely incomplete or ambiguous on visual/UX direction. |
 | **Defer (valid TBD)** | Correctly blocked by an unresolved design decision. Not a gap — an honest wait. |
 | **Flag ambiguous design intent** | Design doc permits multiple valid interpretations and the Step 5 doc chose one. Flag for user decision. |
+
+**Severity classification (per issue):**
+
+| Severity | Criteria | Iteration behavior |
+|----------|---------|-------------------|
+| **Critical** | Breaks end-to-end scenario, spec derivation, or mandatory gate | Must be resolved before continuing iteration |
+| **High** | Causes cross-doc inconsistency or developer divergence | Resolve in current iteration if possible |
+| **Medium** | Reduces clarity or increases implementation risk | May accumulate across iterations |
+| **Low** | Polish or preference-level issue | Address after all higher-severity issues |
+
+Critical issues block iteration progress. Lower-severity issues can accumulate to prevent wasting cycles on low-value debates.
 
 **Adjudication rules:**
 - Prefer fixing Step 5 docs over escalating — most issues are presentation-level clarity.
