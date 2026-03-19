@@ -1,8 +1,8 @@
 ---
 name: scaffold-validate
-description: Run cross-reference and planning-pipeline validation across all scaffold documents. Reports broken references, missing registrations, glossary violations, synchronization drift across spec and task pipelines, engine doc structural integrity, Step 5 style doc validation (structure, tokens, boundaries, accessibility, design intent, signal clarity), cross-cutting integrity (decision closure, workflow compliance, staleness), and cross-layer integrity (pipeline deadlock detection, change impact surface, orphan concepts, implementation coherence, semantic overlap). Outputs a Validation Verdict (PASS/WARN/FAIL) with severity-weighted issue counts. Enforcement mode blocks downstream progression on FAIL. Incremental mode validates only changed files and their dependents.
+description: Run cross-reference and planning-pipeline validation across all scaffold documents. Reports broken references, missing registrations, glossary violations, synchronization drift across spec and task pipelines, engine doc structural integrity, Step 5 style doc validation (structure, tokens, boundaries, accessibility, design intent, signal clarity), Step 6 input doc validation (action traceability, binding coverage, collision detection, navigation completeness, upstream alignment), cross-cutting integrity (decision closure, workflow compliance, staleness), and cross-layer integrity (pipeline deadlock detection, change impact surface, orphan concepts, implementation coherence, semantic overlap). Outputs a Validation Verdict (PASS/WARN/FAIL) with severity-weighted issue counts. Enforcement mode blocks downstream progression on FAIL. Incremental mode validates only changed files and their dependents.
 allowed-tools: Read, Edit, Write, Bash, Grep, Glob
-argument-hint: [--scope all|design|systems|foundation|roadmap|phases|slices|tasks|specs|refs|engine|style] [--range SYS-###-SYS-###] [--incremental]
+argument-hint: [--scope all|design|systems|foundation|roadmap|phases|slices|tasks|specs|refs|engine|style|input] [--range SYS-###-SYS-###] [--incremental]
 ---
 
 # Validate Cross-References
@@ -13,7 +13,7 @@ Run cross-reference and planning-pipeline validation, then report issues.
 
 | Argument | Required | Default | Description |
 |----------|----------|---------|-------------|
-| `--scope` | No | `all` | Which checks to run: `all` (everything), `design` (design doc structure, governance, and cross-references), `systems` (system design structural checks), `foundation` (foundation architecture completeness), `roadmap` (roadmap structure and coverage), `phases` (phase pipeline checks only), `slices` (slice pipeline checks only), `tasks` (task/slice/triage pipeline checks only), `specs` (spec/slice pipeline checks only), `refs` (reference-layer validation — scripted ID/glossary checks plus expanded Step 3 doc structure, value validity, and cross-doc consistency checks), `engine` (engine doc structure, content health, Step 3 alignment, cross-engine consistency, and layer boundary compliance), `style` (Step 5 visual/UX doc structure, content health, cross-doc consistency, authority flow, boundary compliance, and accessibility coherence) |
+| `--scope` | No | `all` | Which checks to run: `all` (everything), `design` (design doc structure, governance, and cross-references), `systems` (system design structural checks), `foundation` (foundation architecture completeness), `roadmap` (roadmap structure and coverage), `phases` (phase pipeline checks only), `slices` (slice pipeline checks only), `tasks` (task/slice/triage pipeline checks only), `specs` (spec/slice pipeline checks only), `refs` (reference-layer validation — scripted ID/glossary checks plus expanded Step 3 doc structure, value validity, and cross-doc consistency checks), `engine` (engine doc structure, content health, Step 3 alignment, cross-engine consistency, and layer boundary compliance), `style` (Step 5 visual/UX doc structure, content health, cross-doc consistency, authority flow, boundary compliance, and accessibility coherence), `input` (Step 6 input doc structure, action traceability, binding coverage, navigation completeness, cross-doc consistency, and upstream alignment) |
 | `--range` | No | all | For `--scope systems`: `SYS-###` or `SYS-###-SYS-###` to validate a specific system or range. If omitted, validates all systems. |
 | `--incremental` | No | off | Only validate files changed since the last successful validation (or last commit if no prior run). Automatically includes dependents of changed files. See Step 0b. |
 
@@ -33,6 +33,7 @@ Parse the `--scope` argument from `$ARGUMENTS`:
 - `--scope refs` → run Step 1 (Python script) AND Step 2j (expanded reference checks). Skip all other steps.
 - `--scope engine` → run only Step 2k (engine-pipeline checks). Skip all other steps.
 - `--scope style` → run only Step 2m (style-pipeline checks). Skip all other steps.
+- `--scope input` → run only Step 2o (input-pipeline checks). Skip all other steps.
 - `--scope all` or no argument → run all steps.
 
 ### 0b. Incremental Mode (when `--incremental` is set)
@@ -820,6 +821,154 @@ These compare Step 5 docs against each other. Require at least 3 Step 5 docs to 
 
 ---
 
+### 2o. Input-Pipeline Checks (scope: `all` or `input`)
+
+Run these checks to validate Step 6 input doc structural integrity, action traceability, binding coverage, navigation completeness, cross-doc consistency, and upstream alignment.
+
+**Target docs:**
+
+| Doc | Path |
+|-----|------|
+| action-map.md | `inputs/action-map.md` |
+| input-philosophy.md | `inputs/input-philosophy.md` |
+| default-bindings-kbm.md | `inputs/default-bindings-kbm.md` |
+| default-bindings-gamepad.md | `inputs/default-bindings-gamepad.md` |
+| ui-navigation.md | `inputs/ui-navigation.md` |
+
+**Status-Severity Matrix:**
+
+| Check Category | Draft | Review | Approved | Complete | Deprecated |
+|---------------|-------|--------|----------|----------|------------|
+| Missing required sections | FAIL | FAIL | FAIL | FAIL | WARN |
+| Empty Purpose/intro | FAIL | FAIL | FAIL | FAIL | WARN |
+| Remaining TODOs | INFO | WARN | FAIL | FAIL | SKIP |
+| Rules not populated | WARN | WARN | FAIL | FAIL | SKIP |
+| Review freshness (stale/missing) | WARN | WARN | FAIL | SKIP | SKIP |
+
+---
+
+#### Document-Level Checks
+
+**Header & Metadata:**
+
+| Check | What It Validates | Severity |
+|-------|------------------|----------|
+| `input-header-fields` | Every input doc has the blockquote header with required fields: `Authority`, `Layer`, `Conforms to`, `Status`. | FAIL if missing |
+| `input-authority-rank` | Every input doc's Authority field is `Rank 3`. | FAIL if not Rank 3 |
+| `input-layer-value` | Every input doc's Layer field is `Canon`. | FAIL if wrong |
+| `input-status-value` | Every input doc's Status field is one of: Draft, Review, Approved, Complete, Deprecated. | FAIL if invalid |
+| `input-conforms-to-resolution` | Every document referenced in `Conforms to` resolves to an existing file. | FAIL if target missing |
+
+**Structure:**
+
+| Check | What It Validates | Severity |
+|-------|------------------|----------|
+| `input-action-map-sections` | action-map.md contains: Namespacing, Actions (with at least one namespace group table), Rules. | WARN if section missing |
+| `input-philosophy-sections` | input-philosophy.md contains: Principles, Responsiveness, Accessibility, Constraints. | WARN if section missing |
+| `input-bindings-sections` | Each bindings doc contains: Bindings (with at least one namespace group table), Rules. | WARN if section missing |
+| `input-navigation-sections` | ui-navigation.md contains: Navigation Model, Focus Flow, Navigation Actions, Mouse Behavior. | WARN if section missing |
+| `input-rules-populated` | Every input doc's Rules section contains at least one authored rule. | See status matrix |
+| `input-todo-count` | Count remaining `*TODO:` markers in each input doc. | See status matrix |
+
+**Action-Map Specific:**
+
+| Check | What It Validates | Severity |
+|-------|------------------|----------|
+| `input-action-id-convention` | Every action ID uses `lowercase_snake_case` with a recognized namespace prefix (`player_`, `ui_`, `camera_`, `debug_`, or project-defined). | FAIL per violation |
+| `input-action-id-uniqueness` | No duplicate action IDs across all namespaces. | FAIL per duplicate |
+| `input-action-descriptions` | Every action row has a non-empty Description column. | WARN per empty |
+| `input-action-source-column` | Action table has a Source column. Every action row has a non-empty Source field in the format `doc-name: section/concept`. | WARN per empty Source; WARN if Source column missing |
+| `input-action-source-resolution` | Each Source reference points to a document that exists and a section/concept that can be located. | WARN per unresolvable source |
+| `input-action-design-coverage` | Every player verb from `design/design-doc.md` Player Verbs section has a corresponding action in the action-map. | WARN per uncovered verb |
+| `input-action-interaction-coverage` | Every player action described in `design/interaction-model.md` has a corresponding action ID. | WARN per uncovered interaction |
+
+**Binding-Specific:**
+
+| Check | What It Validates | Severity |
+|-------|------------------|----------|
+| `input-binding-coverage-kbm` | Every non-excluded action ID in action-map appears in default-bindings-kbm.md. Exclusions must be documented. | WARN per unbound action |
+| `input-binding-coverage-gamepad` | Every gamepad-relevant action ID in action-map appears in default-bindings-gamepad.md. Exclusions must be documented. | WARN per unbound action |
+| `input-binding-orphans` | Every binding in both binding docs references an action ID that exists in action-map. | FAIL per orphan binding |
+| `input-binding-collision-kbm` | No duplicate key assignments within the same active input context in KBM bindings. Context-separated overlaps (different namespaces, mutually exclusive modes) are not flagged. | WARN per same-context collision |
+| `input-binding-collision-gamepad` | Same collision check for gamepad bindings. | WARN per same-context collision |
+
+**Navigation-Specific:**
+
+| Check | What It Validates | Severity |
+|-------|------------------|----------|
+| `input-navigation-model-stated` | ui-navigation.md explicitly states a navigation model (spatial, tab-order, or hybrid). Not "TBD". | WARN if missing |
+| `input-navigation-actions-exist` | `ui_` actions referenced in ui-navigation.md exist in action-map.md. | FAIL per missing action |
+| `input-navigation-actions-used` | All `ui_` navigation actions defined in action-map are referenced in ui-navigation.md. | WARN per unused navigation action |
+| `input-navigation-ui-kit-alignment` | If `design/ui-kit.md` exists, navigation references to components resolve to defined ui-kit components. | WARN per unresolved component |
+
+---
+
+#### Cross-Doc Consistency Checks
+
+These compare input docs against each other and against upstream canon.
+
+**Upstream Alignment:**
+
+| Check | What It Validates | Severity |
+|-------|------------------|----------|
+| `input-interaction-model-alignment` | Action-map action IDs cover all player actions from interaction-model. No action IDs exist without an interaction-model or design-doc source (possible bloat). | WARN per gap or orphan |
+| `input-philosophy-binding-compliance` | Binding docs do not violate input-philosophy constraints. Check: if philosophy says "no chords" → grep bindings for modifier+key combinations. If philosophy says "one-handed play" → verify core actions are reachable. If philosophy says "device-agnostic" → verify both binding docs cover gameplay actions. | WARN per violation |
+| `input-philosophy-interaction-alignment` | Input philosophy principles are consistent with interaction-model behavior. If interaction-model uses drag/hold patterns, philosophy must address toggle alternatives. | WARN [ADVISORY] if tension found |
+
+**Internal Consistency:**
+
+| Check | What It Validates | Severity |
+|-------|------------------|----------|
+| `input-device-parity` | Actions covered by KBM but not gamepad (or vice versa) have explicit exclusion documentation. Silent omissions are flagged. | WARN per undocumented gap |
+| `input-index-sync` | `inputs/_index.md` lists all existing input docs. No stale entries, no missing docs. | WARN if out of sync |
+
+**Review Freshness:**
+
+| Check | What It Validates | Severity |
+|-------|------------------|----------|
+| `input-review-freshness` | For each input doc, check for matching review logs in `scaffold/decisions/review/`. Match by filename pattern (`ITERATE-input-*`, `FIX-input-*`) or log body containing the doc name. | See status matrix |
+
+---
+
+**How to run these checks:**
+
+1. For `input-header-fields`: For each input doc, read blockquote header. Check presence of Authority, Layer, Conforms to, Status.
+2. For `input-authority-rank`: Parse Authority field. Must be `Rank 3`.
+3. For `input-action-id-convention`: Read action-map Actions tables. For each action ID, verify: all lowercase, underscore-separated, starts with a recognized namespace prefix.
+4. For `input-action-id-uniqueness`: Collect all action IDs from all namespace tables. Check for duplicates.
+5. For `input-action-source-column`: Check if action table header contains "Source". For each row, check Source field is non-empty and follows `doc-name: section/concept` format.
+6. For `input-action-source-resolution`: For each Source reference, verify the doc exists (glob) and the section/concept can be located (grep for heading or keyword).
+7. For `input-action-design-coverage`: Read design-doc Player Verbs section. Extract verb names. Grep action-map for each verb. Flag verbs with no matching action.
+8. For `input-action-interaction-coverage`: Read interaction-model player action sections. Extract action descriptions. Check action-map for corresponding IDs.
+9. For `input-binding-coverage-*`: Collect all action IDs from action-map. For each, grep the binding doc. Flag actions not found unless explicitly excluded.
+10. For `input-binding-orphans`: Collect all action IDs referenced in binding docs. Verify each exists in action-map.
+11. For `input-binding-collision-*`: For each namespace group, collect key/button assignments. Flag duplicates within the same group. Cross-group duplicates are only flagged if both groups can be active simultaneously (e.g., `player_` and `camera_` may overlap, `player_` and `debug_` may not).
+12. For `input-navigation-actions-exist`: Collect `ui_` action IDs referenced in ui-navigation. Verify each exists in action-map.
+13. For `input-navigation-actions-used`: Collect all `ui_` actions from action-map. Check each is referenced in ui-navigation.
+14. For `input-philosophy-binding-compliance`: Read philosophy constraints. For each constraint, grep bindings for violations. "No chords" → check for modifier combinations. "Device-agnostic" → check both binding docs cover `player_` actions.
+15. For `input-device-parity`: Diff the action sets between KBM and gamepad binding docs. For actions in one but not the other, check for explicit exclusion documentation.
+16. For `input-review-freshness`: Glob `scaffold/decisions/review/ITERATE-input-*` and `FIX-input-*`. Match docs to logs.
+
+**Maturity-aware activation:**
+- All checks require at least `inputs/action-map.md` to exist. If action-map is missing, SKIP all input checks.
+- Binding checks require the respective binding doc to exist. SKIP individual binding checks if the doc is missing.
+- Navigation checks require `inputs/ui-navigation.md` to exist. SKIP navigation checks if missing.
+- Upstream alignment checks require `design/interaction-model.md` to exist. SKIP alignment checks if missing.
+- Philosophy compliance checks require `inputs/input-philosophy.md` to exist. SKIP if missing.
+- UI-kit alignment checks require `design/ui-kit.md` to exist. SKIP if missing.
+
+**Suggested fixes:**
+- `input-action-id-convention` → "Action ID '[id]' violates naming convention. Expected `lowercase_snake_case` with namespace prefix. Run `/scaffold-fix-input` to auto-fix."
+- `input-action-source-column` → "Action '[id]' missing Source traceability. Add a Source column entry in the format `doc-name: section`."
+- `input-action-design-coverage` → "Player verb '[verb]' has no action in action-map. Create an action via `/scaffold-update-doc action-map` or confirm the verb is covered by an existing action."
+- `input-binding-orphans` → "Binding references non-existent action '[id]'. Remove the binding or create the action. Run `/scaffold-fix-input` to auto-remove orphan bindings."
+- `input-binding-collision-*` → "Same-context binding collision: '[key]' bound to both '[action1]' and '[action2]' in namespace '[ns]'. Review whether these are truly in different contexts."
+- `input-navigation-actions-exist` → "Navigation references undefined action '[id]'. Create the action in action-map or update the navigation doc."
+- `input-philosophy-binding-compliance` → "Philosophy says '[constraint]' but bindings violate it. Update bindings to comply or update philosophy to acknowledge the exception."
+- `input-device-parity` → "Action '[id]' has [device] binding but not [other device] binding with no documented exclusion. Add binding or document the exclusion."
+
+---
+
 ### 2l. Cross-Cutting Integrity Checks (scope: `all`)
 
 These checks span all document types. They enforce decision closure, workflow compliance, and evolution integrity. Run on `--scope all` only — individual scopes skip these.
@@ -1115,10 +1264,11 @@ Based on failing checks, suggest the specific fix skill to run. Group by layer a
 |--------------|-------------------|
 | Design doc checks | `/scaffold-fix-design` |
 | System design checks | `/scaffold-fix-systems [--range]` |
-| Foundation checks | `/scaffold-fix-foundation` |
+| Foundation checks | `/scaffold-fix-cross-cutting` (for cross-doc findings), per-layer fix skills for layer-specific issues |
 | Reference (Step 3) checks | `/scaffold-fix-references` |
 | Engine checks | `/scaffold-fix-engine` |
 | Style (Step 5) checks | `/scaffold-fix-style` |
+| Input (Step 6) checks | `/scaffold-fix-input` |
 | Roadmap checks | `/scaffold-fix-roadmap` |
 | Phase checks | `/scaffold-fix-phase` |
 | Slice checks | `/scaffold-fix-slice` |

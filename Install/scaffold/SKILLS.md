@@ -1,6 +1,6 @@
 # Skills Reference
 
-> Man-page reference for all 75 scaffold slash commands. Each entry shows synopsis, description, arguments, examples, and related skills.
+> Man-page reference for all 77 scaffold slash commands. Each entry shows synopsis, description, arguments, examples, and related skills.
 >
 > **When to use each skill** — see [WORKFLOW.md](WORKFLOW.md) for the step-by-step pipeline order.
 
@@ -41,7 +41,7 @@
 | `/scaffold-fix-slice` | `[--target SLICE-###] [--iterate N]` | Mechanical cleanup for slice docs |
 | `/scaffold-fix-spec` | `[--target SPEC-###] [--iterate N]` | Mechanical cleanup for spec docs |
 | `/scaffold-fix-task` | `[--target TASK-###] [--iterate N]` | Mechanical cleanup for task docs |
-| `/scaffold-fix-foundation` | `[--iterate N]` | Cross-doc integration check for Steps 1–6 |
+| `/scaffold-fix-input` | `[--target doc.md] [--iterate N]` | Mechanical cleanup for Step 6 input docs |
 | `/scaffold-fix-cross-cutting` | — | Resolve cross-document integrity findings |
 | **Iterate** | | |
 | `/scaffold-iterate-design` | `[--topic N] [--iterations N]` | Adversarial per-topic design doc review |
@@ -52,6 +52,7 @@
 | `/scaffold-iterate-phase` | `[P#-###] [--topic N]` | Adversarial per-topic phase review |
 | `/scaffold-iterate-slice` | `[SLICE-###] [--topic N]` | Adversarial per-topic slice review |
 | `/scaffold-iterate-spec` | `[SPEC-### or range] [--topic N]` | Adversarial per-topic spec review |
+| `/scaffold-iterate-input` | `[--target doc.md] [--topics "1,3,6"] [--focus "..."]` | Adversarial per-topic input doc review (6 topics) |
 | `/scaffold-iterate-task` | `[TASK-### or range] [--topic N]` | Adversarial per-topic task review |
 | **Revise** | | |
 | `/scaffold-revise-design` | `[--source P#-###\|SLICE-###\|foundation-recheck]` | Detect design drift from implementation feedback |
@@ -59,6 +60,7 @@
 | `/scaffold-revise-references` | `[--source SLICE-###]` | Detect Step 3 doc drift from implementation feedback |
 | `/scaffold-revise-engine` | `[--source SLICE-###]` | Detect engine doc drift from implementation feedback |
 | `/scaffold-revise-style` | `[--source SLICE-###]` | Detect Step 5 visual/UX doc drift from implementation feedback |
+| `/scaffold-revise-input` | `[--source SLICE-###] [--target doc.md]` | Detect Step 6 input doc drift from implementation feedback |
 | `/scaffold-revise-foundation` | `[--mode initial\|recheck]` | Verify foundation stability, dispatch revision loops |
 | `/scaffold-revise-roadmap` | — | Update roadmap after phase completion |
 | `/scaffold-revise-phases` | `[--source P#-###]` | Update remaining phases from implementation feedback |
@@ -84,7 +86,7 @@
 | `/scaffold-sync-glossary` | `[--scope all\|design\|systems\|references\|style\|input] [--dry-run]` | Scan docs for glossary-worthy terms with worthiness gate and ambiguity detection |
 | `/scaffold-sync-reference-docs` | — | Sync reference docs after upstream changes |
 | **Validate** | | |
-| `/scaffold-validate` | `[--scope refs\|design\|systems\|foundation\|roadmap\|phases\|slices\|specs\|tasks\|engine\|style\|all]` | Run cross-reference validation across scaffold docs |
+| `/scaffold-validate` | `[--scope refs\|design\|systems\|foundation\|roadmap\|phases\|slices\|specs\|tasks\|engine\|style\|input\|all]` | Run cross-reference validation across scaffold docs |
 | **Playtest** | | |
 | `/scaffold-playtest-log` | `[session-type]` | Log playtester observations into the feedback tracker |
 | `/scaffold-playtest-review` | — | Analyze playtest feedback patterns with priority grid |

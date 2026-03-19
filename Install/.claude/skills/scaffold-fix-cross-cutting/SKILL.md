@@ -55,8 +55,8 @@ These indicate Approved/Complete docs with unresolved TODO/TBD/Open Questions.
    - **Needs user decision** — the marker represents a genuine open question. Present options:
      - (a) **Resolve** — user provides the answer, skill writes it and removes the marker.
      - (b) **Defer** — file in known-issues.md or reference an existing ADR. Mark finding as Deferred with tracking reference.
-     - (c) **Downgrade status** — revert the doc from Approved back to Draft (rename file with `git mv`, update `_index.md`). Mark finding as Resolved (the closure requirement no longer applies at Draft).
-   - **Constrained TODO (engine docs only)** — the marker is legitimately blocked on an upstream Step 3 decision. Verify the blocking decision is still unresolved. If so, mark finding as Acknowledged with reason "blocked on [upstream doc]". If the blocking decision was resolved, auto-fill and remove the marker.
+     - (c) **Downgrade status** — revert the doc from Approved back to Draft. This requires: rename file suffix with `git mv` (`_approved` → `_draft`), update the internal `Status:` field to `Draft`, update `_index.md` status column, and update any parent doc tables that reflect this doc's status (e.g., slice Specs/Tasks tables, phase Slice Strategy). Mark finding as Resolved (the closure requirement no longer applies at Draft).
+   - **Constrained TODO** — the marker is legitimately blocked on an unresolved upstream decision. Most common in engine docs (blocked on Step 3), but can appear in any doc type where a section depends on an upstream decision not yet made. Verify the blocking decision is still unresolved. If so, mark finding as Acknowledged with reason "blocked on [upstream doc/decision]". If the blocking decision was resolved, auto-fill and remove the marker.
 
 4. After resolving, update the finding's Status in cross-cutting-findings.md.
 
@@ -77,6 +77,11 @@ These indicate missing pipeline prerequisites for the doc's current status.
 
 **Workflow findings cannot be auto-fixed** because they represent missing process steps that need to actually run, not just files to edit. The skill dispatches the user to the right command.
 
+**Workflow status discipline:** A dispatched command is NOT a resolved finding. When a workflow finding results in a dispatch recommendation:
+- Mark the finding as **Still Open** (not Resolved or Dispatched).
+- Record the recommended command in the Actions Taken section.
+- The finding becomes Resolved only after the user runs the command AND a re-check confirms the issue no longer reproduces.
+
 ### Staleness Findings
 
 These indicate upstream docs changed after downstream docs were stabilized.
@@ -88,8 +93,12 @@ These indicate upstream docs changed after downstream docs were stabilized.
 3. Classify the change:
    - **No impact** — the upstream change doesn't affect the downstream doc's content. Mark finding as Resolved with reason "upstream change does not affect [downstream doc]: [brief explanation]".
    - **Minor impact** — the downstream doc needs a small update (terminology, reference, section name). Auto-apply the edit. Mark finding as Resolved.
+   - **Uncertain impact** — insufficient evidence to determine whether the upstream change materially affects the downstream doc. Present options:
+     - (a) **Inspect manually** — user reads both docs and makes the call.
+     - (b) **Defer** — add to known-issues.md with the staleness note. Mark finding as Deferred.
+     - (c) **Restabilize conservatively** — dispatch fix/iterate for the downstream doc even though impact is unclear. Safer but more expensive.
    - **Major impact** — the downstream doc needs restabilization. Present options:
-     - (a) **Restabilize** — dispatch the appropriate fix/iterate skill for the downstream doc type. Mark finding as "Resolved — restabilization dispatched".
+     - (a) **Restabilize** — dispatch the appropriate fix/iterate skill for the downstream doc type. Mark finding as **Still Open** with note "Restabilization dispatched via [command]". Only mark Resolved after fix + iterate complete and re-check confirms the issue no longer reproduces.
      - (b) **Defer** — the downstream doc is still usable as-is despite upstream drift. Add to known-issues.md with the staleness note. Mark finding as Deferred.
      - (c) **Escalate** — the upstream change implies a broader architecture shift. File an ADR stub. Mark finding as Deferred with ADR reference.
 
@@ -134,14 +143,19 @@ These indicate upstream docs changed after downstream docs were stabilized.
 | Staleness | N | N | N | N | N |
 
 ### Actions Taken
-- XC-001: Resolved — auto-filled TODO from architecture.md section [X]
-- XC-002: Deferred — tracked in KI-### (genuine open question)
-- XC-003: Dispatched — user needs to run `/scaffold-iterate-slice SLICE-009`
+| ID | Status | Action | Owner (next action) |
+|----|--------|--------|-------------------|
+| XC-001 | Resolved | Auto-filled TODO from architecture.md section [X] | — |
+| XC-002 | Deferred | Tracked in KI-### (genuine open question) | Design layer |
+| XC-003 | Still Open | Recommended: `/scaffold-iterate-slice SLICE-009` | Slice pipeline |
+
+### Blocking Findings
+[Findings that prevent pipeline progress — workflow violations, critical staleness, unresolved decision-closure on Approved docs. If none, omit this section.]
 
 ### Recommended Next Steps
-- [List any dispatched commands the user needs to run]
+- [List any dispatched commands the user still needs to run (Still Open workflow findings)]
 - [Any ADR stubs that need completion]
-- [Suggest re-running validate to confirm resolutions]
+- [Post-run validation — see rules below]
 ```
 
 ## Rules
@@ -155,4 +169,9 @@ These indicate upstream docs changed after downstream docs were stabilized.
 - **Never edit upstream docs.** This skill fixes downstream docs or dispatches restabilization. If the upstream doc is wrong, that's an ADR, not a cross-cutting fix.
 - **Respect document authority.** When resolving conflicts between findings, `scaffold/doc-authority.md` determines which doc is correct.
 - **Present decisions grouped.** Don't interleave categories — process all decision-closure findings, then all workflow, then all staleness. This lets the user batch similar decisions.
-- **One finding, one action.** Each finding gets exactly one outcome: Resolved, Acknowledged, Deferred, or Still Open. No partial resolutions.
+- **Check linked findings before acting.** If resolving one finding directly resolves another (e.g., a staleness fix also eliminates a decision-closure issue in the same doc), re-check the related finding before acting on it separately. This prevents redundant work and contradictory status updates.
+- **One finding, one action.** Each finding gets exactly one outcome: Resolved, Acknowledged, Deferred, or Still Open. If an action reduces but does not eliminate the issue, keep status as Still Open and update notes with progress made — do not invent a "Partially Resolved" status.
+- **Stale findings are auto-resolved.** If the finding no longer reproduces during the read-then-act re-check (docs changed since validate ran), mark as Resolved with reason "no longer reproduces — issue was fixed between validate and fix-cross-cutting." Do not apply a fix to an already-fixed issue.
+- **Process findings in priority order within each category.** Within a category group, process in order of: (1) severity if present (Critical → High → Medium → Low), (2) dependency (fix blockers before dependents — if XC-005 blocks XC-008, process XC-005 first), (3) ID as fallback.
+- **Resolved requires re-check.** A finding may be marked Resolved only if the cited issue is re-checked against the current state of the affected docs and no longer reproduces. "Fixed it" without verification is not Resolved — it is Still Open pending confirmation. For auto-fixes, the skill re-reads the affected section after editing to confirm. For workflow dispatches, the user must run the command and trigger a re-validate before the finding can be closed.
+- **Post-run validation is mandatory when docs were edited.** If any finding was Resolved by editing docs, recommend `validate --scope all` (or the most relevant scoped validate) in Next Steps. If only workflow commands were dispatched and no docs were edited, recommend re-running validate after those commands complete. The exit condition is: all Resolved findings confirmed by validate, all Still Open findings have actionable next steps.

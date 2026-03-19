@@ -1,12 +1,12 @@
 # ClaudeScaffold — Installation
 
-This is the installable overlay. Copy its contents into any game project to give Claude Code a structured document pipeline, strict design authority, and 75 skills that automate the workflow from concept to code.
+This is the installable overlay. Copy its contents into any game project to give Claude Code a structured document pipeline, strict design authority, and 77 skills that automate the workflow from concept to code.
 
 ## What Gets Installed
 
 ```
 your-project/
-├── .claude/skills/       ← 75 slash commands (create, seed, fix, iterate, revise, approve, implement, art, audio)
+├── .claude/skills/       ← 77 slash commands (create, seed, fix, iterate, revise, approve, implement, art, audio)
 ├── scaffold/             ← Document pipeline with indexes and templates
 └── CLAUDE.md             ← Rules that tell Claude Code how to use the scaffold
 ```
@@ -15,7 +15,7 @@ your-project/
 
 **`scaffold/`** — A structured document hierarchy with 11 authority ranks. Every design decision, style rule, system behavior, interface contract, and implementation constraint has a home. Start at `scaffold/_index.md` — it's the master entry point.
 
-**`.claude/skills/`** — 75 slash commands that automate document creation, bulk seeding, mechanical fixes, adversarial iteration, revision, approval gates, implementation, art/audio generation, completion tracking, and editing. Skills read higher-authority documents to pre-fill lower ones, check ADRs before scoping new work, and cross-reference everything.
+**`.claude/skills/`** — 77 slash commands that automate document creation, bulk seeding, mechanical fixes, adversarial iteration, revision, approval gates, implementation, art/audio generation, completion tracking, and editing. Skills read higher-authority documents to pre-fill lower ones, check ADRs before scoping new work, and cross-reference everything.
 
 ## Prerequisites
 
@@ -129,16 +129,16 @@ For each approved phase:
 
 See `scaffold/WORKFLOW.md` for the full 24-step recipe.
 
-## All 75 Skills
+## All 77 Skills
 
 | Category | Skills |
 |----------|--------|
 | **Init** | `init-design` |
 | **Bulk seed** | `bulk-seed-style`, `bulk-seed-systems`, `bulk-seed-references`, `bulk-seed-engine`, `bulk-seed-input`, `bulk-seed-phases`, `bulk-seed-slices`, `bulk-seed-specs`, `bulk-seed-tasks` |
 | **Create** | `new-roadmap`, `new-phase`, `new-slice`, `new-spec`, `new-task`, `new-system` |
-| **Fix** | `fix-design`, `fix-style`, `fix-systems`, `fix-references`, `fix-engine`, `fix-roadmap`, `fix-phase`, `fix-slice`, `fix-spec`, `fix-task`, `fix-foundation`, `fix-cross-cutting` |
-| **Iterate** | `iterate-design`, `iterate-style`, `iterate-systems`, `iterate-references`, `iterate-engine`, `iterate-roadmap`, `iterate-phase`, `iterate-slice`, `iterate-spec`, `iterate-task` |
-| **Revise** | `revise-design`, `revise-systems`, `revise-references`, `revise-engine`, `revise-style`, `revise-foundation`, `revise-roadmap`, `revise-phases`, `revise-slices` |
+| **Fix** | `fix-design`, `fix-style`, `fix-systems`, `fix-references`, `fix-engine`, `fix-input`, `fix-roadmap`, `fix-phase`, `fix-slice`, `fix-spec`, `fix-task`, `fix-cross-cutting` |
+| **Iterate** | `iterate-design`, `iterate-style`, `iterate-systems`, `iterate-references`, `iterate-engine`, `iterate-input`, `iterate-roadmap`, `iterate-phase`, `iterate-slice`, `iterate-spec`, `iterate-task` |
+| **Revise** | `revise-design`, `revise-systems`, `revise-references`, `revise-engine`, `revise-style`, `revise-input`, `revise-foundation`, `revise-roadmap`, `revise-phases`, `revise-slices` |
 | **Approve** | `approve-phases`, `approve-slices`, `approve-specs`, `approve-tasks` |
 | **Triage** | `triage-specs`, `triage-tasks`, `reorder-tasks` |
 | **Implement** | `implement-task`, `build-and-test`, `code-review`, `add-regression-tests` |

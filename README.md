@@ -23,7 +23,7 @@ Every design decision, visual style rule, system behavior, interface contract, a
 - **Two-loop stabilization.** Every document type follows the same pattern: create → fix → iterate → validate (initial), then revise → fix → iterate → validate (after implementation feedback). Foundation architecture is gated before planning begins.
 - **Draft → Review → Approved → Complete lifecycle.** Documents start as `Draft`, move through adversarial review via `/scaffold-iterate-*`, are set to `Approved` by approval gates, and marked `Complete` by `/scaffold-complete` when implementation is done. Completion ripples up from tasks through specs, slices, and phases.
 - **Token-efficient retrieval.** Index files in every directory let Claude find what it needs without loading entire folders.
-- **76 skills automate the pipeline.** Create, seed, fix, iterate, revise, approve, implement, generate art/audio, and edit documents with slash commands — no manual file wrangling.
+- **78 skills automate the pipeline.** Create, seed, fix, iterate, revise, approve, implement, generate art/audio, and edit documents with slash commands — no manual file wrangling.
 
 ## How It Works
 
@@ -139,7 +139,7 @@ cp ClaudeScaffold/Install/CLAUDE.md /path/to/your/project/
 This gives your project:
 
 ```
-.claude/skills/       ← 75 Claude Code skills
+.claude/skills/       ← 77 Claude Code skills
 scaffold/             ← Document pipeline with templates and indexes
 CLAUDE.md             ← Instructions that tell Claude Code how to use the scaffold
 ```
@@ -148,16 +148,16 @@ See [Install/README.md](Install/README.md) for full installation details.
 
 ## Skills
 
-75 slash commands organized by workflow:
+77 slash commands organized by workflow:
 
 | Category | Skills |
 |----------|--------|
 | **Init** | `init-design` |
 | **Bulk seed (9)** | `bulk-seed-style`, `bulk-seed-systems`, `bulk-seed-references`, `bulk-seed-engine`, `bulk-seed-input`, `bulk-seed-phases`, `bulk-seed-slices`, `bulk-seed-specs`, `bulk-seed-tasks` |
 | **Create (6)** | `new-roadmap`, `new-phase`, `new-slice`, `new-spec`, `new-task`, `new-system` |
-| **Fix (12)** | `fix-design`, `fix-style`, `fix-systems`, `fix-references`, `fix-engine`, `fix-roadmap`, `fix-phase`, `fix-slice`, `fix-spec`, `fix-task`, `fix-foundation`, `fix-cross-cutting` |
-| **Iterate (10)** | `iterate-design`, `iterate-style`, `iterate-systems`, `iterate-references`, `iterate-engine`, `iterate-roadmap`, `iterate-phase`, `iterate-slice`, `iterate-spec`, `iterate-task` |
-| **Revise (9)** | `revise-design`, `revise-systems`, `revise-references`, `revise-engine`, `revise-style`, `revise-foundation`, `revise-roadmap`, `revise-phases`, `revise-slices` |
+| **Fix (12)** | `fix-design`, `fix-style`, `fix-systems`, `fix-references`, `fix-engine`, `fix-input`, `fix-roadmap`, `fix-phase`, `fix-slice`, `fix-spec`, `fix-task`, `fix-cross-cutting` |
+| **Iterate (11)** | `iterate-design`, `iterate-style`, `iterate-systems`, `iterate-references`, `iterate-engine`, `iterate-input`, `iterate-roadmap`, `iterate-phase`, `iterate-slice`, `iterate-spec`, `iterate-task` |
+| **Revise (10)** | `revise-design`, `revise-systems`, `revise-references`, `revise-engine`, `revise-style`, `revise-input`, `revise-foundation`, `revise-roadmap`, `revise-phases`, `revise-slices` |
 | **Approve (4)** | `approve-phases`, `approve-slices`, `approve-specs`, `approve-tasks` |
 | **Triage (3)** | `triage-specs`, `triage-tasks`, `reorder-tasks` |
 | **Implement (4)** | `implement-task`, `build-and-test`, `code-review`, `add-regression-tests` |

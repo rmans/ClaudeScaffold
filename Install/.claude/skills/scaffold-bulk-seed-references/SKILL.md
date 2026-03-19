@@ -118,7 +118,7 @@ Extract from system Downstream Consequences and interfaces:
 - A pattern appears consistently across **3+ systems**, or
 - A convention is already explicitly stated in the design doc, an accepted ADR, or an existing engine doc
 
-Otherwise leave template rules as-is for later refinement during fix-foundation and iterate-references.
+Otherwise leave template rules as-is for later refinement during fix-references and iterate-references.
 
 Seed the Forbidden Patterns section from the template — these are universal and do not require project-specific evidence.
 
@@ -416,7 +416,7 @@ These were safely deferred as TBD placeholders. Seeding continued.
 ### Next Steps
 - Run `/scaffold-sync-glossary --scope references` to register new domain terms (entity names, resource names, signal names, state names) in the glossary
 - Resolve Decision Queue items (user decisions or defer to Step 7)
-- Run `/scaffold-fix-foundation` to auto-fix cross-doc inconsistencies
+- Run `/scaffold-fix-references` to auto-fix cross-doc inconsistencies
 - Run `/scaffold-iterate-references` for adversarial architecture review
 - Run `/scaffold-validate --scope refs` for cross-reference integrity check
 

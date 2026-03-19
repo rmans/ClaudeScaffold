@@ -419,7 +419,7 @@ Detect Step 5 doc drift from implementation feedback. Reads ADRs, known issues, 
 
 ## Step 6 — Input Model
 
-> **Output:** `inputs/action-map.md`, `inputs/input-philosophy.md`, `inputs/default-bindings-kbm.md`, `inputs/default-bindings-gamepad.md`, `inputs/ui-navigation.md` — all populated and reviewed. **Proceed when:** fix pass clean. **Surfaces for Step 7:** input architecture constraints.
+> **Output:** `inputs/action-map.md`, `inputs/input-philosophy.md`, `inputs/default-bindings-kbm.md`, `inputs/default-bindings-gamepad.md`, `inputs/ui-navigation.md` — all populated and reviewed. **Proceed when:** fix + iterate + validate --scope input passes. **Surfaces for Step 7:** input architecture constraints, action model assumptions, device support commitments.
 
 ### 6a — Create
 
@@ -431,15 +431,35 @@ Reads the design doc, interaction model, and engine input docs to pre-fill actio
 
 ### 6b — Fix (mechanical cleanup)
 
-<!-- TODO: create fix-input skill when Step 6 is hardened -->
+```
+/scaffold-fix-input [--target doc.md] [--iterate N]
+```
 
-Mechanical cleanup pass for input docs. Auto-fixes template text, terminology drift, cross-doc inconsistencies (action map ↔ bindings ↔ interaction model ↔ design doc).
+Mechanical cleanup pass for input docs. Auto-fixes action ID naming conventions, binding collisions, orphan bindings, template text, terminology drift, and cross-doc inconsistencies (action-map ↔ bindings ↔ navigation ↔ interaction-model ↔ design doc). Detects design signals (missing player verbs, namespace confusion, action bloat, philosophy-interaction mismatches, accessibility gaps, button exhaustion) for adversarial review. Supports `--target` for single-doc focus. Context-aware collision detection — namespace-separated and mode-separated overlaps are not flagged.
 
 ### 6c — Iterate (adversarial review)
 
-<!-- TODO: create iterate-input skill when Step 6 is hardened -->
+```
+/scaffold-iterate-input [--target doc.md] [--topics "1,3,6"] [--focus "concern"] [--iterations N]
+```
 
-Adversarial review of input docs. A passing review sets the document's status to `Approved`.
+Adversarial per-topic review via external LLM. Consumes design signals from fix-input. Reviews across 6 topics: action coverage & traceability, philosophy & accessibility coherence, binding fitness & device parity, navigation model completeness, cross-doc consistency, and interaction readiness. Mandatory end-to-end interaction test and device parity test gate further per-doc reviews. A passing review sets the document's status to `Approved`.
+
+### 6d — Validate (structural gate)
+
+```
+/scaffold-validate --scope input
+```
+
+Deterministic structural gate: action ID conventions, traceability (Source column), binding coverage and collision detection, navigation completeness, upstream alignment (interaction-model and design-doc coverage), philosophy-binding compliance, device parity, and review freshness.
+
+### 6e — Revise (post-implementation feedback loop)
+
+```
+/scaffold-revise-input [--source P#-###|SLICE-###|foundation-recheck] [--signals ADR-###,KI:keyword,STYLE:doc-changed]
+```
+
+Called from the outer loop (Step 14) or when `/scaffold-revise-foundation --mode recheck` detects Step 6 drift. Reads ADRs, known issues, spec/task friction, code review findings, interaction model changes, and ui-kit changes. Classifies drift as design-led vs implementation-led. Auto-updates safe changes (stale references, missing actions from upstream, orphan bindings, terminology drift); escalates philosophy violations, navigation model changes, device parity gaps, and accessibility changes. After revise-input runs, re-run the stabilization loop: **revise-input → fix-input (6b) → iterate-input (6c) → validate --scope input (6d)**.
 
 ---
 
@@ -472,37 +492,24 @@ The purpose is not to finalize every low-level implementation detail — it's to
 
 **Initial mode** (first pass): Verifies Steps 1–6 each completed their Create → Review → Iterate pipeline. Reports readiness per doc layer. No revisions needed — nothing has been implemented yet. Proceeds to 7b.
 
-**Recheck mode** (outer loop, after phase completion): Reads implementation feedback (ADRs, KIs, triage logs, playtest patterns, revision logs, code review findings). Identifies which foundation areas drifted and which Step 1–6 docs need updating. Dispatches revision loops (review → fix → iterate) to affected docs only. After dispatched revisions complete, proceeds to 7b for full cross-doc integration.
+**Recheck mode** (outer loop, after phase completion): Reads implementation feedback (ADRs, KIs, triage logs, playtest patterns, revision logs, code review findings). Identifies which foundation areas drifted and which Step 1–6 docs need updating. Dispatches revision loops (revise → fix → iterate → validate) to affected docs only. After dispatched revisions complete, proceeds to 7b for foundation validation gate.
 
-### 7b — Fix (cross-document integration)
-
-```
-/scaffold-fix-foundation
-```
-
-Auto-fixes cross-doc issues: authority-architecture mismatches, missing interface stubs, signal registry gaps, stale ADR references, missing known-issue entries for Partial areas. Surfaces architectural decisions (storage model, handle design, save/load philosophy) for human resolution. For each foundation area, the fix loop classifies it as:
-
-- **Locked** — the rule is explicit in authoritative docs and safe for downstream planning.
-- **Partial** — the directional decision is made, the rule is usable downstream, the remaining gap is bounded and tracked in `known-issues.md`.
-- **Undefined** — no usable downstream rule exists yet. Requires human decision to Lock, mark Partial, or Defer via ADR.
-
-Use `/scaffold-update-doc` to apply decisions. File ADRs for any reversals.
-
-
-### 7c — Validate (gate)
+### 7b — Validate (gate)
 
 ```
 /scaffold-validate --scope foundation
 ```
 
-Deterministic checks: foundation area coverage, area status (Locked/Partial/Deferred), authority-architecture consistency, interface completeness, signal consistency, entity consistency, iterate freshness (8 checks).
+Deterministic checks: foundation area coverage, area status (Locked/Partial/Deferred), authority-architecture consistency, interface completeness, signal consistency, entity consistency, iterate freshness.
+
+If cross-cutting findings are surfaced, run `/scaffold-fix-cross-cutting` to resolve them interactively.
 
 **Gate assessment:**
 - **PASS** — all areas are Locked, or Partial with tracked bounded gaps. Safe to proceed into planning.
 - **CONDITIONAL** — one or more Partial areas have untracked or weakly bounded gaps. Update `known-issues.md` or docs before proceeding.
 - **FAIL** — one or more areas remain Undefined. Do not scale into phases, slices, specs, or tasks until resolved.
 
-### 7d — Fix Cross-Cutting Issues
+### 7c — Fix Cross-Cutting Issues
 
 ```
 /scaffold-fix-cross-cutting [--category decision-closure|workflow|staleness] [--id XC-###]
@@ -516,7 +523,7 @@ Reads `scaffold/decisions/cross-cutting-findings.md` (populated by `/scaffold-va
 
 Each finding gets exactly one outcome: Resolved, Acknowledged (with reason), or Deferred (with KI/ADR reference). Updated in the findings doc immediately.
 
-Run after `7c — Validate` when cross-cutting findings are reported. Also run during the outer loop (Step 14) after phase completion when validate surfaces new staleness or workflow drift.
+Run after `7b — Validate` when cross-cutting findings are reported. Also run during the outer loop (Step 14) after phase completion when validate surfaces new staleness or workflow drift.
 
 ---
 
@@ -995,7 +1002,7 @@ The pipeline stops on failure — build errors, test failures, or unresolvable r
 
 After all slices in a phase are complete:
 
-6. **Run the foundation architecture pipeline (Step 7a–7d in recheck mode):** `/scaffold-revise-foundation --mode recheck` detects drift and dispatches doc revisions — including `/scaffold-revise-design` (Step 1 drift), `/scaffold-revise-systems` (Step 2 drift), `/scaffold-revise-references` (Step 3 drift), `/scaffold-revise-engine` (Step 4 drift), and `/scaffold-revise-style` (Step 5 drift). Then `fix-foundation` runs cross-doc integration, `validate --scope foundation` gates, and `fix-cross-cutting` resolves any cross-cutting findings. If revise-design was dispatched, re-run the Step 1 stabilization loop. If revise-engine was dispatched, re-run: fix-engine → iterate-engine → validate --scope engine. If revise-style was dispatched, re-run: fix-style → iterate-style → validate --scope style. If no drift, proceeds directly.
+6. **Run the foundation architecture pipeline (Step 7a–7b in recheck mode):** `/scaffold-revise-foundation --mode recheck` detects drift and dispatches doc revisions — including `/scaffold-revise-design` (Step 1 drift), `/scaffold-revise-systems` (Step 2 drift), `/scaffold-revise-references` (Step 3 drift), `/scaffold-revise-engine` (Step 4 drift), `/scaffold-revise-style` (Step 5 drift), and `/scaffold-revise-input` (Step 6 drift). Then `validate --scope foundation` gates, and `fix-cross-cutting` resolves any cross-cutting findings. If revise-design was dispatched, re-run the Step 1 stabilization loop. If revise-engine was dispatched, re-run: fix-engine → iterate-engine → validate --scope engine. If revise-style was dispatched, re-run: fix-style → iterate-style → validate --scope style. If revise-input was dispatched, re-run: fix-input → iterate-input → validate --scope input. If no drift, proceeds directly.
 7. **Revise the roadmap (Steps 8e–8h):** revise-roadmap → fix-roadmap → iterate-roadmap → validate --scope roadmap. Full stabilization loop on the revised roadmap before phase revision, so remaining phases are adjusted against the latest roadmap state rather than a stale macro plan.
 8. **Revise remaining phases:** `/scaffold-revise-phases P#-###` (Step 9f) — reads ADRs, KIs, playtest patterns, triage logs, foundation recheck results, slice review logs, implementation friction signals. Four-tier classification with direct-apply path. Approved phases stay Approved.
 9. Fix, iterate, validate, and approve the next phase (Steps 9g–9j).
@@ -1035,7 +1042,6 @@ The outer loop is a stability check. Most cycles pass through quickly — it onl
 |-------|------|-----|-----|
 | `bulk-seed-references` | Create all Step 3 docs (9 docs) | Surface cross-cutting assumptions for Step 7 | 10-phase pipeline: architecture (scene tree, dependencies, tick order, update semantics, identity model, data flow rules, forbidden patterns, code patterns) → authority → interfaces → state transitions → entity components (with identity semantics) → resources → signals (with event taxonomy + Level column) → balance params → enums/statuses → report. Creates from templates if docs don't exist. Flags identity model decisions for Step 7 |
 | `fix-references` | Mechanical cleanup (Step 3) | Normalize before adversarial review | Per-doc checks (section structure, columns, terminology) + cross-doc consistency (authority↔entities, interfaces↔signals, states↔enums). Supports `--target doc.md` for single-doc focus |
-| `fix-foundation` | Cross-doc integration (Step 7) | Foundation-level consistency | Auto-fixes authority conflicts, interface gaps, inconsistent ownership across architecture docs. Surfaces Lock/Partial/Defer decisions |
 | `iterate-references` | Adversarial review (Step 3) | Challenge reference doc quality | 6 topics (architecture coherence, ownership model, contract quality, data model fitness, cross-doc consistency, simulation readiness) + Reviewer Bias Pack (8 patterns). Supports `--target` and `--topics` |
 | `revise-references` | Post-implementation drift | Keep reference docs matching accepted reality | Reads ADRs/KIs/system doc changes/spec friction/code review. Classifies design-led vs implementation-led. Auto-updates safe changes, escalates authority/architecture/contract/state changes. Supports `--target` and `--signals` |
 | `validate --scope refs` | Structural gate | Cross-reference + Step 3 doc integrity | Python script (9 checks: system IDs, authority, signals, interfaces, states, glossary, bidirectional) + expanded checks (doc existence, section structure, column completeness, value validity, cross-doc consistency, duplicates, production chains) |
@@ -1062,13 +1068,16 @@ The outer loop is a stability check. Most cycles pass through quickly — it onl
 | Skill | What | Why | How |
 |-------|------|-----|-----|
 | `bulk-seed-input` | Create input docs | Map interaction primitives to hardware | Seeds action-map, bindings, navigation, philosophy from design doc + interaction model + engine input docs |
+| `fix-input` | Mechanical cleanup | Normalize before adversarial review | Auto-fixes ID conventions, binding collisions, orphan bindings, terminology. Detects missing verbs, namespace confusion, action bloat, philosophy-interaction mismatches. Supports `--target` |
+| `iterate-input` | Adversarial review | Challenge input design quality | 6 topics (action traceability, philosophy coherence, binding fitness, navigation completeness, cross-doc, readiness) + mandatory end-to-end + device parity tests. External LLM. Supports `--target` and `--topics` |
+| `validate --scope input` | Structural gate | Confirm input docs are structurally ready | Action ID conventions, traceability (Source column), binding coverage/collisions, navigation completeness, upstream alignment, philosophy compliance, device parity, review freshness |
+| `revise-input` | Post-implementation drift | Keep input docs matching accepted reality | Reads ADRs/KIs/interaction-model changes/spec friction/code review. Design-led vs implementation-led classification. Auto-updates safe changes, escalates philosophy/navigation/parity/accessibility |
 
 ### Step 7 — Foundation Architecture
 
 | Skill | What | Why | How |
 |-------|------|-----|-----|
 | `revise-foundation` | Orchestrate foundation revisions | Dispatch to affected Step 1-6 skills | Initial: readiness check. Recheck: reads feedback, dispatches revision loops (revise-design, revise-systems, revise-references, revise-engine, revise-style) with --signals. Explicit skill-by-skill dispatch |
-| `fix-foundation` | Cross-document integration | Resolve cross-doc contradictions | Auto-fixes authority-architecture mismatches, missing interfaces, signal gaps. Surfaces Lock/Partial/Defer decisions |
 | `validate --scope foundation` | Foundation gate | Verify cross-doc consistency | 8 checks: docs exist, area coverage, area status, authority consistency, interface completeness, signals, entities, freshness |
 | `fix-cross-cutting` | Resolve cross-cutting findings | Fix decision closure, workflow, staleness issues | Reads cross-cutting-findings.md. Auto-fixes safe items, dispatches missing pipeline steps, escalates judgment calls. Supports `--category` and `--id` |
 | `validate --scope all` | Full validation including cross-cutting | Everything plus decision closure, workflow integrity, staleness | Runs all scope checks + Section 2l cross-cutting checks. Writes findings to cross-cutting-findings.md |
