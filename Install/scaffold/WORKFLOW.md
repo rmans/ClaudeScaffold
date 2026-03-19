@@ -383,9 +383,11 @@ Mechanical cleanup pass for all 6 Step 5 docs. Auto-fixes template text, termino
 
 ### 5c — Iterate (adversarial review)
 
-<!-- TODO: create iterate-style skill when Step 5 is hardened -->
+```
+/scaffold-iterate-style
+```
 
-Adversarial review of visual/UX docs. A passing review sets the document's status to `Approved`.
+Adversarial per-topic review of all 6 Step 5 docs using an external LLM. Reviews across 5 topics: visual coherence (style-guide + color-system), component & layout model (ui-kit), interaction & feedback model (interaction-model + feedback-system), audio integration (audio-direction + feedback-system), and cross-doc consistency & player experience readiness (all 6 docs). Supports `--target` for single-doc focus and `--topics` for scoped review. A passing review sets the document's status to `Approved`.
 
 > **Art & Audio:** With style docs in place, you can now generate visual and audio assets at any point. See the Quick Reference table for all art and audio skills.
 
