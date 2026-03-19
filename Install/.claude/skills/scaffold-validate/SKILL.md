@@ -696,15 +696,15 @@ These compare Step 5 docs against each other. Require at least 3 Step 5 docs to 
 
 | Check | What It Validates | Severity |
 |-------|------------------|----------|
-| `style-design-intent-alignment` | Style-guide tone registers align with design doc Core Fantasy and Tone. Feedback-system intensity aligns with design doc Failure Philosophy (high-stakes systems need strong feedback; low-stakes need subtle). Interaction-model complexity aligns with Player Control Model. Check by extracting key terms from design doc sections and verifying they appear in or are reflected by the corresponding Step 5 docs. | WARN [ADVISORY] if misaligned |
-| `style-interaction-ui-mapping` | Every player action defined in interaction-model has a corresponding UI affordance in ui-kit (button, cursor state, selection indicator, contextual element). No "invisible interactions" where the player can act but there's no visual representation. No orphan UI elements with no interaction meaning. | WARN per unmapped action or orphan element |
+| `style-design-intent-alignment` | Compare only against these specific design doc sections: (1) Core Fantasy → style-guide tone registers should reflect the same mood, (2) Failure Philosophy → feedback-system Critical events should use strong multi-channel feedback, (3) Player Control Model → interaction-model complexity should match stated control style (direct vs indirect, simple vs complex). Check by comparing section headings and explicit named concepts, not general keyword drift. Low-confidence — only flag obvious polarity clashes (e.g., "grim survival" Core Fantasy with "bright playful" tone registers). | WARN [ADVISORY] if misaligned |
+| `style-interaction-ui-mapping` | Every player action defined in interaction-model has a corresponding UI affordance in ui-kit. Normalize actions into canonical vocabulary: `select`, `multi_select`, `command`, `cancel`, `drag`, `inspect`, `mode_switch`, `confirm`, `context_action`. Map interaction-model terms into this vocabulary, then check ui-kit for a matching affordance (component, cursor state, selection indicator). Also scan ui-kit for components with no matching action. Report source line in interaction-model and missing location in ui-kit. | WARN per unmapped action or orphan element |
 
 **Signal Clarity & Conflict:**
 
 | Check | What It Validates | Severity |
 |-------|------------------|----------|
-| `style-feedback-signal-overload` | No event in feedback-system Event-Response Table has all three channels (Visual, Audio, UI) at maximum intensity simultaneously. At least one channel should be supportive/secondary, not competing. Check for events where all channels use Critical/High-severity treatments. | WARN per overloaded event |
-| `style-feedback-channel-conflict` | No event in feedback-system has conflicting emotional signals across channels — e.g., visual treatment suggests success (green, positive animation) while audio suggests failure (error tone, alert sound). Extract semantic tone from token names and audio category names. | WARN [ADVISORY] per conflicting event |
+| `style-feedback-signal-overload` | No event in feedback-system Event-Response Table has all three channels at maximum intensity simultaneously. Check the Priority column: for events marked Critical or High, verify at least one of the three channels (Visual, Audio, UI) is designated supportive/secondary (lower intensity, shorter duration, or explicitly labeled as "supportive"). If the Event-Response Table lacks a Priority column, SKIP this check. Report the specific row. | WARN per overloaded event |
+| `style-feedback-channel-conflict` | No event in feedback-system has obviously conflicting emotional signals across channels. Only flag clear polarity clashes: success token + error audio, danger token + confirmation audio, calm token + alarm audio. Do NOT flag ambiguous or neutral pairings. Report the specific Event-Response Table row with the conflicting Visual and Audio column values. Low-confidence — use sparingly. | WARN [ADVISORY] per conflicting event |
 | `style-visual-hierarchy-consistency` | Critical states use highest-contrast color tokens (from color-system signal palette). Non-critical states do NOT use the same visual weight as critical states. Check that Critical events in feedback-system map to signal-palette danger/alert tokens, and that Info/Low events map to subdued tokens. | WARN if hierarchy violated |
 
 **System Health:**
@@ -712,7 +712,28 @@ These compare Step 5 docs against each other. Require at least 3 Step 5 docs to 
 | Check | What It Validates | Severity |
 |-------|------------------|----------|
 | `style-unused-tokens` | Every color token defined in color-system is referenced by at least one other Step 5 doc (ui-kit, interaction-model, feedback-system). Tokens defined but never used are dead weight. | WARN per unused token |
-| `style-scalability` | Token system can accommodate new states without breaking hierarchy (check that signal palette has room — fewer than 80% of distinct hue slots occupied). UI-kit component definitions follow a pattern that supports addition without redefinition. Feedback-system Event-Response Table has a clear category structure that new events can slot into. | WARN [ADVISORY] if extensibility concerns |
+| `style-scalability` | Advisory check for extensibility concerns. Flag: (1) near-duplicate tokens in color-system (tokens with very similar names or identical hex values), (2) inconsistent component structure in ui-kit (components defined with different section patterns making additions unpredictable), (3) Event-Response Table in feedback-system lacks any grouping or categorization (flat list with no headers or categories). Does not attempt to count hue slots or measure abstract capacity. | WARN [ADVISORY] if concerns found |
+
+**Spec Readiness:**
+
+| Check | What It Validates | Severity |
+|-------|------------------|----------|
+| `style-end-to-end-spec-readiness` | Pick one required interaction from interaction-model (the first defined command or the selection model) and verify the full chain is defined: (1) input mechanism in interaction-model, (2) UI affordance in ui-kit, (3) color token in color-system, (4) feedback response in feedback-system Event-Response Table, (5) audio category in audio-direction. If any step is missing or undefined → FAIL. This is the validator equivalent of iterate-style's end-to-end scenario test. Report which step broke and in which doc. | FAIL if chain incomplete |
+
+---
+
+**Validation discipline rules for style checks:**
+
+**Canonical vocabulary normalization:** Checks that compare concepts across Step 5 docs (action types, severity levels, token categories) should normalize synonyms into canonical vocabulary where possible. Use section headings and explicit named concepts as primary matching targets, not general prose.
+
+**Line-level source reporting:** All style check results must report the specific source location: file path, line number or section heading, and the exact text that triggered the finding. Advisory checks must include enough context for the user to evaluate the finding without re-reading the entire doc.
+
+**Exemption rules for all style keyword checks:** The following content is exempt from boundary compliance, raw hex, and engine content grep checks:
+- Content inside fenced code blocks (` ``` `)
+- Content inside blockquotes (`> `)
+- Content explicitly marked as examples or anti-patterns ("bad example:", "don't do this:")
+- HTML template instruction comments (`<!-- ... -->`) in docs with Status: Draft
+- Illustrative mentions in Rules sections that describe what NOT to do
 
 ---
 
@@ -735,19 +756,20 @@ These compare Step 5 docs against each other. Require at least 3 Step 5 docs to 
 15. For `style-state-transitions-coverage`: Read state-transitions.md state names. Check color-system has a token for each.
 16. For `style-entity-icon-coverage`: Read entity-components.md entity types. Check style-guide and ui-kit for visual descriptions or icon definitions.
 17. For `style-resource-coverage`: Read resource-definitions.md resources. Check ui-kit for display components.
-18. For boundary checks: Grep target docs for specified keywords. Exempt phrases inside code blocks or blockquotes.
+18. For boundary checks: Grep target docs for specified keywords. Exempt: content inside fenced code blocks, blockquotes, lines marked as examples/anti-patterns, HTML template comments in Draft docs, and illustrative mentions in Rules sections describing what NOT to do.
 19. For `style-interaction-feedback-coverage`: Extract action types from interaction-model section headings and content. Check feedback-system for matching entries.
 20. For `style-feedback-audio-coverage`: Extract audio column values from Event-Response Table. Check audio-direction sound categories.
 21. For `style-priority-hierarchy-alignment`: Extract ordered priority lists from both feedback-system and audio-direction. Compare ordering.
 22. For accessibility checks: Run specific pattern checks as described per check.
 23. For `style-review-freshness`: Glob `scaffold/decisions/review/ITERATE-style-*` and `FIX-style-*`. Match to docs. Apply status matrix.
-24. For `style-design-intent-alignment`: Read design doc Core Fantasy, Tone, Failure Philosophy, and Player Control Model sections. Extract key terms and intensity descriptors. Check style-guide tone registers reflect the same mood. Check feedback-system uses strong feedback for high-stakes systems and subtle feedback for low-stakes. Check interaction-model complexity matches Player Control Model. Label `[ADVISORY]`.
-25. For `style-interaction-ui-mapping`: Extract player actions from interaction-model (selection, commands, drag, cancel, mode switches). For each, check ui-kit defines a corresponding visual affordance (component, cursor state, indicator). Also scan ui-kit for components with no matching interaction-model action.
+24. For `style-design-intent-alignment`: Read only these design doc sections: Core Fantasy (first paragraph), Tone (heading-level descriptors), Failure Philosophy (warning severity language), Player Control Model (direct/indirect, simple/complex). Compare named concepts and explicit descriptors against style-guide tone register names, feedback-system Critical event count and channel coverage, and interaction-model section complexity. Only flag obvious polarity clashes — not subtle word differences. Label `[ADVISORY]`.
+25. For `style-interaction-ui-mapping`: Extract player actions from interaction-model section headings and content. Normalize into canonical vocabulary: `select`, `multi_select`, `command`, `cancel`, `drag`, `inspect`, `mode_switch`, `confirm`, `context_action`. For each canonical action, check ui-kit for a matching affordance (component, cursor state, indicator). Report source line in interaction-model and missing location in ui-kit. Also scan ui-kit component definitions for elements with no matching canonical action.
 26. For `style-feedback-signal-overload`: For each Event-Response Table row, check if all three channels (Visual, Audio, UI) use high-severity/critical treatments simultaneously. Flag events where no channel is secondary.
 27. For `style-feedback-channel-conflict`: For each Event-Response Table row, extract semantic tone from the Visual column (token names like `success`, `danger`, `warning`) and the Audio column (category names like `error`, `confirmation`, `alert`). Flag rows where visual and audio imply opposite emotional signals.
 28. For `style-visual-hierarchy-consistency`: Map feedback-system Critical events to their color tokens. Verify Critical events use signal-palette danger/alert tokens. Map Info/Low events to their tokens. Verify they use subdued/neutral tokens, not the same visual weight as Critical.
 29. For `style-unused-tokens`: Collect all token names defined in color-system. Grep ui-kit, interaction-model, feedback-system, and audio-direction for each token name. Tokens with zero references outside color-system are unused.
-30. For `style-scalability`: Count distinct hue categories in color-system signal palette. WARN if >80% of reasonable hue slots are occupied. Check ui-kit component definitions for a repeatable pattern (consistent structure across components). Check feedback-system Event-Response Table for clear category grouping.
+30. For `style-scalability`: Check color-system for near-duplicate tokens (Levenshtein distance ≤ 2 on names, or identical hex values). Check ui-kit component `###` subsections for consistent structure (same section pattern across components). Check feedback-system Event-Response Table for presence of category headers or grouping.
+31. For `style-end-to-end-spec-readiness`: Read interaction-model. Pick the first fully-defined command or the selection model. Extract the action name. Check ui-kit for a component matching that action. Check color-system for tokens referenced by that component's states. Check feedback-system Event-Response Table for a row matching that action's outcome. Check audio-direction for the audio category referenced in that row. Report the first broken link in the chain.
 
 **Maturity-aware activation:**
 - If no Step 5 docs exist → SKIP all style checks.
@@ -764,6 +786,8 @@ These compare Step 5 docs against each other. Require at least 3 Step 5 docs to 
 - Visual hierarchy consistency → SKIP if either feedback-system or color-system doesn't exist.
 - Unused tokens → SKIP if color-system doesn't exist or fewer than 3 other Step 5 docs exist.
 - Scalability → SKIP if fewer than 4 Step 5 docs exist (not enough to assess system extensibility).
+- End-to-end spec readiness → SKIP if any of interaction-model, ui-kit, color-system, feedback-system, or audio-direction doesn't exist.
+- Signal overload → SKIP if feedback-system Event-Response Table has no Priority column.
 
 ---
 
@@ -1054,6 +1078,7 @@ For each failing check, suggest the specific edit needed:
 - Style visual hierarchy violation → "Update feedback-system to use signal-palette danger tokens for Critical events and subdued tokens for Info/Low events"
 - Style unused token → "Remove the unused token from color-system, or add a reference in the appropriate Step 5 doc"
 - Style scalability concern → "Review token system for extensibility. Consider consolidating overlapping tokens or restructuring the Event-Response Table for clearer category boundaries"
+- Style end-to-end chain broken → "The interaction [action] cannot be fully specified: [step N] is missing in [doc]. Fill the missing entry or run `/scaffold-fix-style` to detect the gap"
 
 ## Rules
 
