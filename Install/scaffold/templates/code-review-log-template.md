@@ -1,4 +1,4 @@
-# Code Review: [System/File Scope]
+# CR-###: [System/File Scope]
 
 > **Type:** File-scope | System-scope
 > **Scope:** <!-- file paths or system name -->

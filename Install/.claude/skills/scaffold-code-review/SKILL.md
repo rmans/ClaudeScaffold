@@ -191,10 +191,10 @@ If `--iterations > 1`:
 
 ### 5. Create Review Log
 
-Create `scaffold/decisions/review/REVIEW-code-{name}-{YYYY-MM-DD-HHMMSS}.md`:
+Create `scaffold/decisions/code-review/CR-###-{name}.md` (assign the next sequential CR-### ID):
 
 ```markdown
-# Code Review: {name}
+# CR-###: {name}
 
 ## Review Info
 | Field | Value |
@@ -230,7 +230,7 @@ Create `scaffold/decisions/review/REVIEW-code-{name}-{YYYY-MM-DD-HHMMSS}.md`:
 - **Files changed:** [list or "none"]
 ```
 
-Update `scaffold/decisions/review/_index.md`.
+Update `scaffold/decisions/code-review/_index.md`.
 
 ### 6. Report
 
@@ -246,7 +246,7 @@ Update `scaffold/decisions/review/_index.md`.
 **Iterations:** N completed / M max [early stop: yes/no]
 **Changes applied:** N code changes
 **Unresolved:** [count or "none"]
-**Review log:** scaffold/decisions/review/REVIEW-code-{name}-{date}.md
+**Review log:** scaffold/decisions/code-review/CR-###-{name}.md
 ```
 
 ## Rules

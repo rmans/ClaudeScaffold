@@ -32,7 +32,7 @@
 ## Key Files
 
 - [WORKFLOW.md](WORKFLOW.md) — Step-by-step recipe for the full pipeline
-- [SKILLS.md](SKILLS.md) — Man-page reference for all 63 slash commands
+- [SKILLS.md](SKILLS.md) — Man-page reference for all 71 slash commands
 - [doc-authority.md](doc-authority.md) — Precedence rules (read when conflicts arise)
 - [README.md](README.md) — How to use this scaffold
 
@@ -47,5 +47,9 @@
 | ADR | ADR-### | ADR-001 |
 | Slice | SLICE-### | SLICE-001 |
 | Playtester Feedback | PF-### | PF-001 |
+| Code Review | CR-### | CR-001 |
+| Known Issue | KI-### | KI-001 |
+| Design Debt | DD-### | DD-001 |
+| Cross-Cutting Finding | XC-### | XC-001 |
 
 IDs are permanent. They never change even if the document is renamed.

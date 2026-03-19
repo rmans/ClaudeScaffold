@@ -73,7 +73,7 @@
 |------|----------|-----------|-----------------|
 | S10–S12 | [triage-log-template.md](triage-log-template.md) | TRIAGE-[SLICE/SPECS]-### | [decisions/triage-log/](../decisions/triage-log/_index.md) |
 | S7/S14 | [revision-log-template.md](revision-log-template.md) | REVISION-[layer]-YYYY-MM-DD | [decisions/revision-log/](../decisions/revision-log/_index.md) |
-| S13 | [code-review-log-template.md](code-review-log-template.md) | (per review) | [decisions/code-review/](../decisions/code-review/_index.md) |
+| S13 | [code-review-log-template.md](code-review-log-template.md) | CR-### | [decisions/code-review/](../decisions/code-review/_index.md) |
 | Any | [review-template.md](review-template.md) | ITERATE/FIX/REVIEW-* | [decisions/review/](../decisions/review/_index.md) |
 
 ## Usage

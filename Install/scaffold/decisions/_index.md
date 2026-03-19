@@ -12,7 +12,7 @@
 | [design-debt/](design-debt/_index.md) | DD-### | Intentional design compromises with payoff plans | [design-debt-entry-template.md](../templates/design-debt-entry-template.md) |
 | [playtest-feedback/](playtest-feedback/_index.md) | PF-### | Playtester observations and patterns | [playtest-feedback-entry-template.md](../templates/playtest-feedback-entry-template.md) |
 | [cross-cutting-finding/](cross-cutting-finding/_index.md) | XC-### | Cross-document integrity issues from validate | [cross-cutting-finding-entry-template.md](../templates/cross-cutting-finding-entry-template.md) |
-| [code-review/](code-review/_index.md) | (per review) | Adversarial code review logs | [code-review-log-template.md](../templates/code-review-log-template.md) |
+| [code-review/](code-review/_index.md) | CR-### | Adversarial code review logs | [code-review-log-template.md](../templates/code-review-log-template.md) |
 | [revision-log/](revision-log/_index.md) | REVISION-[layer]-YYYY-MM-DD | Drift detection and update records | [revision-log-template.md](../templates/revision-log-template.md) |
 | [triage-log/](triage-log/_index.md) | TRIAGE-[type]-SLICE-### | Spec/task triage decision records | [triage-log-template.md](../templates/triage-log-template.md) |
 | [review/](review/_index.md) | ITERATE/FIX/REVIEW-* | Adversarial document review logs | [review-template.md](review/review-template.md) |

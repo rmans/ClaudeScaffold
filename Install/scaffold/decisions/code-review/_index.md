@@ -4,8 +4,8 @@
 
 ## Reviews
 
-| File | Scope | Task | Date | Issues | Accepted |
-|------|-------|------|------|--------|----------|
+| ID | File | Scope | Task | Date | Issues | Accepted |
+|----|------|-------|------|------|--------|----------|
 <!-- Rows added after each code review. -->
 
 ## Review Types
