@@ -1,8 +1,8 @@
 ---
 name: scaffold-validate
-description: Run cross-reference and planning-pipeline validation across all scaffold documents. Reports broken references, missing registrations, glossary violations, synchronization drift across spec and task pipelines, engine doc structural integrity, Step 5 style doc validation (structure, tokens, boundaries, accessibility, design intent, signal clarity), cross-cutting integrity (decision closure, workflow compliance, staleness), and cross-layer integrity (pipeline deadlock detection, change impact surface, orphan concepts, implementation coherence, semantic overlap).
+description: Run cross-reference and planning-pipeline validation across all scaffold documents. Reports broken references, missing registrations, glossary violations, synchronization drift across spec and task pipelines, engine doc structural integrity, Step 5 style doc validation (structure, tokens, boundaries, accessibility, design intent, signal clarity), cross-cutting integrity (decision closure, workflow compliance, staleness), and cross-layer integrity (pipeline deadlock detection, change impact surface, orphan concepts, implementation coherence, semantic overlap). Outputs a Validation Verdict (PASS/WARN/FAIL) with severity-weighted issue counts. Enforcement mode blocks downstream progression on FAIL. Incremental mode validates only changed files and their dependents.
 allowed-tools: Read, Edit, Write, Bash, Grep, Glob
-argument-hint: [--scope all|design|systems|foundation|roadmap|phases|slices|tasks|specs|refs|engine] [--range SYS-###-SYS-###]
+argument-hint: [--scope all|design|systems|foundation|roadmap|phases|slices|tasks|specs|refs|engine|style] [--range SYS-###-SYS-###] [--incremental]
 ---
 
 # Validate Cross-References
@@ -15,6 +15,7 @@ Run cross-reference and planning-pipeline validation, then report issues.
 |----------|----------|---------|-------------|
 | `--scope` | No | `all` | Which checks to run: `all` (everything), `design` (design doc structure, governance, and cross-references), `systems` (system design structural checks), `foundation` (foundation architecture completeness), `roadmap` (roadmap structure and coverage), `phases` (phase pipeline checks only), `slices` (slice pipeline checks only), `tasks` (task/slice/triage pipeline checks only), `specs` (spec/slice pipeline checks only), `refs` (reference-layer validation — scripted ID/glossary checks plus expanded Step 3 doc structure, value validity, and cross-doc consistency checks), `engine` (engine doc structure, content health, Step 3 alignment, cross-engine consistency, and layer boundary compliance), `style` (Step 5 visual/UX doc structure, content health, cross-doc consistency, authority flow, boundary compliance, and accessibility coherence) |
 | `--range` | No | all | For `--scope systems`: `SYS-###` or `SYS-###-SYS-###` to validate a specific system or range. If omitted, validates all systems. |
+| `--incremental` | No | off | Only validate files changed since the last successful validation (or last commit if no prior run). Automatically includes dependents of changed files. See Step 0b. |
 
 ## Steps
 
@@ -33,6 +34,25 @@ Parse the `--scope` argument from `$ARGUMENTS`:
 - `--scope engine` → run only Step 2k (engine-pipeline checks). Skip all other steps.
 - `--scope style` → run only Step 2m (style-pipeline checks). Skip all other steps.
 - `--scope all` or no argument → run all steps.
+
+### 0b. Incremental Mode (when `--incremental` is set)
+
+When `--incremental` is provided, reduce the validation surface to only changed files and their dependents:
+
+1. **Identify changed files:** Run `git diff --name-only HEAD` (unstaged + staged) and `git diff --name-only --cached` (staged only). Union the results. Filter to `scaffold/` files only.
+2. **Map dependents:** For each changed file, compute its downstream impact using the Document Influence Map in `scaffold/doc-authority.md`:
+   - Changed `design-doc.md` → all systems, all Step 3 docs, all Step 5 docs, roadmap
+   - Changed `SYS-###` → specs referencing that system, slices scoping that system, tasks implementing those specs, engine docs, Step 5 docs
+   - Changed `architecture.md` / `authority.md` / `interfaces.md` → engine docs, specs, tasks
+   - Changed `SPEC-###` → tasks implementing that spec, slice containing the spec
+   - Changed `SLICE-###` → phase containing the slice, tasks in the slice
+   - Changed Step 5 doc → other Step 5 docs (cross-doc checks only)
+   - Changed engine doc → other engine docs (ecosystem checks only)
+3. **Step 5 override:** If any Step 5 doc (style-guide, color-system, ui-kit, interaction-model, feedback-system, audio-direction) is in the changed set, include **all** Step 5 docs for cross-doc checks. Step 5 docs have dense cross-references — partial inclusion risks missing broken chains.
+4. **Filter checks:** Only run checks that involve at least one file in the changed-or-dependent set. Cross-cutting and cross-layer checks still run but only report issues involving changed/dependent files.
+5. **Report scope:** Add `[INCREMENTAL]` prefix to the report header. List which files triggered the validation and which dependents were included.
+
+If no scaffold files changed, report: **No scaffold changes detected. Skipping validation.**
 
 ### 1. Run the Validator (scope: `all` or `refs`)
 
@@ -697,7 +717,7 @@ These compare Step 5 docs against each other. Require at least 3 Step 5 docs to 
 | Check | What It Validates | Severity |
 |-------|------------------|----------|
 | `style-design-intent-alignment` | Compare only against these specific design doc sections: (1) Core Fantasy → style-guide tone registers should reflect the same mood, (2) Failure Philosophy → feedback-system Critical events should use strong multi-channel feedback, (3) Player Control Model → interaction-model complexity should match stated control style (direct vs indirect, simple vs complex). Check by comparing section headings and explicit named concepts, not general keyword drift. Low-confidence — only flag obvious polarity clashes (e.g., "grim survival" Core Fantasy with "bright playful" tone registers). | WARN [ADVISORY] if misaligned |
-| `style-interaction-ui-mapping` | Every player action defined in interaction-model has a corresponding UI affordance in ui-kit. Normalize actions into canonical vocabulary: `select`, `multi_select`, `command`, `cancel`, `drag`, `inspect`, `mode_switch`, `confirm`, `context_action`. Map interaction-model terms into this vocabulary, then check ui-kit for a matching affordance (component, cursor state, selection indicator). Also scan ui-kit for components with no matching action. Report source line in interaction-model and missing location in ui-kit. | WARN per unmapped action or orphan element |
+| `style-interaction-ui-mapping` | Every player action defined in interaction-model has a corresponding UI affordance in ui-kit. Normalize actions into canonical vocabulary: `select`, `multi_select`, `command`, `cancel`, `drag`, `inspect`, `mode_switch`, `confirm`, `context_action`. Map interaction-model terms into this vocabulary, then check ui-kit for a matching affordance (component, cursor state, selection indicator). Also scan ui-kit for orphan interactive components with no matching canonical action — limit orphan detection to interactive components, cursor states, actionable indicators, and context affordances. Skip purely informational elements, decorative hierarchy aids, layout primitives, and passive status displays. Report source line in interaction-model and missing location in ui-kit. | WARN per unmapped action or orphan element |
 
 **Signal Clarity & Conflict:**
 
@@ -718,7 +738,7 @@ These compare Step 5 docs against each other. Require at least 3 Step 5 docs to 
 
 | Check | What It Validates | Severity |
 |-------|------------------|----------|
-| `style-end-to-end-spec-readiness` | Pick one representative interaction from interaction-model and verify the full chain is defined. Selection priority: (1) first command marked core/primary if such metadata exists, (2) selection model if defined, (3) first command under a canonical heading like `## Core Commands` or `## Command Model`, (4) first defined command as fallback. Verify: (a) input mechanism in interaction-model, (b) UI affordance in ui-kit, (c) semantic or state token in color-system referenced by the affordance or its resulting feedback state, (d) feedback response in feedback-system Event-Response Table, (e) audio category in audio-direction. If any step is missing or undefined → FAIL. Report which step broke and in which doc. | FAIL if chain incomplete |
+| `style-end-to-end-spec-readiness` | Pick one representative interaction from interaction-model and verify the full chain is defined. Selection priority: (1) first command marked core/primary if such metadata exists, (2) first command under a canonical heading like `## Core Commands` or `## Command Model`, (3) selection model if no command is clearly marked core, (4) first defined command as fallback. Verify: (a) input mechanism in interaction-model, (b) UI affordance in ui-kit, (c) semantic or state token in color-system referenced by the affordance or its resulting feedback state, (d) feedback response in feedback-system Event-Response Table, (e) audio category in audio-direction. If any step is missing or undefined and selection was via priority (1) or (2) → FAIL. If selection was via priority (3) or (4) → WARN (the pick was heuristic, not explicit). Report which step broke, in which doc, and which selection priority was used. | FAIL if chain incomplete with explicit pick; WARN if chain incomplete with heuristic pick |
 
 ---
 
@@ -728,16 +748,21 @@ These compare Step 5 docs against each other. Require at least 3 Step 5 docs to 
 
 **Line-level source reporting:** All style check results must report the specific source location: file path, line number or section heading, and the exact text that triggered the finding. Advisory checks must include enough context for the user to evaluate the finding without re-reading the entire doc.
 
-**Deterministic-before-advisory rule:** If a deterministic check already explains a failure, advisory checks must not raise a duplicate finding for the same row/token/action. Example: if `style-token-resolution` fails because a token is missing, `style-visual-hierarchy-consistency` should not also complain about that same row unless it reveals a distinct problem. Deduplicate by source location (doc + section + row/token name).
+**Deterministic-before-advisory rule:** If a deterministic check already explains a failure, advisory checks must not raise a duplicate finding for the same row/token/action. Example: if `style-token-resolution` fails because a token is missing, `style-visual-hierarchy-consistency` should not also complain about that same row unless it reveals a distinct problem. Deduplicate by source location (doc + section + row/token name). **Extended rule:** Do not emit downstream derivative warnings for the same root cause across related checks. If `style-interaction-ui-mapping` already flags an unmapped action, neither `style-interaction-feedback-coverage` nor `style-end-to-end-spec-readiness` should re-flag the same action's absence unless they identify a distinct break point. One root cause = one finding in the report.
+
+**Instruction precedence:** If a detailed check definition (in the tables above) conflicts with the shorter "How to run these checks" instruction below, the detailed check definition wins. The run instructions are implementation guidance — the check definitions are the authoritative rules.
 
 **Advisory conservatism:** All `[ADVISORY]` checks (`style-design-intent-alignment`, `style-feedback-channel-conflict`, `style-accessibility-no-color-only`, `style-accessibility-no-hover-only`, `style-scalability`) must only fire on explicit evidence, obvious contradiction, and localizable examples. Never fire on broad inference, subtle word differences, or ambiguous pairings. When in doubt, do not flag.
 
 **Exemption rules for all style keyword checks:** The following content is exempt from boundary compliance, raw hex, and engine content grep checks:
 - Content inside fenced code blocks (` ``` `)
 - Content inside blockquotes (`> `)
-- Content explicitly marked as examples or anti-patterns ("bad example:", "don't do this:")
+- Content explicitly marked as examples or anti-patterns ("bad example:", "don't do this:", "avoid:", "instead of:")
+- Content in comparison or migration tables labeled as examples (column headers containing "before", "after", "wrong", "right", "avoid", "instead")
+- Content in sections titled "Anti-Patterns", "Examples", "Migration", "Before/After", or similar instructional headings
 - HTML template instruction comments (`<!-- ... -->`) in docs with Status: Draft
 - Illustrative mentions in Rules sections that describe what NOT to do
+- Accessibility contrast ratio examples (hex values appearing within ±2 lines of "contrast", "WCAG", "ratio")
 
 ---
 
@@ -761,19 +786,19 @@ These compare Step 5 docs against each other. Require at least 3 Step 5 docs to 
 16. For `style-entity-icon-coverage`: Read entity-components.md entity types. Check style-guide and ui-kit for visual descriptions or icon definitions.
 17. For `style-resource-coverage`: Read resource-definitions.md resources. Check ui-kit for display components.
 18. For boundary checks: Grep target docs for specified keywords. Exempt: content inside fenced code blocks, blockquotes, lines marked as examples/anti-patterns, HTML template comments in Draft docs, and illustrative mentions in Rules sections describing what NOT to do.
-19. For `style-interaction-feedback-coverage`: Extract action types from interaction-model section headings and content. Check feedback-system for matching entries.
+19. For `style-interaction-feedback-coverage`: Extract action types from interaction-model section headings and content. Normalize into the same canonical vocabulary used by `style-interaction-ui-mapping`: `select`, `multi_select`, `command`, `cancel`, `drag`, `inspect`, `mode_switch`, `confirm`, `context_action`. Check feedback-system for a matching feedback entry per canonical action.
 20. For `style-feedback-audio-coverage`: Extract audio column values from Event-Response Table. Check audio-direction sound categories.
 21. For `style-priority-hierarchy-alignment`: Extract ordered priority lists from both feedback-system and audio-direction. Compare ordering.
 22. For accessibility checks: Run specific pattern checks as described per check.
 23. For `style-review-freshness`: Glob `scaffold/decisions/review/ITERATE-style-*` and `FIX-style-*`. Match to docs. Apply status matrix.
 24. For `style-design-intent-alignment`: Read only these design doc sections: Core Fantasy (first paragraph), Tone (heading-level descriptors), Failure Philosophy (warning severity language), Player Control Model (direct/indirect, simple/complex). Compare named concepts and explicit descriptors against style-guide tone register names, feedback-system Critical event count and channel coverage, and interaction-model section complexity. Only flag obvious polarity clashes — not subtle word differences. Label `[ADVISORY]`.
-25. For `style-interaction-ui-mapping`: Extract player actions from interaction-model section headings and content. Normalize into canonical vocabulary: `select`, `multi_select`, `command`, `cancel`, `drag`, `inspect`, `mode_switch`, `confirm`, `context_action`. For each canonical action, check ui-kit for a matching affordance (component, cursor state, indicator). Report source line in interaction-model and missing location in ui-kit. Also scan ui-kit component definitions for elements with no matching canonical action.
-26. For `style-feedback-signal-overload`: For each Event-Response Table row, check if all three channels (Visual, Audio, UI) use high-severity/critical treatments simultaneously. Flag events where no channel is secondary.
+25. For `style-interaction-ui-mapping`: Extract player actions from interaction-model section headings and content. Normalize into canonical vocabulary: `select`, `multi_select`, `command`, `cancel`, `drag`, `inspect`, `mode_switch`, `confirm`, `context_action`. For each canonical action, check ui-kit for a matching affordance (component, cursor state, indicator). Report source line in interaction-model and missing location in ui-kit. Also scan ui-kit component definitions for orphan interactive elements with no matching canonical action — limit orphan detection to interactive components, cursor states, actionable indicators, and context affordances. Skip purely informational elements, decorative hierarchy aids, layout primitives, and passive status displays.
+26. For `style-feedback-signal-overload`: For each Event-Response Table row, check if channel-level support/intensity is explicitly represented (e.g., "primary"/"supportive" labels, or intensity descriptors like "strong"/"subtle"). If explicit: enforce that not all three channels (Visual, Audio, UI) are at maximum intensity simultaneously — flag events where no channel is secondary. If the table has a Priority column but no channel-level intensity marking: downgrade to WARN [ADVISORY]. If the table lacks a Priority column entirely: SKIP.
 27. For `style-feedback-channel-conflict`: For each Event-Response Table row, extract semantic tone from the Visual column (token names like `success`, `danger`, `warning`) and the Audio column (category names like `error`, `confirmation`, `alert`). Flag rows where visual and audio imply opposite emotional signals.
 28. For `style-visual-hierarchy-consistency`: Map feedback-system Critical events to their color tokens. Verify Critical events use signal-palette danger/alert tokens. Map Info/Low events to their tokens. Verify they use subdued/neutral tokens, not the same visual weight as Critical.
 29. For `style-unused-tokens`: Collect all token names defined in color-system. Grep ui-kit, interaction-model, feedback-system, and audio-direction for each token name. Tokens with zero references outside color-system are unused.
 30. For `style-scalability`: Check color-system for duplicate-purpose tokens (identical hex values, or tokens sharing the same normalized stem/prefix). Check ui-kit component `###` subsections for consistent structure (same section pattern across components). Check feedback-system Event-Response Table for presence of category headers or grouping. Do not use string distance metrics.
-31. For `style-end-to-end-spec-readiness`: Read interaction-model. Pick the representative interaction using priority: (1) first core/primary-marked command, (2) selection model, (3) first command under canonical heading, (4) first defined command. Normalize to canonical vocabulary. Check ui-kit for a matching affordance. Check color-system for semantic or state tokens referenced by the affordance or its resulting feedback state. Check feedback-system Event-Response Table for a matching row. Check audio-direction for the audio category in that row. Report the first broken link in the chain.
+31. For `style-end-to-end-spec-readiness`: Read interaction-model. Pick the representative interaction using priority: (1) first core/primary-marked command, (2) first command under canonical heading like `## Core Commands` or `## Command Model`, (3) selection model if no command is clearly marked core, (4) first defined command as fallback. Normalize to canonical vocabulary. Check ui-kit for a matching affordance. Check color-system for semantic or state tokens referenced by the affordance or its resulting feedback state. Check feedback-system Event-Response Table for a matching row. Check audio-direction for the audio category in that row. Report the first broken link in the chain.
 
 **Maturity-aware activation:**
 - If no Step 5 docs exist → SKIP all style checks.
@@ -898,6 +923,15 @@ These checks span multiple document layers. They detect structural problems that
 | `implementation-data-availability` | For each spec that references system data (entity fields, signals, resources), verify that the data source is actually defined upstream (entity-components has the field, signal-registry has the signal, resource-definitions has the resource). A spec that depends on data that doesn't exist is unimplementable. | FAIL per missing data source |
 | `implementation-timing-coherence` | For specs and tasks that describe timing-sensitive behavior ("on tick", "immediately", "next frame"), check that the referenced timing model is consistent with architecture.md Simulation Update Semantics and simulation-runtime tick orchestration. Flag specs that assume timing not guaranteed by the architecture. | WARN [ADVISORY] per inconsistency |
 
+**End-to-End Pipeline Chain:**
+
+| Check | What It Validates | Severity |
+|-------|------------------|----------|
+| `pipeline-design-to-systems` | Every design-level concept (Core Loop actions, Design Invariant implications, System Domain entries) is represented in at least one system design. Concepts with no system coverage are orphan design intent. | WARN per orphan concept |
+| `pipeline-systems-to-specs` | Every system responsibility listed in a system design's Simulation Responsibility or Player Actions section has at least one spec that exercises it. Responsibilities with no spec coverage have no testable behavior definition. | WARN per uncovered responsibility |
+| `pipeline-specs-to-tasks` | Every Approved/Complete spec has at least one task that implements it. Specs with no tasks have no execution path. | FAIL per unimplemented spec |
+| `pipeline-tasks-to-engine` | Every task whose implementation touches engine-level concerns (references engine patterns, node types, signal wiring, or tick behavior) has a corresponding engine doc that covers the relevant topic. Tasks assuming engine conventions not documented anywhere are fragile. | WARN [ADVISORY] per uncovered task |
+
 **Semantic Overlap (advisory):**
 
 | Check | What It Validates | Severity |
@@ -918,6 +952,10 @@ These checks span multiple document layers. They detect structural problems that
 9. For `implementation-timing-coherence`: For each spec/task mentioning timing keywords ("per tick", "immediately", "queued", "next frame", "end of tick"), cross-reference architecture.md Simulation Update Semantics. Flag if the timing assumption is not explicitly supported. Label `[ADVISORY]`.
 10. For `semantic-system-overlap`: Extract first 2 sentences of each system Purpose. Tokenize, remove stop words. Compare all pairs for >60% keyword overlap. Report overlapping pairs. Label `[ADVISORY]`.
 11. For `semantic-spec-overlap`: Within each slice, extract spec descriptions and acceptance criteria. Tokenize. Compare pairs within the same slice for >50% keyword overlap. Report overlapping pairs. Label `[ADVISORY]`.
+12. For `pipeline-design-to-systems`: Read design doc Core Loop (extract player actions/verbs), Design Invariants (extract Implication fields), and System Domains (extract listed domains). For each concept, grep all system designs for a matching reference. Report concepts with zero system coverage.
+13. For `pipeline-systems-to-specs`: For each system design, extract Simulation Responsibility bullet points and Player Actions entries. For each responsibility/action, grep all specs for `System: SYS-###` matching that system. Check if any spec's description or acceptance criteria addresses the responsibility. Report uncovered responsibilities.
+14. For `pipeline-specs-to-tasks`: For each spec with Status Approved or Complete, grep all task files for `Implements: SPEC-###`. Report specs with zero implementing tasks.
+15. For `pipeline-tasks-to-engine`: For each task, scan implementation steps for engine-level keywords (node types, signal patterns, tick references, resource loading patterns). For each keyword cluster, check if a matching engine doc topic covers it. Label `[ADVISORY]`.
 
 **Maturity-aware activation:**
 - Pipeline deadlock detection → requires at least 1 phase, 1 slice, and 1 spec to exist. SKIP otherwise.
@@ -925,6 +963,7 @@ These checks span multiple document layers. They detect structural problems that
 - Orphan detection → each check requires its source doc to exist. SKIP individually if missing.
 - Implementation coherence → requires at least 3 specs with data references. SKIP otherwise.
 - Semantic overlap → system overlap requires 3+ systems. Spec overlap requires 2+ specs in at least one slice. SKIP otherwise.
+- End-to-end pipeline chain → `pipeline-design-to-systems` requires design doc and at least 1 system. `pipeline-systems-to-specs` requires at least 1 system and 1 spec. `pipeline-specs-to-tasks` requires at least 1 Approved/Complete spec and 1 task. `pipeline-tasks-to-engine` requires at least 1 task and 1 engine doc. SKIP individually if preconditions not met.
 
 **Suggested fixes:**
 - Pipeline circular dependency → "Break the cycle by removing one dependency. Review the chain: [A → B → C → A] and determine which link is weakest"
@@ -938,31 +977,134 @@ These checks span multiple document layers. They detect structural problems that
 - Implementation timing inconsistency → "SPEC-### assumes [timing] but architecture.md doesn't guarantee it. Align timing or file an ADR"
 - Semantic system overlap → "SYS-### and SYS-### have overlapping Purpose descriptions. Clarify boundaries or merge"
 - Semantic spec overlap → "SPEC-### and SPEC-### in SLICE-### describe similar behavior. Merge or differentiate"
+- Pipeline design-to-systems orphan → "Design concept [concept] has no system coverage. Create a system for it via `/scaffold-new-system` or remove the concept from the design doc if it's been descoped"
+- Pipeline systems-to-specs uncovered → "System SYS-### responsibility [responsibility] has no spec coverage. Create a spec via `/scaffold-new-spec` or mark the responsibility as deferred"
+- Pipeline specs-to-tasks unimplemented → "SPEC-### (Approved) has no implementing tasks. Create tasks via `/scaffold-new-task` or defer the spec"
+- Pipeline tasks-to-engine uncovered → "TASK-### references engine concepts not covered by any engine doc. Run `/scaffold-fix-engine` or create a new engine doc"
 
 ### 3. Report
 
-Present results as a summary table with four status levels:
+Present results as a summary table with five columns:
 
 | Status | Meaning |
 |--------|---------|
 | **PASS** | Check ran and found no issues |
 | **FAIL** | Check ran and found issues that must be fixed |
 | **WARN** | Check ran and found issues that should be reviewed but may be acceptable |
+| **INFO** | Informational finding (no action required unless upgrading to a stricter maturity level) |
 | **SKIP** | Check preconditions not met (maturity-aware activation) — not an error |
 
+**Severity classification:** Each FAIL and WARN issue is additionally classified by impact:
+
+| Impact | Meaning | Examples |
+|--------|---------|----------|
+| **Critical** | Architecture-breaking — blocks all downstream work | Authority conflicts, circular pipeline deadlocks, missing data sources for specs |
+| **High** | Cross-layer inconsistency — breaks specific downstream paths | Broken references across layers, stale Approved docs, unimplemented specs |
+| **Medium** | Structural issues — within-layer problems | Missing sections, index drift, status-filename mismatch, template drift |
+| **Low** | Cosmetic / hygiene — no downstream breakage | Seeded markers, unused tokens, template comments, count-range warnings |
+
+Impact classification is deterministic per check — see the check definitions for which impact each check produces. When a check can produce multiple severities (e.g., missing core section = High, missing adaptive section = Medium), classify per individual finding.
+
+**Confidence classification:** Each finding carries a confidence level:
+
+| Confidence | Meaning | When to use |
+|------------|---------|-------------|
+| **High** | Deterministic — structural check with no ambiguity | Section exists/missing, ID resolves/doesn't, value in allowed set |
+| **Medium** | Structured heuristic — pattern-based with clear rules | Keyword proximity checks, timing coherence, naming convention comparison |
+| **Low** | Advisory / interpretation — may produce false positives | Design intent alignment, semantic overlap, boundary compliance keyword grep |
+
+All `[ADVISORY]` checks are Low confidence. All structural/existence checks are High confidence. Cross-doc consistency checks that use exact matching are High; those using keyword proximity are Medium.
+
 ```
-| Check | Status | Issues |
-|-------|--------|--------|
-| System IDs | PASS | 0 |
-| Task index files | FAIL | 2 |
-| Triage upstream targets | SKIP | 0 |
-| Status filename sync | WARN | 1 |
-| ... | ... | ... |
+| Check | Status | Impact | Confidence | Issues |
+|-------|--------|--------|------------|--------|
+| System IDs | PASS | — | High | 0 |
+| Task index files | FAIL | Medium | High | 2 |
+| Triage upstream targets | SKIP | — | — | 0 |
+| Pipeline specs-to-tasks | FAIL | High | High | 1 |
+| Design intent alignment | WARN | Low | Low | 1 |
+| ... | ... | ... | ... | ... |
 ```
 
-Then list each FAIL and WARN issue with file, line, and message. SKIP checks get a one-line note explaining why they were skipped.
+Then list each FAIL and WARN issue with file, line, message, impact, and confidence. SKIP checks get a one-line note explaining why they were skipped.
 
 If all checks pass, report: **All cross-references validated. No issues found.**
+
+### 3b. Validation Verdict
+
+After the report table, always output a Validation Verdict block:
+
+```
+## Validation Verdict
+
+- **Status:** PASS | WARN | FAIL
+- **Critical Issues:** N
+- **High Issues:** N
+- **Medium Issues:** N
+- **Low Issues:** N
+- **Blocking:** Yes/No
+- **Next Recommended Step:** <skill or action>
+```
+
+**Verdict rules:**
+- **FAIL** if any FAIL issues exist (regardless of impact). Blocking = Yes.
+- **WARN** if only WARN/INFO issues exist. Blocking = No.
+- **PASS** if only PASS/SKIP/INFO results. Blocking = No.
+
+**Next Recommended Step logic:**
+- If Critical FAIL exists → recommend the fix skill for the highest-impact failing layer
+- If High FAIL exists → recommend the specific fix skill (e.g., `/scaffold-fix-systems` for system FAILs)
+- If only Medium/Low FAIL → recommend `/scaffold-fix-<layer>` for the first failing layer
+- If only WARN → recommend reviewing the warnings, then proceeding
+- If PASS → recommend the next pipeline step (e.g., if validating after fix, recommend iterate; if after iterate, recommend approve)
+
+### 3c. Enforcement
+
+When the Validation Verdict status is **FAIL**:
+
+1. **Exit with non-zero status.** Report the FAIL verdict clearly so callers (including other skills) can detect it.
+2. **Block downstream progression.** The following skills should not proceed if validate FAILs:
+   - `/scaffold-approve-*` — cannot approve docs with FAIL issues
+   - `/scaffold-implement-task` — cannot implement tasks with upstream FAILs
+   - `/scaffold-complete` — cannot mark Complete with FAIL issues
+3. **Log the result.** Append a validation run entry to `scaffold/decisions/validation-log.md` (create if missing) with: date, scope, verdict, issue counts by impact, and blocking status.
+
+When the Validation Verdict status is **WARN**:
+- Allow progression but log the risk in `scaffold/decisions/validation-log.md`.
+- Include a `⚠ Proceeding with N warnings` note in the log entry.
+
+When the Validation Verdict status is **PASS** or only **INFO**:
+- Fully pass. Log the clean run in `scaffold/decisions/validation-log.md`.
+
+**Validation log format:**
+
+```markdown
+| Date | Scope | Verdict | Critical | High | Medium | Low | Warnings | Blocking |
+|------|-------|---------|----------|------|--------|-----|----------|----------|
+| 2026-03-19 | all | FAIL | 1 | 3 | 5 | 2 | 4 | Yes |
+```
+
+### 3d. Auto-Dispatch (suggested next action)
+
+Based on failing checks, suggest the specific fix skill to run. Group by layer and present the most impactful first:
+
+| Failing Layer | Suggested Fix Skill |
+|--------------|-------------------|
+| Design doc checks | `/scaffold-fix-design` |
+| System design checks | `/scaffold-fix-systems [--range]` |
+| Foundation checks | `/scaffold-fix-foundation` |
+| Reference (Step 3) checks | `/scaffold-fix-references` |
+| Engine checks | `/scaffold-fix-engine` |
+| Style (Step 5) checks | `/scaffold-fix-style` |
+| Roadmap checks | `/scaffold-fix-roadmap` |
+| Phase checks | `/scaffold-fix-phase` |
+| Slice checks | `/scaffold-fix-slice` |
+| Spec checks | `/scaffold-fix-spec` |
+| Task checks | `/scaffold-fix-task` |
+| Cross-cutting findings | `/scaffold-fix-cross-cutting` |
+| Pipeline chain gaps | Depends on which layer broke — suggest the creation skill for the missing artifact |
+
+When multiple layers fail, present them in priority order: Critical-impact failures first, then High, then Medium, then Low.
 
 ### 4. Suggest Fixes
 
@@ -1086,7 +1228,156 @@ For each failing check, suggest the specific edit needed:
 
 ## Rules
 
-- **Read-only analysis.** This skill reports issues but does not fix them. Use `/scaffold-update-doc` to apply fixes.
+- **Analysis-first, enforcement-aware, log-writing.** This skill analyzes scaffold documents and produces a Validation Verdict but does not fix issues. Use the suggested fix skill or `/scaffold-update-doc` to apply fixes. The only files this skill writes are `scaffold/decisions/validation-log.md` (verdict log) and — on `--scope all` only — `scaffold/decisions/cross-cutting-findings.md` (finding updates).
+- **Scoped runs write only the validation log.** When using `--scope style`, `--scope engine`, or any other single-scope argument, the skill writes only to `validation-log.md`. Cross-cutting findings (`cross-cutting-findings.md`) are updated only on `--scope all` runs, because cross-cutting checks span multiple layers and require full context.
 - **Run from project root.** The script expects `scaffold/` to be in the current directory.
 - **If the script fails**, check that Python 3 is available and `scaffold/tools/validate-refs.py` exists.
 - **Maturity-aware severity.** See the Severity Model in Step 2b for SKIP vs WARN vs FAIL rules. The severity depends on whether preconditions are met and whether the structure is required at the current project maturity.
+- **Enforcement is advisory by default.** The verdict and blocking status are informational — they tell downstream skills whether to proceed. Skills that consume validate output (approve, implement, complete) should check the validation log before proceeding.
+- **Incremental mode is best-effort.** Dependency mapping may miss indirect dependents. For Step 5 docs specifically, if any Step 5 doc changes, all Step 5 docs are included in cross-doc checks. When in doubt, run full validation (`--scope all` without `--incremental`).
+- **Impact classification is per-finding.** A single check may produce findings at different impact levels (e.g., missing core section = High, missing adaptive section = Medium). Classify each finding individually, not the check as a whole. See the Impact Map below for the deterministic mapping.
+- **Confidence labels are stable.** High/Medium/Low confidence is determined by check type, not by result. A High-confidence check that finds nothing is still High confidence. Do not adjust confidence based on finding count or severity.
+
+## Impact Map
+
+Deterministic mapping of every check to its impact level and confidence. Checks not listed default to Medium impact, High confidence.
+
+### Style Checks (Step 5)
+
+| Check | Impact | Confidence |
+|-------|--------|------------|
+| `style-header-fields` | Medium | High |
+| `style-authority-rank` | Medium | High |
+| `style-layer-value` | Medium | High |
+| `style-status-value` | Medium | High |
+| `style-conforms-to-resolution` | High | High |
+| `style-template-sections` | Medium | High |
+| `style-rules-populated` | Low | High |
+| `style-section-health` | Medium (WARN) / High (FAIL) | High |
+| `style-todo-count` | Low | High |
+| `style-template-comments` | Low | High |
+| `style-guide-pillars` | Medium | High |
+| `style-guide-tone-registers` | Medium | High |
+| `color-system-tokens` | Medium | High |
+| `color-system-hex-valid` | High | High |
+| `color-system-no-duplicate-tokens` | High | High |
+| `ui-kit-component-states` | Medium | High |
+| `ui-kit-scope-guard` | High | High |
+| `interaction-model-selection` | Medium | High |
+| `interaction-model-commands` | Medium | High |
+| `feedback-system-priority` | Medium | High |
+| `feedback-system-event-table` | Medium | High |
+| `feedback-system-event-columns` | Medium | High |
+| `audio-direction-categories` | Medium | High |
+| `audio-direction-hierarchy` | Medium | High |
+| `style-authority-flow` | High | High |
+| `style-token-resolution` | High | High |
+| `style-no-raw-hex` | Low | High |
+| `style-state-transitions-coverage` | Medium | Medium |
+| `style-entity-icon-coverage` | Medium | Medium |
+| `style-resource-coverage` | Medium | Medium |
+| `style-interaction-no-responses` | Low | Low |
+| `style-feedback-no-inputs` | Low | Low |
+| `style-audio-no-timing` | Low | Low |
+| `style-ui-kit-no-engine` | High | High |
+| `style-interaction-feedback-coverage` | High | Medium |
+| `style-feedback-audio-coverage` | Medium | Medium |
+| `style-priority-hierarchy-alignment` | Medium | High |
+| `style-accessibility-contrast` | Medium | High |
+| `style-accessibility-redundancy` | High | High |
+| `style-accessibility-no-color-only` | Medium | Low |
+| `style-accessibility-no-hover-only` | Medium | Low |
+| `style-review-freshness` | Low | High |
+| `style-design-intent-alignment` | Low | Low |
+| `style-interaction-ui-mapping` | High | Medium |
+| `style-feedback-signal-overload` | Medium | Medium |
+| `style-feedback-channel-conflict` | Low | Low |
+| `style-visual-hierarchy-consistency` | Medium | Medium |
+| `style-unused-tokens` | Low | High |
+| `style-scalability` | Low | Low |
+| `style-end-to-end-spec-readiness` | Critical (explicit pick) / High (heuristic pick) | High (explicit) / Medium (heuristic) |
+
+### Engine Checks (Step 4)
+
+| Check | Impact | Confidence |
+|-------|--------|------------|
+| `engine-index-files` | Medium | High |
+| `engine-header-fields` | Medium | High |
+| `engine-layer-value` | Medium | High |
+| `engine-authority-rank` | Medium | High |
+| `engine-status-value` | Medium | High |
+| `engine-conforms-to-resolution` | High | High |
+| `engine-common-sections` | Medium | High |
+| `engine-template-sections` | Low | High |
+| `engine-section-health` | Medium (WARN) / High (FAIL) | High |
+| `engine-purpose-populated` | High | High |
+| `engine-todo-count` | Low | High |
+| `engine-seeded-markers` | Low | High |
+| `engine-template-comments` | Low | High |
+| `engine-constrained-todo-freshness` | Medium | High |
+| `engine-no-system-design-sections` | High | High |
+| `engine-architecture-references` | Medium | Low |
+| `engine-authority-compliance` | High | Low |
+| `engine-signal-registry-compliance` | Medium | Low |
+| `engine-no-design-content` | Medium | Low |
+| `engine-naming-convention-consistency` | Low | Low |
+| `engine-language-boundary-consistency` | Medium | Low |
+| `engine-signal-pattern-consistency` | Low | Low |
+| `engine-topic-overlap` | Medium | Medium |
+| `engine-template-drift` | Low | High |
+| `engine-review-freshness` | Low | High |
+
+### Cross-Layer Checks (Step 2n)
+
+| Check | Impact | Confidence |
+|-------|--------|------------|
+| `pipeline-circular-dependency` | Critical | High |
+| `pipeline-cross-layer-deadlock` | Critical | High |
+| `change-impact-surface` | Low | High |
+| `orphan-signals` | Low | High |
+| `orphan-enums` | Low | High |
+| `orphan-resources` | Low | High |
+| `orphan-balance-params` | Low | High |
+| `implementation-data-availability` | Critical | High |
+| `implementation-timing-coherence` | Medium | Low |
+| `semantic-system-overlap` | Low | Low |
+| `semantic-spec-overlap` | Low | Low |
+| `pipeline-design-to-systems` | Medium | Medium |
+| `pipeline-systems-to-specs` | Medium | Medium |
+| `pipeline-specs-to-tasks` | High | High |
+| `pipeline-tasks-to-engine` | Medium | Low |
+
+### Cross-Cutting Checks (Step 2l)
+
+| Check | Impact | Confidence |
+|-------|--------|------------|
+| `decision-closure-*` | High (Approved/Complete) / Low (Draft) | High |
+| `workflow-slice-review-before-approve` | High | High |
+| `workflow-phase-review-before-approve` | High | High |
+| `workflow-tasks-reordered-before-approve` | High | High |
+| `workflow-phase-sequence` | Critical | High |
+| `workflow-completed-phase-revision` | Medium | High |
+| `workflow-validate-after-edit` | Low | Medium |
+| `staleness-*` | Medium | Medium |
+
+### Foundation, Design, Systems, Planning Checks
+
+| Check | Impact | Confidence |
+|-------|--------|------------|
+| `*-index-files` | Medium | High |
+| `*-status-sync` / `*-status-filename-sync` | Medium | High |
+| `*-structure` (core section missing) | High | High |
+| `*-structure` (adaptive section missing) | Medium | High |
+| `*-section-health` (below FAIL threshold) | High | High |
+| `*-section-health` (below WARN threshold) | Medium | High |
+| `*-glossary-compliance` | Medium | High |
+| `*-review-freshness` | Low | High |
+| `foundation-authority-consistency` | Critical | High |
+| `foundation-entity-consistency` | High | High |
+| `systems-owned-state-overlap` | Critical | High |
+| `systems-dependency-cycles` | Medium | Medium |
+| `design-invariant-format` | High | High |
+| `design-system-index-sync` | High | High |
+| `design-adr-consistency` | Critical | High |
+| `refs-no-duplicate-entries` | High | High |
+| `refs-authority-entity-alignment` | Critical | High |

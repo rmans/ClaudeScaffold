@@ -115,3 +115,34 @@ Follow the step-by-step recipe in `scaffold/WORKFLOW.md` for the full 24-step pi
 - File an ADR in `scaffold/decisions/` to change a higher-authority document.
 - Log unresolved questions in `scaffold/decisions/known-issues.md`.
 - Log intentional compromises in `scaffold/decisions/design-debt.md`.
+
+## Project Version
+
+The project version is tracked in `VERSION.md` in the project root. Format: `MAJOR.PHASE.SLICE.PATCH`
+
+| Segment | When to bump | Examples |
+|---------|-------------|----------|
+| **MAJOR** | Full release / ship | 1.0.0.0 — v1 release |
+| **PHASE** | Phase completion (`/scaffold-complete` on a phase) | 0.1.0.0 — Phase 1 complete |
+| **SLICE** | Slice completion (`/scaffold-complete` on a slice) | 0.1.1.0 — first slice of Phase 1 complete |
+| **PATCH** | Task completion, bug fixes, doc creation, any other incremental work | 0.1.1.1 — first patch after slice |
+
+**Rules:**
+- Bump PATCH after every meaningful commit (task completion, doc creation, bug fix).
+- Bump SLICE and reset PATCH to 0 when a slice is completed.
+- Bump PHASE and reset SLICE + PATCH to 0 when a phase is completed.
+- Bump MAJOR and reset all others to 0 on a full release.
+- When bumping the version, update the `**Current:**` line and add a new changelog entry.
+- Changelog entries use the format: `### X.X.X.X — Short Title` followed by a bullet list of changes.
+- Keep entries concise — one bullet per meaningful change, not per file edited.
+- Group related changes under a single version bump (e.g., don't bump PATCH three times in one commit).
+
+**VERSION.md vs doc changelogs:** Individual scaffold docs have their own `Changelog` fields tracking per-file edits and which decision doc caused the change. `VERSION.md` is different — it is the **project-level changelog** that tells the story of how the project evolved over time. Write entries at the project level: what milestone was reached, what capability was added, what was fixed, what shifted. Not which files were touched — that's what doc changelogs and git history are for.
+
+**Changelog entry categories** — prefix each bullet with a category tag:
+- `[Added]` — new features, systems, docs, capabilities
+- `[Changed]` — modifications to existing behavior or design decisions
+- `[Fixed]` — bug fixes, issue resolutions, corrections
+- `[Removed]` — removed features, deprecated systems, descoped content
+- `[Balanced]` — tuning changes, balance parameter adjustments
+- `[Resolved]` — closed known issues, addressed ADR feedback, resolved design debt
