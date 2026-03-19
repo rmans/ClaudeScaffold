@@ -673,7 +673,7 @@ These compare Step 5 docs against each other. Require at least 3 Step 5 docs to 
 
 | Check | What It Validates | Severity |
 |-------|------------------|----------|
-| `style-interaction-feedback-coverage` | Every player action type defined in interaction-model has a corresponding feedback type in feedback-system. Extract action types from interaction-model (selection, command, cancel, drag, etc.) and check for matching feedback entries. | WARN per uncovered action |
+| `style-interaction-feedback-coverage` | Every player action type defined in interaction-model has a corresponding feedback type in feedback-system. Normalize actions into the same canonical vocabulary used by `style-interaction-ui-mapping`: `select`, `multi_select`, `command`, `cancel`, `drag`, `inspect`, `mode_switch`, `confirm`, `context_action`. Check feedback-system for a matching feedback entry per canonical action. | WARN per uncovered action |
 | `style-feedback-audio-coverage` | Every feedback type in feedback-system that specifies an audio response references a sound category defined in audio-direction. | WARN per unresolved category |
 | `style-priority-hierarchy-alignment` | feedback-system priority hierarchy and audio-direction feedback hierarchy use the same ordering. Extract priority lists from both docs and compare. | WARN if ordering conflicts |
 
@@ -703,7 +703,7 @@ These compare Step 5 docs against each other. Require at least 3 Step 5 docs to 
 
 | Check | What It Validates | Severity |
 |-------|------------------|----------|
-| `style-feedback-signal-overload` | No event in feedback-system Event-Response Table has all three channels at maximum intensity simultaneously. Check the Priority column: for events marked Critical or High, verify at least one of the three channels (Visual, Audio, UI) is designated supportive/secondary (lower intensity, shorter duration, or explicitly labeled as "supportive"). If the Event-Response Table lacks a Priority column, SKIP this check. Report the specific row. | WARN per overloaded event |
+| `style-feedback-signal-overload` | No event in feedback-system Event-Response Table has all three channels at maximum intensity simultaneously. Only enforce when channel support level is explicitly represented in the table (e.g., "primary"/"supportive" labels, or intensity descriptors like "strong"/"subtle"). If the table has a Priority column but no channel-level intensity marking, downgrade to WARN [ADVISORY]. If the table lacks a Priority column entirely, SKIP. Report the specific row. | WARN per overloaded event (ADVISORY if intensity not explicit) |
 | `style-feedback-channel-conflict` | No event in feedback-system has obviously conflicting emotional signals across channels. Only flag clear polarity clashes: success token + error audio, danger token + confirmation audio, calm token + alarm audio. Do NOT flag ambiguous or neutral pairings. Report the specific Event-Response Table row with the conflicting Visual and Audio column values. Low-confidence — use sparingly. | WARN [ADVISORY] per conflicting event |
 | `style-visual-hierarchy-consistency` | Critical states use highest-contrast color tokens (from color-system signal palette). Non-critical states do NOT use the same visual weight as critical states. Check that Critical events in feedback-system map to signal-palette danger/alert tokens, and that Info/Low events map to subdued tokens. | WARN if hierarchy violated |
 
@@ -712,13 +712,13 @@ These compare Step 5 docs against each other. Require at least 3 Step 5 docs to 
 | Check | What It Validates | Severity |
 |-------|------------------|----------|
 | `style-unused-tokens` | Every color token defined in color-system is referenced by at least one other Step 5 doc (ui-kit, interaction-model, feedback-system). Tokens defined but never used are dead weight. | WARN per unused token |
-| `style-scalability` | Advisory check for extensibility concerns. Flag: (1) near-duplicate tokens in color-system (tokens with very similar names or identical hex values), (2) inconsistent component structure in ui-kit (components defined with different section patterns making additions unpredictable), (3) Event-Response Table in feedback-system lacks any grouping or categorization (flat list with no headers or categories). Does not attempt to count hue slots or measure abstract capacity. | WARN [ADVISORY] if concerns found |
+| `style-scalability` | Advisory check for extensibility concerns. Flag: (1) duplicate-purpose tokens in color-system (identical hex values, or tokens sharing the same normalized stem/prefix that suggest redundancy), (2) inconsistent component structure in ui-kit (components defined with different section patterns making additions unpredictable), (3) Event-Response Table in feedback-system lacks any grouping or categorization (flat list with no headers or categories). Does not use string distance metrics. | WARN [ADVISORY] if concerns found |
 
 **Spec Readiness:**
 
 | Check | What It Validates | Severity |
 |-------|------------------|----------|
-| `style-end-to-end-spec-readiness` | Pick one required interaction from interaction-model (the first defined command or the selection model) and verify the full chain is defined: (1) input mechanism in interaction-model, (2) UI affordance in ui-kit, (3) color token in color-system, (4) feedback response in feedback-system Event-Response Table, (5) audio category in audio-direction. If any step is missing or undefined → FAIL. This is the validator equivalent of iterate-style's end-to-end scenario test. Report which step broke and in which doc. | FAIL if chain incomplete |
+| `style-end-to-end-spec-readiness` | Pick one representative interaction from interaction-model and verify the full chain is defined. Selection priority: (1) first command marked core/primary if such metadata exists, (2) selection model if defined, (3) first command under a canonical heading like `## Core Commands` or `## Command Model`, (4) first defined command as fallback. Verify: (a) input mechanism in interaction-model, (b) UI affordance in ui-kit, (c) semantic or state token in color-system referenced by the affordance or its resulting feedback state, (d) feedback response in feedback-system Event-Response Table, (e) audio category in audio-direction. If any step is missing or undefined → FAIL. Report which step broke and in which doc. | FAIL if chain incomplete |
 
 ---
 
@@ -727,6 +727,10 @@ These compare Step 5 docs against each other. Require at least 3 Step 5 docs to 
 **Canonical vocabulary normalization:** Checks that compare concepts across Step 5 docs (action types, severity levels, token categories) should normalize synonyms into canonical vocabulary where possible. Use section headings and explicit named concepts as primary matching targets, not general prose.
 
 **Line-level source reporting:** All style check results must report the specific source location: file path, line number or section heading, and the exact text that triggered the finding. Advisory checks must include enough context for the user to evaluate the finding without re-reading the entire doc.
+
+**Deterministic-before-advisory rule:** If a deterministic check already explains a failure, advisory checks must not raise a duplicate finding for the same row/token/action. Example: if `style-token-resolution` fails because a token is missing, `style-visual-hierarchy-consistency` should not also complain about that same row unless it reveals a distinct problem. Deduplicate by source location (doc + section + row/token name).
+
+**Advisory conservatism:** All `[ADVISORY]` checks (`style-design-intent-alignment`, `style-feedback-channel-conflict`, `style-accessibility-no-color-only`, `style-accessibility-no-hover-only`, `style-scalability`) must only fire on explicit evidence, obvious contradiction, and localizable examples. Never fire on broad inference, subtle word differences, or ambiguous pairings. When in doubt, do not flag.
 
 **Exemption rules for all style keyword checks:** The following content is exempt from boundary compliance, raw hex, and engine content grep checks:
 - Content inside fenced code blocks (` ``` `)
@@ -768,8 +772,8 @@ These compare Step 5 docs against each other. Require at least 3 Step 5 docs to 
 27. For `style-feedback-channel-conflict`: For each Event-Response Table row, extract semantic tone from the Visual column (token names like `success`, `danger`, `warning`) and the Audio column (category names like `error`, `confirmation`, `alert`). Flag rows where visual and audio imply opposite emotional signals.
 28. For `style-visual-hierarchy-consistency`: Map feedback-system Critical events to their color tokens. Verify Critical events use signal-palette danger/alert tokens. Map Info/Low events to their tokens. Verify they use subdued/neutral tokens, not the same visual weight as Critical.
 29. For `style-unused-tokens`: Collect all token names defined in color-system. Grep ui-kit, interaction-model, feedback-system, and audio-direction for each token name. Tokens with zero references outside color-system are unused.
-30. For `style-scalability`: Check color-system for near-duplicate tokens (Levenshtein distance ≤ 2 on names, or identical hex values). Check ui-kit component `###` subsections for consistent structure (same section pattern across components). Check feedback-system Event-Response Table for presence of category headers or grouping.
-31. For `style-end-to-end-spec-readiness`: Read interaction-model. Pick the first fully-defined command or the selection model. Extract the action name. Check ui-kit for a component matching that action. Check color-system for tokens referenced by that component's states. Check feedback-system Event-Response Table for a row matching that action's outcome. Check audio-direction for the audio category referenced in that row. Report the first broken link in the chain.
+30. For `style-scalability`: Check color-system for duplicate-purpose tokens (identical hex values, or tokens sharing the same normalized stem/prefix). Check ui-kit component `###` subsections for consistent structure (same section pattern across components). Check feedback-system Event-Response Table for presence of category headers or grouping. Do not use string distance metrics.
+31. For `style-end-to-end-spec-readiness`: Read interaction-model. Pick the representative interaction using priority: (1) first core/primary-marked command, (2) selection model, (3) first command under canonical heading, (4) first defined command. Normalize to canonical vocabulary. Check ui-kit for a matching affordance. Check color-system for semantic or state tokens referenced by the affordance or its resulting feedback state. Check feedback-system Event-Response Table for a matching row. Check audio-direction for the audio category in that row. Report the first broken link in the chain.
 
 **Maturity-aware activation:**
 - If no Step 5 docs exist → SKIP all style checks.
