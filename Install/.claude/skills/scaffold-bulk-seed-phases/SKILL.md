@@ -185,6 +185,7 @@ For each confirmed candidate:
 
 ## Rules
 
+- **Seeded files must contain substantive content, not template placeholders.** Every section that the skill populates must have real authored prose derived from roadmap and design doc analysis. Do not leave pre-filled sections as TODO, HTML comment prompts, or single generic sentences. Remove template HTML comments from sections that receive authored content — replace them, don't leave them alongside the real content. A phase file where Goal is "TBD" or Entry Criteria is the template's HTML comment has failed the seed.
 - **Roadmap drives phase selection.** Derive candidates from the roadmap, not from exhaustive system enumeration.
 - **Never write without confirmation.** Present all proposed phases before creating files.
 - **No IDs until confirmation.** Use temporary candidate labels during the confirmation phase.

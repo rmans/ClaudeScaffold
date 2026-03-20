@@ -424,6 +424,7 @@ These were safely deferred as TBD placeholders. Seeding continued.
 
 ## Rules
 
+- **Seeded content must be substantive, not template placeholders.** Every Direct and Derived entry must have real authored content derived from system designs. Do not leave pre-filled tables as empty template structures, TODO markers, or placeholder rows. Remove template HTML comments from sections that receive authored content — replace them with the actual entries. TBD items are collected in the Decision Queue, not left as inline TODOs in the doc body.
 - **Bulk-write Direct and Derived entries without stopping.** Only stop for blocking conflicts (two systems claiming write authority over the same variable with no resolution). Collect all TBD items in the Decision Queue for user follow-up after seeding completes.
 - **Work phase by phase.** Complete one phase before starting the next — later phases build on earlier ones.
 - **Architecture comes first** because it establishes the scene tree, dependency graph, identity model, and update semantics that all other docs reference.

@@ -233,8 +233,9 @@ Include back-propagation needs (e.g., "interaction-model implies a context menu 
 ## Rules
 
 - **Auto-write when confidence is high.** If upstream evidence is strong and unambiguous, write the section directly. Do not turn bulk seeding into six interviews.
+- **High/Medium confidence sections must contain substantive content, not template placeholders.** When auto-writing, produce real authored prose derived from upstream docs — not TODO markers, HTML comment prompts, or single generic sentences. Remove template HTML comments from sections that receive authored content — replace them with the actual content. A style doc where a High-confidence section is still at template defaults has failed the seed.
 - **Pause only on ambiguous or high-impact decisions.** Ambiguous style direction, competing visual interpretations, major UX model choices, or anything that would materially change downstream docs.
-- **Leave TODOs for low-confidence content.** Don't force content where upstream docs don't provide enough context. Tag what's missing so the user can fill it.
+- **Leave TODOs for low-confidence content.** Don't force content where upstream docs don't provide enough context. Tag what's missing with `<!-- LOW: [what's missing] -->` so the user can fill it.
 - **Phases are processed in order for consistency.** Style-guide → color-system → ui-kit → interaction-model → feedback-system → audio-direction. If a later phase reveals a missing assumption in an earlier doc, note the tension in the report and flag the earlier doc for follow-up rather than silently rewriting it.
 - **Design doc and system designs are the primary sources.** Architecture, reference, and engine docs are secondary constraint sources. Don't let Step 5 docs overweight low-level technical references at the expense of player experience.
 - **Be specific, not generic.** Proposed content should reference the actual game described in the design doc, not boilerplate. Use system names, entity types, and mechanics from the project.

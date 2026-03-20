@@ -211,6 +211,7 @@ For each confirmed task:
 
 ## Rules
 
+- **Seeded files must contain substantive content, not template placeholders.** Every section (Objective, Steps, Files Affected, Verification, Notes) must have real authored content derived from specs and engine docs. Do not leave sections as TODO, HTML comment prompts, or single generic sentences. Remove template HTML comments from sections that receive authored content — replace them with the actual implementation steps, file paths, and verification checks. A task file where Steps is "TBD" or Verification is the template's HTML comment has failed the seed.
 - **Slice-scoped only.** This skill generates tasks for one slice at a time. To seed multiple slices, invoke once per slice.
 - **Never write without confirmation.** Present all proposed tasks before creating files.
 - **Tasks describe IMPLEMENTATION, not BEHAVIOR.** Engine constructs, class names, signals, file paths, and method names belong here. Translate spec behavior into engine-specific implementation.

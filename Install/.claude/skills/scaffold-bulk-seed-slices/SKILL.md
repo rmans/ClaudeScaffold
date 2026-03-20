@@ -232,6 +232,7 @@ Remind the user of next steps. Only the first slice goes through the full pipeli
 
 ## Rules
 
+- **Seeded files must contain substantive content, not template placeholders.** Every section that the skill populates (Goal, Systems Covered, Integration Points, Done Criteria, Proof Value, Demo Script Skeleton) must have real authored prose derived from phase goals and system designs. Do not leave pre-filled sections as TODO, HTML comment prompts, or single generic sentences. Remove template HTML comments from sections that receive authored content. A slice file where Goal is "TBD" or Done Criteria is the template's HTML comment has failed the seed.
 - **Phase goals drive slice selection.** Derive candidates from what the phase must prove end-to-end, not from exhaustive system enumeration.
 - **Never write without confirmation.** Present all proposed slices before creating files. All ordering, dependency, and overlap decisions must be finalized first.
 - **No IDs until confirmation.** Use temporary candidate labels (A, B, C) during the confirmation phase. Assign permanent SLICE-### IDs only after the user confirms the final candidate set, order, and dependencies.

@@ -233,6 +233,7 @@ Update `scaffold/engine/_index.md` to list all created docs with correct prefix 
 
 ## Rules
 
+- **Strong-confidence sections must contain substantive content, not template placeholders.** When the confidence tier is Strong, write real authored prose — do not leave as TODO, HTML comment prompts, or single generic sentences. Remove template HTML comments from Strong sections and replace with the authored content. Constrained TODO and Open TODO sections retain their markers by design, but Strong sections must be fully authored. An engine doc where a Strong section is still at template defaults has failed the seed.
 - **Seed everything in one pass.** No per-doc confirmation. The fix/iterate pipeline handles review.
 - **Auto-detect before asking.** Infer engine, stack, and platform from project context. Only ask for values that cannot be confidently determined.
 - **Default to create-missing.** Never overwrite existing docs unless explicitly requested via `--mode`.

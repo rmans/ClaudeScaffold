@@ -215,6 +215,7 @@ Remind the user of next steps. Seeded specs go through a stabilization loop befo
 
 ## Rules
 
+- **Seeded files must contain substantive content, not template placeholders.** Every section (Summary, Trigger, Preconditions, Behavior, Acceptance Criteria, Asset Requirements, etc.) must have real authored prose derived from system designs and slice goals. Do not leave sections as TODO, HTML comment prompts, or single generic sentences. Remove template HTML comments from sections that receive authored content — replace them with actual behavioral descriptions and testable criteria. A spec file where Behavior is "TBD" or Acceptance Criteria is the template's HTML comment has failed the seed.
 - **Slice goals drive spec selection.** Derive candidates from what the slice must prove end-to-end, not from exhaustive system behavior enumeration. System designs flesh out behavior; they don't determine which specs exist.
 - **Never write without confirmation.** Present all proposed specs before creating files.
 - **Specs describe BEHAVIOR, not IMPLEMENTATION.** No signals, methods, nodes, classes, functions, or engine constructs in spec content. Translate Player Actions and System Resolution into behavior language.
