@@ -94,6 +94,7 @@ For each atomic spec candidate, draft:
 - **Edge Cases** — boundary conditions, error states, and interactions with other systems.
 - **Secondary Effects** — cross-system propagation triggered by this behavior, or "None."
 - **Acceptance Criteria** — testable pass/fail checks derived from behavior steps.
+- **Asset Requirements** — scan existing `assets/` directories for assets that match the spec's visual and audio needs (derived from Behavior, Observable Outcome, Failure Outcome sections). For each visual or audio element implied by the behavior, add a row: Requirement, Type, Description, Source Section, Satisfied By (existing asset path if reusable, or "—"), Status (Ready if reusable, Needed if must be produced). If no assets are needed, write "No art or audio assets required."
 - **Out of Scope** — what this spec intentionally does not cover.
 - **System** — primary owning system ID.
 - **Cross-system** — secondary system IDs if applicable, or "None."
@@ -181,7 +182,7 @@ For each confirmed spec:
 
 1. **Assign the next sequential SPEC-### ID** from `scaffold/specs/_index.md`.
 2. **Create** `scaffold/specs/SPEC-###-<name>_draft.md` using the spec template:
-   - Fill in all confirmed draft fields: Summary, Proof Intent, Trigger, Preconditions, Behavior, Observable Outcome, Failure Outcome, Postconditions, Edge Cases, Secondary Effects, Acceptance Criteria, and Out of Scope.
+   - Fill in all confirmed draft fields: Summary, Proof Intent, Trigger, Preconditions, Behavior, Observable Outcome, Failure Outcome, Postconditions, Edge Cases, Secondary Effects, Acceptance Criteria, Asset Requirements, and Out of Scope.
    - Set the System reference to the primary system ID.
    - If the spec is cross-system, add secondary system IDs as **header metadata** (e.g., `> **Secondary Systems:** SYS-###, SYS-###`), not as narrative in the behavior body. Cross-system is a structural property, not a behavior step.
    - Set the Conforms to reference.

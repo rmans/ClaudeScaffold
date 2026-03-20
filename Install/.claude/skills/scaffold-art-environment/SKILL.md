@@ -48,7 +48,7 @@ Combine the style context from Step 2 with the user's prompt or document-extract
 
 ### 5. Generate image
 
-1. Ensure the output directory exists (create if needed). The directory is `scaffold/art/environment-art/`.
+1. Ensure the output directory exists (create if needed). The directory is `scaffold/assets/environment/`.
 
 2. Generate a kebab-case filename from the prompt:
    - Take the first few meaningful words (max 40 characters)
@@ -63,7 +63,7 @@ Combine the style context from Step 2 with the user's prompt or document-extract
 python scaffold/tools/image-gen.py generate \
     --prompt "<approved prompt>" \
     --style-context "<style context from step 2>" \
-    --output "scaffold/art/environment-art/<filename>.png" \
+    --output "scaffold/assets/environment/<filename>.png" \
     --provider <dalle|openart> \
     --size 1792x1024 \
     --model dall-e-3 \
@@ -82,7 +82,7 @@ python scaffold/tools/image-gen.py generate \
 
 ### 6. Update index
 
-Append a row to `scaffold/art/environment-art/_index.md` in the Files table:
+Append a row to `scaffold/assets/environment/_index.md` in the Files table:
 
 ```markdown
 | <filename>.png | <short prompt summary, max 60 chars> | YYYY-MM-DD |

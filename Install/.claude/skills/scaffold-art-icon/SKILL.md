@@ -45,7 +45,9 @@ Combine the style context from Step 2 with the user's prompt or document-extract
 
 ### 5. Generate image
 
-1. Ensure the output directory exists (create if needed). The directory is `scaffold/art/icon-art/`.
+1. Ensure the output directory exists (create if needed). The directory is `scaffold/assets/ui/` for shared icons or `scaffold/assets/entities/` for entity icons.
+
+   Ask the user which entity this asset belongs to (e.g., 'colonist', 'workshop'). Create `scaffold/assets/entities/<entity>/` if it doesn't exist. Save the asset there. If the icon is shared/generic UI, save to `scaffold/assets/ui/` instead.
 
 2. Generate a kebab-case filename from the prompt:
    - Take the first few meaningful words (max 40 characters)
@@ -60,7 +62,7 @@ Combine the style context from Step 2 with the user's prompt or document-extract
 python scaffold/tools/image-gen.py generate \
     --prompt "<approved prompt>" \
     --style-context "<style context from step 2>" \
-    --output "scaffold/art/icon-art/<filename>.png" \
+    --output "scaffold/assets/ui/<filename>.png or scaffold/assets/entities/<entity>/<filename>.png" \
     --provider <dalle|openart> \
     --size 1024x1024 \
     --model dall-e-3 \
@@ -79,7 +81,7 @@ python scaffold/tools/image-gen.py generate \
 
 ### 6. Update index
 
-Append a row to `scaffold/art/icon-art/_index.md` in the Files table:
+Append a row to `scaffold/assets/ui/_index.md` (for shared icons) or the entity's `scaffold/assets/entities/<entity>/_index.md` (for entity icons) in the Files table:
 
 ```markdown
 | <filename>.png | <short prompt summary, max 60 chars> | YYYY-MM-DD |

@@ -46,7 +46,8 @@ Record all issues found.
 For each issue found, classify as:
 
 ### Auto-Fixable (apply immediately)
-- **Missing sections** — add empty section with `<!-- TODO: fill in -->` placeholder. Required sections: Summary, Proof Intent, Trigger, Preconditions, Behavior, Observable Outcome, Failure Outcome, Postconditions, Edge Cases, Secondary Effects, Acceptance Criteria, Out of Scope, Notes.
+- **Missing sections** — add empty section with `<!-- TODO: fill in -->` placeholder. Required sections: Summary, Proof Intent, Trigger, Preconditions, Behavior, Observable Outcome, Failure Outcome, Postconditions, Edge Cases, Secondary Effects, Acceptance Criteria, Asset Requirements, Out of Scope, Notes.
+- **Asset path validation** — if Asset Requirements table has entries with Status: Ready and a Satisfied By path, verify the path resolves to an existing file (glob `assets/`). Flag broken paths. If Status is Ready but Satisfied By is empty, flag as inconsistent.
 - **Missing Secondary Systems header** — add `> **Secondary Systems:** —` to the header block if absent.
 - **Vague ACs** — tighten wording to be testable (e.g., "works correctly" → specific observable outcome from the Observable Outcome or Behavior section).
 - **Implementation leaks** — replace engine constructs with behavior language (e.g., "emit signal" → "notify the system", "node" → "entity").

@@ -56,7 +56,8 @@ Walk the user through the spec template, pre-filling from the system design wher
 9. **Edge Cases** — Ask: *"What unusual inputs or boundary conditions exist?"* Pre-fill from system design's Edge Cases section.
 10. **Secondary Effects** — Ask: *"Does this behavior trigger reactions in other systems? UI refreshes, recalculations, state propagation?"*
 11. **Acceptance Criteria** — Ask: *"How do you verify this is correctly implemented? What tests would you run?"*
-12. **Out of Scope** — Ask: *"What does this spec intentionally NOT cover?"*
+12. **Asset Requirements** — Scan existing `assets/` directories for assets that match this spec's visual and audio needs (from Behavior, Observable Outcome, Failure Outcome, and Feel/Feedback sections). Ask: *"What art and audio assets does this behavior need? Which existing assets can be reused (with variants like color/overlay/pitch)? What needs to be produced?"* Pre-fill the Satisfied By column with matching existing assets where found.
+13. **Out of Scope** — Ask: *"What does this spec intentionally NOT cover?"*
 
 Pre-filled content is a starting point. Always present pre-filled content for user confirmation — never treat it as final.
 

@@ -25,14 +25,15 @@
 | [slices/](slices/_index.md) | Integration | Vertical slice contracts |
 | [templates/](templates/_index.md) | Meta | Document templates for all ID'd types and engine docs |
 | [decisions/review/](decisions/review/_index.md) | Tooling | Adversarial review logs from `/scaffold-iterate` |
-| [art/](art/_index.md) | Content | Generated art from art skills (`/scaffold-art-concept`, `/scaffold-art-ui-mockup`, etc.) |
-| [audio/](audio/_index.md) | Content | Generated audio from audio skills (`/scaffold-audio-music`, `/scaffold-audio-sfx`, etc.) |
+| [assets/](assets/_index.md) | Content | All production art and audio — organized by entity, not by tool. Entities, UI, environment, music, shared, concept, promo. |
 | [tools/](tools/_index.md) | Tooling | Scripts and utilities for the pipeline |
 
 ## Key Files
 
 - [WORKFLOW.md](WORKFLOW.md) — Step-by-step recipe for the full pipeline
-- [SKILLS.md](SKILLS.md) — Man-page reference for all 73 slash commands
+- [ART-WORKFLOW.md](ART-WORKFLOW.md) — Art production pipeline (spec requirements → generate → review → integrate)
+- [AUDIO-WORKFLOW.md](AUDIO-WORKFLOW.md) — Audio production pipeline (spec requirements → generate → review → integrate)
+- [SKILLS.md](SKILLS.md) — Man-page reference for all scaffold slash commands
 - [doc-authority.md](doc-authority.md) — Precedence rules (read when conflicts arise)
 - [README.md](README.md) — How to use this scaffold
 

@@ -56,7 +56,7 @@ Combine the musical direction from Step 2 with the user's prompt or document-ext
 
 ### 5. Generate audio
 
-1. Ensure `scaffold/audio/music/` directory exists (create it if needed).
+1. Ensure `scaffold/assets/music/` directory exists (create it if needed).
 
 2. Generate a kebab-case filename from the prompt:
    - Take the first few meaningful words (max 40 characters)
@@ -69,7 +69,7 @@ Combine the musical direction from Step 2 with the user's prompt or document-ext
 ```bash
 python scaffold/tools/audio-gen.py music \
     --prompt "<approved prompt>" \
-    --output "scaffold/audio/music/<filename>.mp3" \
+    --output "scaffold/assets/music/<filename>.mp3" \
     --instrumental
 ```
 
@@ -79,7 +79,7 @@ python scaffold/tools/audio-gen.py music \
 
 ### 6. Update index
 
-Append a row to `scaffold/audio/music/_index.md` in the Files table:
+Append a row to `scaffold/assets/music/_index.md` in the Files table:
 
 ```markdown
 | <filename>.mp3 | <short prompt summary, max 60 chars> | YYYY-MM-DD |

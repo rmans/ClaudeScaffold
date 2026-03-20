@@ -165,8 +165,7 @@ All skill names are prefixed with `/scaffold-` (e.g., `/scaffold-init-design`).
 | `engine/` | Implementation (rank 10) | Engine-specific best practices and constraints |
 | `tasks/` | Execution (rank 11) | Implementation tasks |
 | `theory/` | Advisory | 16 docs on game design, UX, architecture — no authority |
-| `art/` | Content | Generated art assets from art skills |
-| `audio/` | Content | Generated audio assets from audio skills |
+| `assets/` | Content | All production art and audio — organized by entity (entities/, ui/, environment/, music/, shared/, concept/, promo/) |
 | `templates/` | Meta | Templates for all document types |
 
 ## Customization

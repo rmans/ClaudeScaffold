@@ -30,7 +30,7 @@ Image generator that sends prompts to the DALL-E API and saves generated images 
 python scaffold/tools/image-gen.py generate \
     --prompt "a forest village at dusk" \
     --style-context "pixel art, warm palette" \
-    --output scaffold/art/concept-art/forest-village.png \
+    --output scaffold/assets/concept/forest-village.png \
     --size 1024x1024 \
     --model dall-e-3 \
     --quality standard
@@ -52,7 +52,7 @@ python scaffold/tools/image-gen.py generate \
 ```json
 {
   "status": "ok",
-  "file": "scaffold/art/concept-art/forest-village.png",
+  "file": "scaffold/assets/concept/forest-village.png",
   "revised_prompt": "A serene forest village at dusk...",
   "size": "1024x1024"
 }
@@ -89,19 +89,19 @@ Audio generator that sends requests to OpenAI TTS or ElevenLabs APIs and saves g
 ```
 python scaffold/tools/audio-gen.py tts \
     --text "The ancient forest holds secrets." \
-    --output scaffold/audio/voice/ancient-forest-line.mp3 \
+    --output scaffold/assets/entities/narrator/ancient-forest-line.mp3 \
     --voice alloy \
     --model tts-1
 
 python scaffold/tools/audio-gen.py sfx \
     --prompt "sword slash impact, metallic ring" \
-    --output scaffold/audio/sfx/sword-slash.mp3 \
+    --output scaffold/assets/entities/sword/sfx-slash.mp3 \
     --duration 2.0 \
     --prompt-influence 0.3
 
 python scaffold/tools/audio-gen.py music \
     --prompt "upbeat chiptune battle theme, 120 BPM" \
-    --output scaffold/audio/music/battle-theme.mp3 \
+    --output scaffold/assets/music/battle-theme.mp3 \
     --duration 30 \
     --instrumental
 
@@ -144,7 +144,7 @@ python scaffold/tools/audio-gen.py check-config
 ```json
 {
   "status": "ok",
-  "file": "scaffold/audio/music/battle-theme.mp3",
+  "file": "scaffold/assets/music/battle-theme.mp3",
   "provider": "elevenlabs",
   "instrumental": true
 }

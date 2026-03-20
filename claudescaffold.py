@@ -26,18 +26,14 @@ UPGRADE_REPLACE_ROOT_FILES = {"_index.md", "doc-authority.md", "WORKFLOW.md", "R
 # Upgrade mode: these subdir files are infrastructure and get replaced
 UPGRADE_REPLACE_SUBDIR_FILES = {
     "reviews/TEMPLATE-review.md",
-    "art/_index.md",
-    "art/ui-mockups/_index.md",
-    "art/character-art/_index.md",
-    "art/environment-art/_index.md",
-    "art/sprite-art/_index.md",
-    "art/icon-art/_index.md",
-    "art/promo-art/_index.md",
-    "audio/_index.md",
-    "audio/music/_index.md",
-    "audio/sfx/_index.md",
-    "audio/ambience/_index.md",
-    "audio/voice/_index.md",
+    "assets/_index.md",
+    "assets/entities/_index.md",
+    "assets/ui/_index.md",
+    "assets/environment/_index.md",
+    "assets/music/_index.md",
+    "assets/shared/_index.md",
+    "assets/concept/_index.md",
+    "assets/promo/_index.md",
     "prototypes/_index.md",
 }
 

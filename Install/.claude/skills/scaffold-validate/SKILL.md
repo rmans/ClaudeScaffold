@@ -116,6 +116,8 @@ Run these checks to validate the spec stabilization pipeline. These catch drift 
 | `spec-system-resolution` | Every spec's System reference resolves to an existing system file in `scaffold/design/systems/`. Catches broken system references after system renames or merges. |
 | `spec-status-sync` | The Status column in each slice's Specs table matches the actual `> **Status:**` line in each spec file. Catches slice tables not updated after approve-specs or complete. |
 | `spec-triage-upstream-targets` | Every upstream action in `scaffold/decisions/triage-logs/TRIAGE-SPECS-SLICE-*.md` references a real target document. Catches stale spec triage logs. |
+| `spec-asset-path-resolution` | For specs with Asset Requirements tables, every Satisfied By path with Status: Ready resolves to an existing file in `assets/`. Catches broken asset references after renames, moves, or deletions. | WARN per broken path |
+| `spec-asset-status-consistency` | Asset Requirements entries with Status: Ready must have a non-empty Satisfied By path. Entries with Status: Needed must have Satisfied By: "—" or empty. Catches inconsistent status. | WARN per inconsistent entry |
 
 **How to run these checks:**
 1. For `spec-index-files`: Read `scaffold/specs/_index.md`. Glob `scaffold/specs/SPEC-*.md`. Compare registered vs. actual.
@@ -123,6 +125,8 @@ Run these checks to validate the spec stabilization pipeline. These catch drift 
 3. For `spec-system-resolution`: For each spec file, extract the System reference. Glob `scaffold/design/systems/SYS-###-*.md` to confirm it exists.
 4. For `spec-status-sync`: For each slice, read its Specs table. For each spec row, read the spec file's Status line. Compare.
 5. For `spec-triage-upstream-targets`: Glob `scaffold/decisions/triage-logs/TRIAGE-SPECS-SLICE-*.md`. Parse the Upstream Actions table. For each target document reference, verify the file exists.
+6. For `spec-asset-path-resolution`: For each spec file, check for an `## Asset Requirements` section with a table. For each row with Status: Ready and a non-empty Satisfied By value, glob the path relative to the project root. Report broken paths.
+7. For `spec-asset-status-consistency`: For each asset row, verify: Ready → Satisfied By must be non-empty. Needed → Satisfied By must be "—" or empty. In Production → either state is acceptable.
 
 **Maturity-aware activation:**
 - If any task files exist → `task-index-files`, `status-filename-sync`, and `reference-file-resolution` are required.

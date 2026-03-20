@@ -57,7 +57,7 @@ Combine the atmospheric direction from Step 2 with the user's prompt or document
 
 ### 5. Generate audio
 
-1. Ensure `scaffold/audio/ambience/` directory exists (create it if needed).
+1. Ask the user which environment/location this ambience belongs to (e.g., 'forest', 'cave', 'village'). Create `scaffold/assets/environment/<location>/` if it doesn't exist.
 
 2. Generate a kebab-case filename from the prompt:
    - Take the first few meaningful words (max 40 characters)
@@ -70,7 +70,7 @@ Combine the atmospheric direction from Step 2 with the user's prompt or document
 ```bash
 python scaffold/tools/audio-gen.py sfx \
     --prompt "<approved prompt>" \
-    --output "scaffold/audio/ambience/<filename>.mp3" \
+    --output "scaffold/assets/environment/<location>/<filename>.mp3" \
     --loop
 ```
 
@@ -80,7 +80,7 @@ python scaffold/tools/audio-gen.py sfx \
 
 ### 6. Update index
 
-Append a row to `scaffold/audio/ambience/_index.md` in the Files table:
+Append a row to `scaffold/assets/environment/<location>/_index.md` in the Files table:
 
 ```markdown
 | <filename>.mp3 | <short prompt summary, max 60 chars> | YYYY-MM-DD |

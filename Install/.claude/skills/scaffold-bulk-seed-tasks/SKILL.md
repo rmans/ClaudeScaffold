@@ -24,6 +24,7 @@ Read the slice and its included specs — these are the source of truth for what
 3. **Read each spec** listed in the slice's Specs Included table. For each spec, extract:
    - Summary, Preconditions, Behavior steps, Postconditions, Edge Cases, Acceptance Criteria
    - The parent system reference
+   - **Asset Requirements** — if the spec has an Asset Requirements table, extract it. Tasks that implement visual or audio behavior should reference the specific asset paths from the spec's Satisfied By column (for Ready assets) or note that production is pending (for Needed/In Production assets). This tells the task exactly what files to wire.
 4. **If the slice has zero specs**, stop and tell the user to create specs first.
 
 Do NOT read specs outside this slice. Task generation is scoped to the target slice only.

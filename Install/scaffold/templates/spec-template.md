@@ -62,6 +62,21 @@ Examples:
 
 <!-- How to verify this spec is correctly implemented. Concrete pass/fail checks. -->
 
+## Asset Requirements
+
+<!-- What art and audio assets does this behavior need? List what's required, not how to produce it. Asset production happens via art/audio skills; tasks wire the results.
+
+Scan existing `assets/` directories for reusable assets before listing something as Needed. A single base asset (mesh, sprite, sound) can satisfy multiple requirements through variants (color, overlay, pitch shift).
+
+| Requirement | Type | Description | Source Section | Satisfied By | Status |
+|-------------|------|-------------|---------------|-------------|--------|
+
+Type: Sprite, Mesh, Icon, UI Mockup, Concept Art, SFX, Music, Ambience, Voice
+Status: Needed (must be produced), In Production (art/audio skill running), Ready (exists or reusable)
+Satisfied By: path to existing asset if reusable, or "—" if Needed
+
+If no assets are required, write "No art or audio assets required for this behavior." -->
+
 ## Out of Scope
 
 <!-- What this spec intentionally does not cover. Prevents spec creep and duplicate overlap. -->

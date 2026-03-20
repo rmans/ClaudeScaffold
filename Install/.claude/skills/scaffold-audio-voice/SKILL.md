@@ -56,7 +56,7 @@ From the context in Step 2 and the user's input:
 
 ### 5. Generate audio
 
-1. Ensure `scaffold/audio/voice/` directory exists (create it if needed).
+1. Ask the user which entity/character this voice belongs to. Create `scaffold/assets/entities/<entity>/` if it doesn't exist.
 
 2. Generate a kebab-case filename from the text content:
    - Take the first few meaningful words (max 40 characters)
@@ -69,7 +69,7 @@ From the context in Step 2 and the user's input:
 ```bash
 python scaffold/tools/audio-gen.py tts \
     --text "<approved text>" \
-    --output "scaffold/audio/voice/<filename>.mp3" \
+    --output "scaffold/assets/entities/<entity>/<filename>.mp3" \
     --voice <chosen-voice>
 ```
 
@@ -80,7 +80,7 @@ python scaffold/tools/audio-gen.py tts \
 
 ### 6. Update index
 
-Append a row to `scaffold/audio/voice/_index.md` in the Files table:
+Append a row to `scaffold/assets/entities/<entity>/_index.md` in the Files table:
 
 ```markdown
 | <filename>.mp3 | <short text summary, max 60 chars> | YYYY-MM-DD |

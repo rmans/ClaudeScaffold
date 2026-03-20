@@ -56,7 +56,11 @@ Combine the sound design direction from Step 2 with the user's prompt or documen
 
 ### 5. Generate audio
 
-1. Ensure `scaffold/audio/sfx/` directory exists (create it if needed).
+1. Ask the user which entity or category (ui, environment, shared) this sound belongs to. Create the appropriate subdirectory under `scaffold/assets/` if it doesn't exist:
+   - Entity-specific SFX → `scaffold/assets/entities/<entity>/`
+   - UI SFX → `scaffold/assets/ui/`
+   - Environment SFX → `scaffold/assets/environment/`
+   - Shared SFX → `scaffold/assets/shared/`
 
 2. Generate a kebab-case filename from the prompt:
    - Take the first few meaningful words (max 40 characters)
@@ -69,7 +73,7 @@ Combine the sound design direction from Step 2 with the user's prompt or documen
 ```bash
 python scaffold/tools/audio-gen.py sfx \
     --prompt "<approved prompt>" \
-    --output "scaffold/audio/sfx/<filename>.mp3"
+    --output "scaffold/assets/<category>/<filename>.mp3"
 ```
 
    Add `--duration <seconds>` if the user specifies a desired length.
@@ -79,7 +83,7 @@ python scaffold/tools/audio-gen.py sfx \
 
 ### 6. Update index
 
-Append a row to `scaffold/audio/sfx/_index.md` in the Files table:
+Append a row to the `_index.md` in the target directory (e.g., `scaffold/assets/entities/<entity>/_index.md` or `scaffold/assets/ui/_index.md`) in the Files table:
 
 ```markdown
 | <filename>.mp3 | <short prompt summary, max 60 chars> | YYYY-MM-DD |

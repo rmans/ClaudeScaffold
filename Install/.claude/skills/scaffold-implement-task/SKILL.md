@@ -41,7 +41,7 @@ If the argument contains a hyphen between two TASK-### IDs:
 Read all context needed to implement:
 
 1. The task file — Objective, Task Type, Depends on, Steps, Files Created, Files Modified, Deliverable, Verification, Verification Mapping, Out of Scope, Risks, Regression Tests.
-2. Parent spec — follow `Implements: SPEC-###`. Understand the behavior.
+2. Parent spec — follow `Implements: SPEC-###`. Understand the behavior. If the spec has an Asset Requirements table, check that all assets this task needs are Status: Ready with valid Satisfied By paths. If any required assets are Needed or In Production, warn: "Asset [requirement] is not yet Ready. Implementation may need placeholder assets or must wait for asset production."
 3. Parent system design — follow the spec's system reference.
 4. `scaffold/design/architecture.md` — tick order, signal wiring, data flow, code patterns.
 5. `scaffold/design/interfaces.md` — cross-system contracts (if task involves system communication).
