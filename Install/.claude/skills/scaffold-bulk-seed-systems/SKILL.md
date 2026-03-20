@@ -198,7 +198,7 @@ For each confirmed system:
 3. **Create the file** at `design/systems/SYS-###-name_draft.md`:
    - Replace `SYS-###` with the actual ID
    - Replace `[System Name]` with the confirmed name
-   - **Write substantive content** for the 8 pre-fill sections listed below. "Pre-fill" means writing real prose derived from the design doc analysis in Phase 2 — not copying the template HTML comments, not writing TODO, not leaving placeholders. Every pre-filled section must contain authored content that a downstream reviewer could evaluate.
+   - **Write substantive content for ALL sections.** "Pre-fill" means writing real prose derived from the design doc analysis in Phase 2 — not copying template HTML comments, not writing TODO, not leaving placeholders. Every section must contain authored content that a downstream reviewer could evaluate. No section should be left at template defaults.
 
    | Section | What to write | Minimum content |
    |---------|--------------|-----------------|
@@ -206,16 +206,25 @@ For each confirmed system:
    | **Simulation Responsibility** | What state this system uniquely owns and updates — the reason this system exists as a separate entity | 2-3 sentences explaining what this system simulates and why no other system can own it |
    | **Player Intent** | Bullet list of what the player is trying to accomplish when engaging with this system, derived from player verbs and the control model | At least 3 bullet points |
    | **Design Constraints** | Invariants, boundaries, anchors, and control model rules that constrain this system — referenced by name from the design doc | At least 1 named constraint with explanation of how it applies |
+   | **Visibility to Player** | Table of what parts of this system's state are visible, partially visible, or hidden — derived from the Player Information Model, Simulation Transparency Policy, and Information Clarity Principle in the design doc | At least 2 rows in the visibility table |
+   | **Player Actions** | Numbered sequence of what the player observably does when engaging with this system — derived from player verbs, control model, and core/secondary loops | At least 3 numbered steps |
+   | **System Resolution** | Numbered sequence of what happens after the player acts — the chain of visible consequences, derived from the design doc's consequence model and failure philosophy | At least 2 numbered steps |
+   | **State Lifecycle** | Player-observable phases this system moves through — derived from content structure, failure philosophy, and any state progressions implied by the design doc | At least 3 states in a progression (e.g., Planned → Active → Complete) |
+   | **Failure / Friction States** | What can go wrong and what the player sees — derived from the Failure Philosophy, Core Design Tension, and consequence model in the design doc | At least 2 failure/friction scenarios |
    | **Owned State** | Table of gameplay-facing state this system exclusively manages, derived from design doc content categories, entities, and resources. Gameplay state only — not caches, scene nodes, engine objects, or data-structure choices | At least 2 state entries in the table with Description and Persistence columns filled |
    | **Upstream Dependencies** | Table of systems this one requires to function, with what each provides — derived from the "Likely dependencies" column | At least 1 entry if dependencies exist, or explicit "None — this system has no upstream dependencies" |
    | **Downstream Consequences** | Table of systems this one feeds state to, with what each receives — derived from the "Likely downstream effects" column | At least 1 entry if downstream effects exist, or explicit "None — this system does not feed other systems" |
    | **Non-Responsibilities** | Bullet list of adjacent concerns this system explicitly does NOT own, naming the system that does where possible | At least 2 bullet points |
+   | **Edge Cases & Ambiguity Killers** | Questions a player or implementer would naturally ask about this system — derived from design tension, pressure tests, and boundary conditions implied by the design doc | At least 2 Q&A pairs |
+   | **Feel & Feedback** | How this system should feel to the player — derived from the design doc's tone, aesthetic pillars, and any system-specific feel notes | At least 2 bullet points describing the intended feel |
+   | **Open Questions** | Genuine unresolved design questions about this system that emerged during the Phase 2 analysis — things the design doc doesn't fully answer | At least 1 question, or explicit "None — design doc fully specifies this system's scope" |
 
-   **Pre-fill quality standard:** If a downstream reviewer reads only the pre-filled sections, they should understand what this system does, what it owns, what constrains it, and what it does NOT do. A file where every pre-filled section is a single generic sentence or a rephrased template prompt has failed the pre-fill — go back to the design doc analysis and write specific content.
+   **Sections not in the pre-fill table** (Observability & Debug Surface, Performance Characteristics) may be left as template prompts if the design doc provides no signal for them. These are implementation-adjacent and are better filled during Step 3/4.
+
+   **Pre-fill quality standard:** If a downstream reviewer reads the seeded file, they should understand what this system does, how it feels, what it owns, what constrains it, what can go wrong, and what it does NOT do. A file where sections are single generic sentences or rephrased template prompts has failed the pre-fill — go back to the design doc analysis and write specific content for THIS system.
 
    - After the authored content in each pre-filled section, append `<!-- SEEDED: derived from design doc. Verify and expand. -->` so reviewers know what was inferred vs authored.
    - Remove the template's HTML comment prompts from pre-filled sections — replace them with the authored content. Do not leave the template instruction comments alongside the real content.
-   - Leave remaining sections (Visibility to Player, Player Actions, System Resolution, State Lifecycle, Failure / Friction States, Edge Cases, Feel & Feedback, Observability, Performance Characteristics, Open Questions) as template prompts with their HTML comments intact.
 
 4. **Register in both indexes:**
    - Add a row to `design/systems/_index.md`
