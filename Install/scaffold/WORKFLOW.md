@@ -201,6 +201,17 @@ Mechanical cleanup pass — normalizes structure, repairs terminology drift, fix
 
 Adversarial per-topic review via external LLM. Consumes design signals from fix-systems. Reviews system designs for ownership correctness, design governance compliance, cross-system coherence, and behavioral completeness. A passing review sets the document's status to `Approved`.
 
+### 2c-ii — Manual Review (human pass)
+
+After iterate-systems completes, manually review two sections in each system doc:
+
+1. **Edge Cases & Ambiguity Killers** — the reviewer may have added or modified edge cases you don't fully agree with. Read each Q&A pair and verify it matches your design intent. Remove, reword, or add entries as needed.
+2. **Open Questions** — the reviewer may have surfaced questions that are already answered elsewhere in your design, or questions you disagree are actually open. Resolve what you can, remove what's already answered, and keep only genuinely unresolved questions.
+
+**If this review changes your understanding of the design** — for example, an edge case reveals a gap in the design doc's failure philosophy, or an open question exposes an unaddressed control model ambiguity — update `design/design-doc.md` to reflect the clarification. The design doc is the highest authority; system docs derive from it. If the system review surfaced something the design doc should have addressed, fix it upstream.
+
+After manual review, proceed to validate. If the design doc was updated, re-run the Step 1 stabilization loop (`fix-design → iterate-design → validate --scope design`) before continuing.
+
 ### 2d — Validate (structural gate)
 
 ```
