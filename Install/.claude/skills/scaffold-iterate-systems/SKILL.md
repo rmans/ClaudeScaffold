@@ -152,15 +152,7 @@ Ratings must be justified by the highest-severity accepted issues. A 4 or 5 requ
 
 ## Parallelization
 
-For range reviews, Topics 1-3 and 5 (per-system topics) can run in parallel across systems that don't list each other in Upstream Dependencies or Downstream Consequences. Edits to one system's doc during review could conflict with concurrent edits to an interacting system — so interacting pairs must be reviewed sequentially.
-
-Topic 4 (Cross-System Coherence) always runs as a batch after all per-system topics complete, since it evaluates the interaction graph.
-
-**Practical approach:**
-1. Build dependency graph from all systems in the range.
-2. Systems with no mutual edges → review Topics 1-3, 5 in parallel.
-3. Systems with mutual edges → review sequentially within their group.
-4. After all per-system reviews complete → run Topic 4 as a batch across the full range.
+Range reviews use parallel agents — see the Range Review section under Execution for the full process. The key constraint: systems with mutual dependency edges (A lists B in dependencies AND B lists A) must be reviewed sequentially because edits to one system's doc during review could conflict with the other's review. Independent systems run in parallel via separate Agent tool invocations.
 
 ## Preflight
 
@@ -218,34 +210,49 @@ For a single system (e.g., `SYS-005`), follow the same topic loop, inner loop (e
 
 ### Range Review
 
-For a range (e.g., `SYS-001-SYS-043`), **every system in the range must be reviewed**. The range is not a suggestion — it is a work list. Skipping systems is not acceptable.
+For a range (e.g., `SYS-001-SYS-043`), **every system in the range must be reviewed**. The range is not a suggestion — it is a work list. Skipping systems is not acceptable. Reviewing one system and stopping is a skill failure, not convergence.
 
-**Step 1 — Build the work list.**
+Range reviews use **parallel agents** — one agent per system for the per-system topics (1-3, 5), with a final batch pass for cross-system coherence (Topic 4).
+
+**Step 1 — Build the work list and dependency graph.**
 1. Glob all system files matching the range: `design/systems/SYS-*.md` where the ID falls within the specified range.
 2. Sort by ID number.
 3. Log the full work list: "Reviewing N systems: SYS-001, SYS-002, ..., SYS-043"
 4. If any IDs in the range have no matching file, note them as missing and continue with the rest.
+5. Build the dependency graph: for each system, read its Upstream Dependencies and Downstream Consequences tables. Identify mutual edges (A lists B AND B lists A).
 
-**Step 2 — Per-system review (Topics 1-3, 5).**
-For EACH system in the work list, sequentially:
-1. Load the system file and its context files (interaction partners, design doc, glossary, authority, interfaces).
-2. Run Topics 1, 2, 3, and 5 — each with its own back-and-forth exchange loop.
-3. Adjudicate and apply changes.
-4. Log progress: "Completed SYS-### (N of M) — Rating: X/5, Issues: Y accepted, Z rejected"
-5. Move to the next system. **Do not stop after one system.**
+**Step 2 — Partition into parallel groups.**
+1. Systems with NO mutual dependency edges can be reviewed simultaneously — their reviews cannot conflict.
+2. Systems with mutual edges (A↔B) must be in the same sequential group — editing A's doc could affect B's review.
+3. Partition the work list into groups:
+   - **Independent systems** — no mutual edges with any other system in the range. These can all run in parallel.
+   - **Dependency clusters** — sets of systems connected by mutual edges. Systems within a cluster run sequentially; separate clusters run in parallel.
+4. Log the partition: "Group 1 (parallel): SYS-001, SYS-003, SYS-007, ... | Group 2 (sequential): SYS-002 → SYS-005 → SYS-008 | ..."
 
-Systems with no mutual dependency edges (per the Parallelization section) may be reviewed in parallel where the Python infrastructure supports it. Systems that list each other in Upstream Dependencies or Downstream Consequences must be reviewed sequentially.
+**Step 3 — Spawn parallel agents for per-system review (Topics 1-3, 5).**
+For each group from Step 2, spawn agents using the Agent tool:
+1. **Independent systems** — spawn one agent per system, all in parallel (use multiple Agent tool calls in a single message). Each agent receives:
+   - The system file path
+   - Context files: design doc, glossary, doc-authority, systems index, interaction partner files, authority.md, interfaces.md, known-issues, relevant ADRs
+   - The review config path for the external LLM
+   - Instructions to run Topics 1, 2, 3, and 5 with the standard exchange loop, adjudication, and scope collapse guard
+   - The `--focus` and `--signals` arguments if provided
+   - Instructions to apply accepted changes directly to the system file
+   - Instructions to return: system ID, rating, issues accepted/rejected/escalated, changes applied, and any escalations
+2. **Dependency clusters** — spawn one agent per cluster. The agent reviews its systems sequentially within the cluster (A first, then B using A's updated doc, then C using B's updated doc, etc.).
+3. Wait for all agents to complete. Collect their results.
+4. Log progress for each completed agent: "SYS-### — Rating: X/5, Issues: Y accepted, Z rejected, E escalated"
 
-**Step 3 — Cross-system batch review (Topic 4).**
-After ALL per-system reviews in Step 2 are complete:
-1. Run Topic 4 (Cross-System Coherence) as a single batch across the full range.
-2. This evaluates the interaction graph — dependency symmetry, authority conflicts, handoff clarity, orphan detection, dependency cycles.
-3. Topic 4 findings may reference any system in the range.
+**Step 4 — Cross-system batch review (Topic 4).**
+After ALL per-system agents from Step 3 have completed:
+1. Run Topic 4 (Cross-System Coherence) as a single batch across the full range. This can be a single agent or run directly.
+2. This evaluates the interaction graph using the now-updated system docs — dependency symmetry, authority conflicts, handoff clarity, orphan detection, dependency cycles.
+3. Topic 4 findings may reference any system in the range and may trigger edits to multiple system files.
 
-**Step 4 — Convergence check.**
-After the full pass (Steps 2-3), check convergence:
+**Step 5 — Convergence check.**
+After the full pass (Steps 3-4), check convergence:
 - If no new issues were found across the entire range → stop.
-- If new issues exist → run another iteration, but only on systems that had accepted changes or unresolved escalations.
+- If new issues exist → run another iteration (Steps 3-4), but only on systems that had accepted changes, unresolved escalations, or were affected by Topic 4 findings.
 - Maximum `--iterations` outer loops across the full range.
 
 **Stop conditions** (any one stops iteration):
@@ -254,7 +261,10 @@ After the full pass (Steps 2-3), check convergence:
 - **Human-only** — only issues requiring user decisions remain; further iteration won't resolve them.
 - **Limit** — `--iterations` maximum reached.
 
-**Critical rule for ranges:** The skill MUST process every system in the work list before stopping. Reviewing one system and stopping is a skill failure, not convergence. Convergence is checked after a complete pass through the entire range, not after a single system.
+**Agent failure handling:**
+- If an agent fails (Python script error, API error, timeout), log the failure and continue with remaining agents. Do not abort the entire range.
+- Failed systems are retried once after all other agents complete. If retry also fails, report the system as "review failed" with the error.
+- The overall range review can still produce a verdict even if some systems failed — report them separately in the output.
 
 ### Issue Adjudication
 
