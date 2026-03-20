@@ -152,7 +152,7 @@ Ratings must be justified by the highest-severity accepted issues. A 4 or 5 requ
 
 ## Parallelization
 
-Range reviews use parallel agents — see the Range Review section under Execution for the full process. The key constraint: systems with mutual dependency edges (A lists B in dependencies AND B lists A) must be reviewed sequentially because edits to one system's doc during review could conflict with the other's review. Independent systems run in parallel via separate Agent tool invocations.
+Range reviews spawn one agent per system, each running a complete self-contained review loop (all topics, all exchanges, all iterations). Agents run in parallel except when a system has a mutual dependency edge with a currently-active agent's system — in that case, the dependent system is deferred until the dependency's agent completes. See the Range Review section under Execution for the full process.
 
 ## Preflight
 
@@ -221,38 +221,46 @@ Range reviews use **parallel agents** — one agent per system for the per-syste
 4. If any IDs in the range have no matching file, note them as missing and continue with the rest.
 5. Build the dependency graph: for each system, read its Upstream Dependencies and Downstream Consequences tables. Identify mutual edges (A lists B AND B lists A).
 
-**Step 2 — Partition into parallel groups.**
-1. Systems with NO mutual dependency edges can be reviewed simultaneously — their reviews cannot conflict.
-2. Systems with mutual edges (A↔B) must be in the same sequential group — editing A's doc could affect B's review.
-3. Partition the work list into groups:
-   - **Independent systems** — no mutual edges with any other system in the range. These can all run in parallel.
-   - **Dependency clusters** — sets of systems connected by mutual edges. Systems within a cluster run sequentially; separate clusters run in parallel.
-4. Log the partition: "Group 1 (parallel): SYS-001, SYS-003, SYS-007, ... | Group 2 (sequential): SYS-002 → SYS-005 → SYS-008 | ..."
+**Step 2 — Assign agents.**
+Each agent runs a **complete, self-contained review** of ONE system — all per-system topics (1-3, 5), all back-and-forth exchanges, all iterations up to `--iterations` max, all adjudication, all edits applied. An agent is not "one pass" — it is the full review loop for that system, the same as if you ran `iterate-systems SYS-###` on that system alone.
 
-**Step 3 — Spawn parallel agents for per-system review (Topics 1-3, 5).**
-For each group from Step 2, spawn agents using the Agent tool:
-1. **Independent systems** — spawn one agent per system, all in parallel (use multiple Agent tool calls in a single message). Each agent receives:
-   - The system file path
-   - Context files: design doc, glossary, doc-authority, systems index, interaction partner files, authority.md, interfaces.md, known-issues, relevant ADRs
-   - The review config path for the external LLM
-   - Instructions to run Topics 1, 2, 3, and 5 with the standard exchange loop, adjudication, and scope collapse guard
-   - The `--focus` and `--signals` arguments if provided
-   - Instructions to apply accepted changes directly to the system file
-   - Instructions to return: system ID, rating, issues accepted/rejected/escalated, changes applied, and any escalations
-2. **Dependency clusters** — spawn one agent per cluster. The agent reviews its systems sequentially within the cluster (A first, then B using A's updated doc, then C using B's updated doc, etc.).
-3. Wait for all agents to complete. Collect their results.
-4. Log progress for each completed agent: "SYS-### — Rating: X/5, Issues: Y accepted, Z rejected, E escalated"
+Assignment rules:
+1. Walk the work list in order (SYS-001, SYS-002, SYS-003, ...).
+2. For each system, check whether it has a mutual dependency edge with any system that is **currently being reviewed by an active agent**.
+3. If NO active dependency conflict → assign it to an agent and spawn immediately.
+4. If YES (e.g., SYS-003 depends on SYS-001 which is still being reviewed) → **skip it for now**. It goes into the deferred queue.
+5. Continue assigning the next system in the list. Agent 3 picks up SYS-004 instead of waiting.
+6. Spawn all assignable agents in parallel (use multiple Agent tool calls in a single message).
+
+Each agent receives:
+- The system file path
+- Context files: design doc, glossary, doc-authority, systems index, interaction partner files, authority.md, interfaces.md, known-issues, relevant ADRs
+- The review config path for the external LLM
+- Full topic definitions (1-3, 5) with exchange loop, adjudication rules, scope collapse guard, review consistency lock
+- The `--focus`, `--signals`, and `--max-exchanges` arguments if provided
+- Instructions to apply accepted changes directly to the system file
+- Instructions to create the review log entry for this system
+- Instructions to return: system ID, rating, issues accepted/rejected/escalated, changes applied, and any escalations
+
+Log the assignment: "Spawning N agents: SYS-001 (agent 1), SYS-002 (agent 2), SYS-004 (agent 3, skipped SYS-003 — depends on SYS-001), ..."
+
+**Step 3 — Process deferred systems.**
+As agents complete, check the deferred queue:
+1. When an agent finishes (e.g., agent 1 completes SYS-001), check if any deferred system's dependency is now resolved.
+2. If SYS-003 was deferred because SYS-001 was active, and SYS-001's agent has now completed → spawn an agent for SYS-003 using SYS-001's updated doc as context.
+3. Continue until the deferred queue is empty and all agents have completed.
+4. Log progress for each completed agent: "SYS-### — Rating: X/5, Issues: Y accepted, Z rejected, E escalated (N of M complete)"
 
 **Step 4 — Cross-system batch review (Topic 4).**
-After ALL per-system agents from Step 3 have completed:
-1. Run Topic 4 (Cross-System Coherence) as a single batch across the full range. This can be a single agent or run directly.
+After ALL agents (initial + deferred) have completed:
+1. Run Topic 4 (Cross-System Coherence) as a single batch across the full range.
 2. This evaluates the interaction graph using the now-updated system docs — dependency symmetry, authority conflicts, handoff clarity, orphan detection, dependency cycles.
 3. Topic 4 findings may reference any system in the range and may trigger edits to multiple system files.
 
 **Step 5 — Convergence check.**
-After the full pass (Steps 3-4), check convergence:
+After the full pass (Steps 2-4), check convergence:
 - If no new issues were found across the entire range → stop.
-- If new issues exist → run another iteration (Steps 3-4), but only on systems that had accepted changes, unresolved escalations, or were affected by Topic 4 findings.
+- If new issues exist → run another iteration (Steps 2-4), but only on systems that had accepted changes, unresolved escalations, or were affected by Topic 4 findings.
 - Maximum `--iterations` outer loops across the full range.
 
 **Stop conditions** (any one stops iteration):
