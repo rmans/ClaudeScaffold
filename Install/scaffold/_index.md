@@ -33,6 +33,7 @@
 - [WORKFLOW.md](WORKFLOW.md) — Step-by-step recipe for the full pipeline
 - [ART-WORKFLOW.md](ART-WORKFLOW.md) — Art production pipeline (spec requirements → generate → review → integrate)
 - [AUDIO-WORKFLOW.md](AUDIO-WORKFLOW.md) — Audio production pipeline (spec requirements → generate → review → integrate)
+- [AI-CHARACTER-ART-GUIDE.md](AI-CHARACTER-ART-GUIDE.md) — Complete AI-to-3D character pipeline guide (concept → mesh → rig → Godot)
 - [SKILLS.md](SKILLS.md) — Man-page reference for all scaffold slash commands
 - [doc-authority.md](doc-authority.md) — Precedence rules (read when conflicts arise)
 - [README.md](README.md) — How to use this scaffold

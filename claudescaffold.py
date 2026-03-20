@@ -22,7 +22,7 @@ EXPECTED_SKILLS = 78
 # Upgrade mode: these scaffold/ subdirectories are infrastructure and get fully replaced
 UPGRADE_REPLACE_DIRS = {"theory", "templates", "tools"}
 # Upgrade mode: these scaffold/ root files are infrastructure and get replaced
-UPGRADE_REPLACE_ROOT_FILES = {"_index.md", "doc-authority.md", "WORKFLOW.md", "README.md", "SKILLS.md"}
+UPGRADE_REPLACE_ROOT_FILES = {"_index.md", "doc-authority.md", "WORKFLOW.md", "README.md", "SKILLS.md", "AI-CHARACTER-ART-GUIDE.md"}
 # Upgrade mode: these subdir files are infrastructure and get replaced
 UPGRADE_REPLACE_SUBDIR_FILES = {
     "reviews/TEMPLATE-review.md",
