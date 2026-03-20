@@ -159,7 +159,24 @@ For each confirmed candidate:
 
 1. **Assign the next sequential P#-### ID** from `scaffold/phases/_index.md`.
 2. **Convert temporary dependency labels** to assigned P#-### IDs.
-3. **Create** `scaffold/phases/P#-###-<name>_draft.md` using the phase template with confirmed content.
+3. **Create** `scaffold/phases/P#-###-<name>_draft.md` using the phase template. Write substantive content for ALL sections — remove template HTML comments and replace with authored prose. No section should be left at template defaults.
+
+   | Section | What to write | Minimum content |
+   |---------|--------------|-----------------|
+   | **Goal** | One sentence describing what this phase delivers, derived from roadmap entry | Complete sentence, not a fragment or TODO |
+   | **Capability Unlocked** | What can be done after this phase that couldn't before — a testable capability, not a system name | 1-2 sentences describing the observable difference |
+   | **Entry Criteria** | What must be true before this phase starts — prefer phase IDs for sequencing | At least 1 criterion; use P#-### references where applicable |
+   | **In Scope** | Bulleted list of systems and features included, derived from roadmap system coverage | At least 2 bullet points with SYS-### references |
+   | **Out of Scope** | Explicitly deferred work — what is NOT in this phase | At least 2 bullet points naming specific deferrals |
+   | **Non-Goals** | Things intentionally not solved — prevents scope creep into future phases | At least 1 non-goal |
+   | **Deliverables** | Concrete outputs (systems, features, slices) — demonstrable, not abstract | At least 2 deliverables |
+   | **Exit Criteria** | What must be true for phase completion — must be demonstrable in playtest or dev demo, not just "implemented" | At least 2 verifiable criteria |
+   | **Slice Strategy** | How slices should look in this phase — verticality expectations, typical size, systems touched, proof style | At least 3 bullet points covering size, integration expectations, and proof style |
+   | **Risk Focus** | Major risks or unknowns this phase is expected to reduce | At least 1 risk with explanation of how the phase addresses it |
+   | **Phase Demo** | How the phase should be demonstrated — becomes the anchor for slice demo scripts | 2-3 sentences describing the demo scenario |
+   | **System Readiness** | Expected maturity level for each in-scope system | Table with at least 1 row per in-scope system, maturity column filled |
+   | **Architectural Constraints** | Architecture rules slices must respect — foundation decisions that constrain implementation | At least 1 constraint, or explicit "No architectural constraints beyond standard project conventions" |
+   | **Dependencies** | Phases, systems, or decisions this depends on | At least 1 entry, or explicit "No dependencies — this is the first phase" |
 4. **Register** in `scaffold/phases/_index.md`.
 5. **Update** `scaffold/phases/roadmap.md` Phase Overview with the new phase ID. Only update the row corresponding to the confirmed roadmap entry. Never rewrite other roadmap rows. If no matching row is unambiguous, stop and ask the user which row to update.
 

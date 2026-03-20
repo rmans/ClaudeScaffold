@@ -181,8 +181,25 @@ Present decisions using the Human Decision Presentation pattern (see WORKFLOW.md
 For each confirmed spec:
 
 1. **Assign the next sequential SPEC-### ID** from `scaffold/specs/_index.md`.
-2. **Create** `scaffold/specs/SPEC-###-<name>_draft.md` using the spec template:
-   - Fill in all confirmed draft fields: Summary, Proof Intent, Trigger, Preconditions, Behavior, Observable Outcome, Failure Outcome, Postconditions, Edge Cases, Secondary Effects, Acceptance Criteria, Asset Requirements, and Out of Scope.
+2. **Create** `scaffold/specs/SPEC-###-<name>_draft.md` using the spec template. Write substantive content for ALL sections — remove template HTML comments and replace with authored prose. No section should be left at template defaults.
+
+   | Section | What to write | Minimum content |
+   |---------|--------------|-----------------|
+   | **Summary** | One sentence describing what behavior this spec defines | Complete sentence, not a fragment |
+   | **Proof Intent** | What this spec proves within its parent slice — connects spec to slice proof chain | 1 sentence with concrete proof (e.g., "proves valid placement path") |
+   | **Trigger** | What causes this behavior to start — player action or system event | 1 sentence naming the specific initiating event |
+   | **Preconditions** | What must be true before this behavior can occur | At least 2 bullet points |
+   | **Behavior** | Step-by-step description of the behavior — precise and testable | At least 3 numbered steps, each describing one observable action or result |
+   | **Observable Outcome** | What can be observed when the behavior succeeds — player-visible or test-observable | At least 2 bullet points |
+   | **Failure Outcome** | What happens when the behavior is rejected or fails — expected visible failure | At least 1 failure scenario with observable result |
+   | **Postconditions** | What must be true after this behavior completes | At least 2 bullet points |
+   | **Edge Cases** | Unusual inputs, boundary conditions, error states | At least 2 edge cases |
+   | **Secondary Effects** | Follow-on effects in other systems triggered by this behavior | At least 1 effect, or explicit "No secondary effects — behavior is self-contained" |
+   | **Acceptance Criteria** | Concrete pass/fail checks for verifying correct implementation | At least 3 testable criteria |
+   | **Asset Requirements** | Table of art/audio assets needed — scan existing assets/ before listing as Needed | Table with entries, or explicit "No art or audio assets required for this behavior" |
+   | **Out of Scope** | What this spec intentionally does not cover | At least 1 exclusion |
+   | **Notes** | ADR constraints, KI references, design debt, or other context | At least 1 note, or explicit "No additional constraints" |
+
    - Set the System reference to the primary system ID.
    - If the spec is cross-system, add secondary system IDs as **header metadata** (e.g., `> **Secondary Systems:** SYS-###, SYS-###`), not as narrative in the behavior body. Cross-system is a structural property, not a behavior step.
    - Set the Conforms to reference.

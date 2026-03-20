@@ -181,8 +181,35 @@ Present decisions using the Human Decision Presentation pattern (see WORKFLOW.md
 For each confirmed task:
 
 1. **Assign the next sequential TASK-### ID** from `scaffold/tasks/_index.md`.
-2. **Create** `scaffold/tasks/TASK-###-<name>_draft.md` using the task template:
-   - Fill in Objective, Steps, Files Affected, Verification, and Notes from the confirmed drafts.
+2. **Create** `scaffold/tasks/TASK-###-<name>_draft.md` using the task template. Write substantive content for all applicable sections — remove template HTML comments and replace with authored prose. Sections that don't apply to a task should state why they're skipped, not be left as template defaults.
+
+   **Core sections (always required):**
+
+   | Section | What to write | Minimum content |
+   |---------|--------------|-----------------|
+   | **Objective** | One sentence describing what this task produces, from confirmed draft | Complete sentence with engine-specific language |
+   | **Deliverable** | What should concretely exist when done — more specific than Objective | 1-2 sentences naming the concrete output (file, class, system, behavior) |
+   | **Steps** | Ordered implementation steps with engine constructs, class names, signal names, file paths | At least 3 numbered steps, each concrete and verifiable |
+   | **Files Created** | New files this task introduces | At least 1 file path, or explicit "No new files" |
+   | **Files Modified** | Existing files this task changes | At least 1 file path, or explicit "No existing files modified" |
+   | **Verification** | How to confirm this task is done correctly — both automated and manual | At least 2 verification checks |
+   | **Verification Mapping** | Maps parent spec acceptance criteria to verification steps | At least 1 AC → verification mapping |
+   | **Out of Scope** | What this task intentionally does not implement | At least 1 exclusion |
+   | **Risks** | Task-local execution risks — where the implementer is most likely to break things | At least 1 risk |
+   | **Notes** | Implementation notes, gotchas, references to engine docs, ADR/KI/DD annotations | At least 1 note, or explicit "No additional constraints" |
+
+   **Conditional sections (fill if applicable, otherwise state "N/A — [reason]"):**
+
+   | Section | When to fill | What to write |
+   |---------|-------------|--------------|
+   | **Regression Tests** | Task introduces or modifies C++ system APIs | Test plan covering the 6 layers (core functionality, edge cases, invariants, state transitions, integration points, stress/scale) |
+   | **GUT Unit Tests** | Task introduces or modifies GDScript code | Test plan for GDScript-layer logic |
+   | **GDScript Lint** | Task creates or modifies .gd files | Confirmation that gdlint will be run |
+   | **Manual Playtest Checklist** | Task has player-visible behavior | At least 2 checklist items with Setup/Action/Expected Result format |
+   | **Data Tables** | Task adds or modifies balance values, content definitions, or display config | Which CSV files to create/update |
+   | **Diagnostics** | Task adds or modifies simulation state management | Which [DIAG] warnings and invariants to add |
+   | **Localization** | Task adds or modifies player-visible UI text | Which translation keys to add |
+
    - Set the `Implements` reference to the parent spec ID.
    - Set the `Phase` reference from the slice's parent phase.
 3. **Register** the task in `scaffold/tasks/_index.md` with the spec reference.

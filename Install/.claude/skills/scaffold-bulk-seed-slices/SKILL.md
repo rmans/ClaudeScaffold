@@ -197,15 +197,23 @@ For each confirmed candidate:
 
 1. **Assign the next sequential SLICE-### ID** from `scaffold/slices/_index.md`.
 2. **Convert temporary dependency labels** to the newly assigned SLICE-### IDs. Dependencies on existing slices keep their original IDs.
-3. **Create** `scaffold/slices/SLICE-###-<name>_draft.md` using the slice template:
-   - Fill in Goal from the confirmed description.
+3. **Create** `scaffold/slices/SLICE-###-<name>_draft.md` using the slice template. Write substantive content for ALL sections — remove template HTML comments and replace with authored prose. No section should be left at template defaults.
+
+   | Section | What to write | Minimum content |
+   |---------|--------------|-----------------|
+   | **Goal** | One sentence describing the end-to-end experience this slice delivers, from confirmed description | Complete sentence, player-perspective |
+   | **Proof Value** | What uncertainty this slice reduces — why it matters for the phase | 1-2 sentences with concrete examples (e.g., "proves BuildingSystem → RoomSystem integration") |
+   | **Assumptions** | What must already exist — infrastructure, systems, behaviors this slice depends on | At least 2 bullet points |
+   | **Starting Conditions** | What must be true before the demo begins — makes demos reproducible | At least 2 conditions describing the pre-demo state |
+   | **Specs Included** | Table of specs this slice covers — populate with suggested spec names | At least 1 row; specs not yet created may use descriptive names marked "TBD — create with `/scaffold-new-spec`" |
+   | **Tasks** | Leave empty — tasks are seeded by `/scaffold-bulk-seed-tasks` after specs are defined | Empty table structure only |
+   | **Integration Points** | How systems connect in this slice — reference interfaces.md | At least 1 integration point describing which systems cross and what data flows |
+   | **Done Criteria** | What must be true for this slice to be complete — testable conditions | At least 2 verifiable criteria |
+   | **Failure Modes This Slice Should Catch** | What breakage should be visible if this slice fails | At least 2 failure modes — a strong slice is defined by the bugs it would expose |
+   | **Visible Proof** | What the tester should visibly see if the slice works — not logs or internal inspection | At least 2 observable outcomes |
+   | **Demo Script** | Step-by-step walkthrough demonstrating the slice works end-to-end | At least 3 numbered steps with specific player actions and expected results |
+
    - Set `> **Depends on:**` from the confirmed dependency graph (SLICE-### IDs or "—").
-   - Fill in Systems Covered.
-   - Fill in Integration Points from interfaces.md references.
-   - Populate the Specs Included table with suggested spec names (marked as "TBD — create with `/scaffold-new-spec`").
-   - Leave the Tasks table empty.
-   - Fill in Done Criteria based on the goal.
-   - Draft a Demo Script skeleton based on the integration points.
 4. **Register** the slice in `scaffold/slices/_index.md` with the phase reference, inserted at the correct position in the implementation order (not just appended). Existing Approved and Complete slices keep their relative order — newly created Draft slices are inserted around those fixed points according to the confirmed candidate order.
 
 ## Phase 4 — Report
