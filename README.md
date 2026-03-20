@@ -23,6 +23,7 @@ Every design decision, visual style rule, system behavior, interface contract, a
 - **Two-loop stabilization.** Every document type follows the same pattern: create → fix → iterate → validate (initial), then revise → fix → iterate → validate (after implementation feedback). Foundation architecture is gated before planning begins.
 - **Draft → Review → Approved → Complete lifecycle.** Documents start as `Draft`, move through adversarial review via `/scaffold-iterate-*`, are set to `Approved` by approval gates, and marked `Complete` by `/scaffold-complete` when implementation is done. Completion ripples up from tasks through specs, slices, and phases.
 - **Token-efficient retrieval.** Index files in every directory let Claude find what it needs without loading entire folders.
+- **Asset requirements in specs.** Specs identify what art and audio the behavior needs, scan for reusable assets, and track production status. Tasks wire the ready assets.
 - **78 skills automate the pipeline.** Create, seed, fix, iterate, revise, approve, implement, generate art/audio, and edit documents with slash commands — no manual file wrangling.
 
 ## How It Works
@@ -49,12 +50,13 @@ OUTER LOOP (architecture stability)
 3. **References** — Extract data tables: signals, entities, resources, balance params, architecture
 4. **Engine** — Define how to build it in your target engine
 5. **Visual/UX** — Lock in visual identity, interaction model, feedback system, audio direction
-6. **Inputs** — Define player input actions and bindings
+6. **Inputs** — Define player input actions, bindings, navigation, and philosophy
 7. **Foundation Gate** — Verify Steps 1–6 are architecturally stable before planning
 8. **Plan** — Create a roadmap, break it into phases, slice each phase vertically
-9. **Spec** — Write atomic behavior specs for each slice
+9. **Spec** — Write atomic behavior specs for each slice (with asset requirements)
 10. **Build** — Create implementation tasks, write code, run adversarial code review
 11. **Feedback** — ADRs, triage logs, and revision loops update the roadmap and re-scope upcoming work
+12. **Art/Audio** — Produce assets identified by specs, following the craft pipelines in ART-WORKFLOW.md and AUDIO-WORKFLOW.md
 
 Each step has skills that automate it. Each document has a clear authority rank. Nothing is ad-hoc.
 
@@ -93,11 +95,11 @@ Documents are separated into layers. No document may mix layers.
 | Slices | What proves this phase works end-to-end? | `slices/` |
 | Engine | How do we build in this engine? | `engine/` |
 | Theory | What do experts recommend? | `theory/` |
-| Content | What does the game look/sound like? | `art/`, `audio/` |
+| Assets | What does the game look and sound like? | `assets/` |
 
 ### Theory as Advisory Context
 
-The `theory/` directory contains 16 documents covering game design principles, common pitfalls, genre conventions, UX heuristics, color theory, architecture patterns, and more. These are Rank 11 — they carry **no authority**. Skills read them for context when creating and reviewing documents, but they never dictate design decisions. Theory informs; it doesn't override.
+The `theory/` directory contains 16 documents covering game design principles, common pitfalls, genre conventions, UX heuristics, color theory, architecture patterns, and more. These carry **no authority**. Skills read them for context when creating and reviewing documents, but they never dictate design decisions. Theory informs; it doesn't override.
 
 ## Installation
 
@@ -139,7 +141,7 @@ cp ClaudeScaffold/Install/CLAUDE.md /path/to/your/project/
 This gives your project:
 
 ```
-.claude/skills/       ← 77 Claude Code skills
+.claude/skills/       ← 78 Claude Code skills
 scaffold/             ← Document pipeline with templates and indexes
 CLAUDE.md             ← Instructions that tell Claude Code how to use the scaffold
 ```
@@ -148,7 +150,7 @@ See [Install/README.md](Install/README.md) for full installation details.
 
 ## Skills
 
-77 slash commands organized by workflow:
+78 slash commands organized by workflow:
 
 | Category | Skills |
 |----------|--------|
@@ -181,14 +183,15 @@ All skill names are prefixed with `/scaffold-` (e.g., `/scaffold-init-design`).
 6.  /scaffold-bulk-seed-references     ← populate reference docs
 7.  /scaffold-bulk-seed-engine         ← select engine, seed engine docs
 8.  /scaffold-bulk-seed-style          ← seed visual/UX docs
-9.  /scaffold-revise-foundation        ← verify architecture stability
-10. /scaffold-new-roadmap              ← create the project roadmap
-11. /scaffold-bulk-seed-phases         ← seed phases from roadmap
-12. /scaffold-approve-phases           ← gate first phase
-13. Per phase: seed slices → approve → seed specs/tasks → approve → implement
+9.  /scaffold-bulk-seed-input          ← seed input docs
+10. /scaffold-revise-foundation        ← verify architecture stability
+11. /scaffold-new-roadmap              ← create the project roadmap
+12. /scaffold-bulk-seed-phases         ← seed phases from roadmap
+13. /scaffold-approve-phases           ← gate first phase
+14. Per phase: seed slices → approve → seed specs/tasks → approve → implement
 ```
 
-See `scaffold/WORKFLOW.md` for the full 24-step recipe.
+See `scaffold/WORKFLOW.md` for the full pipeline recipe. See `scaffold/ART-WORKFLOW.md` and `scaffold/AUDIO-WORKFLOW.md` for art and audio production pipelines.
 
 ## Scaffold Structure
 
@@ -196,14 +199,16 @@ See `scaffold/WORKFLOW.md` for the full 24-step recipe.
 scaffold/
 ├── _index.md                        # Master index + retrieval protocol
 ├── doc-authority.md                 # Precedence rules (ranks 1–11)
-├── WORKFLOW.md                      # Step-by-step pipeline recipe (24 steps)
+├── WORKFLOW.md                      # Step-by-step pipeline recipe
+├── ART-WORKFLOW.md                  # Art production pipeline (2D, 3D, UI)
+├── AUDIO-WORKFLOW.md                # Audio production pipeline (SFX, music, ambience, voice)
 │
 ├── design/                          # CANON: what the game is
 │   ├── design-doc.md                #   Core vision, pillars, loops, mechanics (rank 1)
 │   ├── style-guide.md               #   Visual art style (rank 2)
 │   ├── color-system.md              #   Color palette and rules (rank 2)
 │   ├── ui-kit.md                    #   UI component definitions (rank 2)
-│   ├── glossary.md                  #   Canonical terminology + NOT column (rank 2)
+│   ├── glossary.md                  #   Canonical terminology + NOT column + authority + criticality (rank 2)
 │   ├── interaction-model.md         #   Player interaction patterns (rank 2)
 │   ├── feedback-system.md           #   Game feel and feedback coordination (rank 2)
 │   ├── audio-direction.md           #   Audio philosophy and sound categories (rank 2)
@@ -214,6 +219,12 @@ scaffold/
 │   └── systems/                     #   Individual system designs (rank 5)
 │
 ├── inputs/                          # CANON: input control definitions (rank 3)
+│   ├── action-map.md                #   Action IDs with source traceability
+│   ├── input-philosophy.md          #   Input principles and accessibility
+│   ├── default-bindings-kbm.md      #   Keyboard/mouse defaults
+│   ├── default-bindings-gamepad.md  #   Gamepad defaults
+│   └── ui-navigation.md             #   Focus flow and navigation model
+│
 ├── reference/                       # Canonical data tables (rank 6)
 │
 ├── decisions/                       # Decision tracking
@@ -229,13 +240,21 @@ scaffold/
 │
 ├── phases/                          # Scope gates (rank 7)
 ├── slices/                          # Vertical slice contracts (rank 8)
-├── specs/                           # Atomic behavior specs (rank 9)
+├── specs/                           # Atomic behavior specs with asset requirements (rank 9)
 ├── engine/                          # Engine-specific constraints (rank 10)
 ├── tasks/                           # Implementation steps (rank 11)
 ├── theory/                          # Advisory only — no authority
-├── art/                             # Generated art assets
-├── audio/                           # Generated audio assets
-├── templates/                       # Document + engine templates (44 total)
+│
+├── assets/                          # All production art and audio
+│   ├── entities/                    #   Per-entity: sprites, models, icons, SFX, voice
+│   ├── ui/                          #   Shared UI: panels, cursors, shared icons
+│   ├── environment/                 #   Biome/location: tilesets, ambience
+│   ├── music/                       #   Scene/mood-level tracks
+│   ├── shared/                      #   Reusable base assets across entities
+│   ├── concept/                     #   Exploration art (not production)
+│   └── promo/                       #   Marketing art
+│
+├── templates/                       # Document + engine templates
 └── tools/                           # Scripts and utilities
 ```
 
