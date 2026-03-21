@@ -6,7 +6,7 @@ This project uses ClaudeScaffold — a document-driven pipeline for game develop
 
 1. **Document authority is law.** When documents conflict, the higher-ranked document wins. Code must never "work around" higher-level intent. If an implementation would violate a design document, the implementation is wrong — file an ADR via `/scaffold-file-decision --type adr` to change the document instead.
 2. **Design defines WHAT, engine defines HOW.** Documents in `scaffold/design/` describe what the game is. Documents in `scaffold/engine/` describe how to build it. Never mix layers.
-3. **Single writer per variable.** Every piece of game data has exactly one owning system defined in `scaffold/design/authority.md`. No system may write to another system's data without an ADR.
+3. **Single writer per variable.** Every piece of game data has exactly one owning system defined in `scaffold/design/authority.md`. No system may write to another system's data without an ADR filed via `/scaffold-file-decision --type adr`.
 4. **Use canonical terminology.** Terms defined in `scaffold/design/glossary.md` are mandatory. Use the exact term — never synonyms from the NOT column.
 5. **Systems are behavior, not implementation.** System designs in `scaffold/design/systems/` describe player-visible behavior. No signals, methods, nodes, or class names in system docs.
 6. **Theory informs, never dictates.** Documents in `scaffold/theory/` provide advisory context. Read them when creating or reviewing, but they carry no authority.
@@ -57,16 +57,16 @@ Never load entire directories. Follow this protocol:
 
 ## When Creating or Modifying Systems
 
-- Use the template at `scaffold/templates/system-template.md`.
-- Assign sequential SYS-### IDs — never skip or reuse.
-- Register in both `scaffold/design/systems/_index.md` AND the System Design Index in `scaffold/design/design-doc.md`.
+- **Use `/scaffold-bulk-seed-systems` to create systems from the design doc.** For individual systems, use `/scaffold-new-system`. Both use the template, assign IDs, and register in indexes automatically.
+- If creating manually: use the template at `scaffold/templates/system-template.md`, assign sequential SYS-### IDs (never skip or reuse), and register in both `scaffold/design/systems/_index.md` AND the System Design Index in `scaffold/design/design-doc.md`.
 - Write in player-visible behavior only. Technical contracts belong in `scaffold/design/interfaces.md` and `scaffold/reference/signal-registry.md`.
 
 ## When Planning (Phases, Slices, Specs, Tasks)
 
 - Follow the order: Roadmap → Phases → Slices → Specs → Tasks.
+- **Use bulk-seed skills to create planning docs:** `/scaffold-bulk-seed-phases`, `/scaffold-bulk-seed-slices`, `/scaffold-bulk-seed-specs`, `/scaffold-bulk-seed-tasks`. For individual docs, use `/scaffold-new-phase`, `/scaffold-new-slice`, `/scaffold-new-spec`, `/scaffold-new-task`.
 - Before creating a phase, spec, or task, read all ADRs filed during prior work. ADRs may change scope.
-- Before creating a phase, read `scaffold/decisions/playtest-feedback.md` for Pattern-status entries. Playtest patterns may affect phase scope alongside ADRs.
+- Before creating a phase, read `scaffold/decisions/playtest-feedback/` for Pattern-status entries. Playtest patterns may affect phase scope alongside ADRs.
 - Slices define vertical end-to-end chunks within a phase. Specs define behavior within a slice. Tasks implement specs.
 - Specs describe BEHAVIOR (what it does). Tasks describe IMPLEMENTATION (how to build it in the engine).
 - After completing a phase, follow the Phase Transition Protocol in `scaffold/phases/roadmap.md` to update the roadmap.
@@ -79,7 +79,7 @@ Every scaffold document carries a `> **Status:**` field in its blockquote header
 - **Review** — set manually by the user when the document is ready for adversarial review.
 - **Approved** — set automatically by `/scaffold-iterate` after a successful adversarial review (consensus reached, no unresolved HIGH issues).
 - **Complete** — set by `/scaffold-complete` when implementation is done and verified. Applies to planning-layer docs only (phases, slices, specs, tasks). Ripples upward: when all tasks for a spec are Complete, the spec becomes Complete, and so on through slices and phases.
-- **Deprecated** — set via ADR when a document is no longer active. The document remains in its directory (IDs are permanent) but reviews flag references to it.
+- **Deprecated** — set via ADR (filed with `/scaffold-file-decision --type adr`) when a document is no longer active. The document remains in its directory (IDs are permanent) but reviews flag references to it.
 
 ADRs use their own status lifecycle (`Proposed | Accepted | Deprecated | Superseded`) and are not part of this system.
 
@@ -108,6 +108,15 @@ Before creating or revising any scaffold document, check the **Document Influenc
 ## Workflow
 
 Follow the step-by-step recipe in `scaffold/WORKFLOW.md` for the full 24-step pipeline from design doc to implementation.
+
+## External Review Setup
+
+The `/scaffold-iterate-*` skills use an external LLM for adversarial review via `scaffold/tools/doc-review.py`. Configuration lives in `scaffold/tools/review_config.json`:
+
+- **Primary provider:** Set `"provider"` (default: `"openai"`).
+- **Fallback chain:** Set `"fallback_order"` (default: `["openai", "anthropic"]`). If the primary provider fails with a billing/quota error, the script automatically tries the next provider. If all providers are exhausted, iterate skills fall back to self-review (Claude reviews directly, weaker but functional).
+- **API keys:** Set `OPENAI_API_KEY` and/or `ANTHROPIC_API_KEY` as environment variables or in `scaffold/.env`.
+- **Formatting pass:** `/scaffold-validate` runs a markdown formatting pass (whitespace, blank lines, heading spacing, table alignment) before validation checks. This normalizes all scaffold docs automatically.
 
 ## When Resolving Conflicts
 
@@ -204,6 +213,7 @@ When creating or modifying scaffold documents, check and update these related fi
 
 | When you change... | Also update... |
 |---------------------|---------------|
-| `decisions/ADR-###` accepted | The upstream doc the ADR modifies, `VERSION.md` changelog |
-| `decisions/known-issues.md` entry resolved | The doc that was blocked, remove blocking reference |
+| `decisions/architecture-decision-record/ADR-###` accepted | The upstream doc the ADR modifies, `VERSION.md` changelog |
+| `decisions/known-issues/KI-###` resolved | The doc that was blocked, remove blocking reference |
+| `decisions/design-debt/DD-###` paid off | The affected docs, `VERSION.md` changelog |
 | Task/spec/slice/phase completed | `VERSION.md` — bump appropriate version segment |
