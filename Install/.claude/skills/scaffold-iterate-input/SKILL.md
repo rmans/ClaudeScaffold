@@ -479,7 +479,7 @@ One of:
 - **When --target is set, respect edit scope.** Cross-doc issues are flagged for fix-input, not fixed directly.
 - **Sleep between API calls.** Add `sleep 10` between topic transitions.
 - **Clean up temporary files** after use.
-- **If the Python script fails, report the error and stop.**
+- **Provider fallback chain.** The Python script automatically tries providers in `fallback_order` from `review_config.json`. If the primary provider (e.g., OpenAI) fails with a billing, quota, or rate limit error, it falls back to the next provider (e.g., Anthropic). If ALL providers are exhausted (the script returns `"fallback": "self-review"` in its error output), fall back to **self-review mode**: Claude performs the review directly using the same topics, criteria, and adjudication rules — without the external LLM. Self-review is weaker than adversarial external review (no independent perspective), but is better than stopping entirely. Log which mode was used in the review log. If the script fails with a non-billing error (bad request, network error, malformed response), report the error and stop — do not fall back.
 - **Topic 6 is highest-value.** When budget is tight, run Topic 6 first. It catches integration failures per-doc reviews miss.
 - **Ambiguous upstream is not an input defect.** When the interaction model permits multiple valid input interpretations and the input doc chose a reasonable one, flag for user decision — don't treat the input doc as wrong.
 - **Practicality check before finalizing changes.** Would this change make the doc harder to use? Does it improve clarity for developers or just enforce consistency for the review system? Reject changes that increase rigidity without improving implementability.

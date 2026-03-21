@@ -638,12 +638,37 @@ def _extract_json(text):
 
 
 # ---------------------------------------------------------------------------
+# Billing / Quota Error Detection
+# ---------------------------------------------------------------------------
+
+BILLING_ERROR_PATTERNS = [
+    "insufficient_quota", "billing", "insufficient_funds", "payment",
+    "exceeded your current quota", "account is not active",
+    "rate_limit", "too many requests", "overloaded",
+]
+
+
+def is_billing_error(result):
+    """Check if an API error result indicates a billing/quota/rate issue."""
+    if "error" not in result:
+        return False
+    error_msg = result["error"].lower()
+    # HTTP 402 (Payment Required), 429 (Rate Limit), 529 (Overloaded)
+    for code in ["(402)", "(429)", "(529)"]:
+        if code in error_msg:
+            return True
+    for pattern in BILLING_ERROR_PATTERNS:
+        if pattern in error_msg:
+            return True
+    return False
+
+
+# ---------------------------------------------------------------------------
 # Provider Dispatch
 # ---------------------------------------------------------------------------
 
-def call_provider(api_key, config, messages, json_mode=True):
-    """Route to the correct provider's API call."""
-    provider = config.get("provider", "openai")
+def _call_single_provider(provider, api_key, config, messages, json_mode):
+    """Call a single provider. Returns (result, provider_name)."""
     if provider == "openai":
         if json_mode:
             return call_openai(api_key, config, messages)
@@ -656,6 +681,76 @@ def call_provider(api_key, config, messages, json_mode=True):
             return call_anthropic_raw(api_key, config, messages)
     else:
         return {"error": f"Unknown provider: {provider}. Use 'openai' or 'anthropic'."}
+
+
+def _get_api_key_for_provider(config, provider):
+    """Resolve API key for a specific provider (not necessarily the primary one)."""
+    provider_config = config.get(provider, {})
+    env_var = provider_config.get("api_key_env", f"{provider.upper()}_API_KEY")
+
+    key = os.environ.get(env_var)
+    if not key:
+        env_file = Path(__file__).parent.parent / ".env"
+        if env_file.exists():
+            for line in env_file.read_text(encoding="utf-8").splitlines():
+                line = line.strip()
+                if line.startswith("#") or "=" not in line:
+                    continue
+                k, v = line.split("=", 1)
+                k = k.strip()
+                v = v.strip().strip("'").strip('"')
+                if k == env_var:
+                    key = v
+                    break
+    return key
+
+
+def call_provider(api_key, config, messages, json_mode=True):
+    """Route to the correct provider's API call, with fallback on billing errors."""
+    fallback_order = config.get("fallback_order", [config.get("provider", "openai")])
+    primary = config.get("provider", "openai")
+
+    # Ensure primary is first in the fallback order
+    if primary in fallback_order:
+        fallback_order = [primary] + [p for p in fallback_order if p != primary]
+    else:
+        fallback_order = [primary] + fallback_order
+
+    errors_encountered = []
+
+    for provider in fallback_order:
+        # Get API key for this provider
+        if provider == primary:
+            pkey = api_key
+        else:
+            pkey = _get_api_key_for_provider(config, provider)
+            if not pkey:
+                errors_encountered.append(f"{provider}: no API key configured")
+                continue
+
+        result = _call_single_provider(provider, pkey, config, messages, json_mode)
+
+        if "error" not in result:
+            # Success — annotate which provider was used if it wasn't the primary
+            if provider != primary:
+                result["_fallback_provider"] = provider
+                print(f"[FALLBACK] Primary provider ({primary}) failed, using {provider}", file=sys.stderr)
+            return result
+
+        if is_billing_error(result):
+            errors_encountered.append(f"{provider}: {result['error']}")
+            print(f"[FALLBACK] {provider} billing/quota error, trying next provider...", file=sys.stderr)
+            continue
+        else:
+            # Non-billing error (e.g., bad request, server error) — don't fallback, return immediately
+            return result
+
+    # All providers exhausted
+    return {
+        "error": "All providers exhausted — billing or quota errors on all configured providers",
+        "providers_tried": errors_encountered,
+        "fallback": "self-review",
+    }
 
 
 # ---------------------------------------------------------------------------
