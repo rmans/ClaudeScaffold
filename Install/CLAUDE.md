@@ -4,13 +4,13 @@ This project uses ClaudeScaffold — a document-driven pipeline for game develop
 
 ## Rules
 
-1. **Document authority is law.** When documents conflict, the higher-ranked document wins. Code must never "work around" higher-level intent. If an implementation would violate a design document, the implementation is wrong — file an ADR to change the document instead.
+1. **Document authority is law.** When documents conflict, the higher-ranked document wins. Code must never "work around" higher-level intent. If an implementation would violate a design document, the implementation is wrong — file an ADR via `/scaffold-file-decision --type adr` to change the document instead.
 2. **Design defines WHAT, engine defines HOW.** Documents in `scaffold/design/` describe what the game is. Documents in `scaffold/engine/` describe how to build it. Never mix layers.
 3. **Single writer per variable.** Every piece of game data has exactly one owning system defined in `scaffold/design/authority.md`. No system may write to another system's data without an ADR.
 4. **Use canonical terminology.** Terms defined in `scaffold/design/glossary.md` are mandatory. Use the exact term — never synonyms from the NOT column.
 5. **Systems are behavior, not implementation.** System designs in `scaffold/design/systems/` describe player-visible behavior. No signals, methods, nodes, or class names in system docs.
 6. **Theory informs, never dictates.** Documents in `scaffold/theory/` provide advisory context. Read them when creating or reviewing, but they carry no authority.
-7. **ADRs are the feedback mechanism.** When implementation conflicts with design, file an ADR. ADRs feed back into upcoming phases, specs, and tasks. Never silently deviate from the plan.
+7. **ADRs are the feedback mechanism.** When implementation conflicts with design, file an ADR via `/scaffold-file-decision --type adr`. ADRs feed back into upcoming phases, specs, and tasks. Never silently deviate from the plan.
 
 ## Retrieval Protocol
 
@@ -112,9 +112,11 @@ Follow the step-by-step recipe in `scaffold/WORKFLOW.md` for the full 24-step pi
 ## When Resolving Conflicts
 
 - Higher-ranked document always wins.
-- File an ADR in `scaffold/decisions/` to change a higher-authority document.
-- Log unresolved questions in `scaffold/decisions/known-issues.md`.
-- Log intentional compromises in `scaffold/decisions/design-debt.md`.
+- **Always use `/scaffold-file-decision` to file decision documents.** This is the canonical way to create ADRs, Known Issues, and Design Debt entries — it assigns sequential IDs, fills templates, registers in indexes, and cross-references affected documents.
+  - ADR (architecture decision): `/scaffold-file-decision --type adr "title"`
+  - KI (known issue): `/scaffold-file-decision --type ki "title"`
+  - DD (design debt): `/scaffold-file-decision --type dd "title"`
+- Do not manually create ADR/KI/DD files or append to known-issues.md / design-debt.md directly.
 
 ## Project Version
 
