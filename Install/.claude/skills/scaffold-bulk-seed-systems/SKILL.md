@@ -167,28 +167,40 @@ Before presenting to the user, run these checks:
 
 After auditing the explicit proposals, analyze the proposed systems for **shared responsibilities that should be extracted into their own systems**. These are systems the design doc doesn't name directly, but that emerge from studying what the proposed systems all need to do.
 
+**The critical gate: system vs. architecture.** A shared responsibility only becomes a system if it has **player-visible behavior** — something the player can see, react to, or be affected by. If the shared concern is invisible plumbing (data transfer, internal routing, state synchronization), it belongs in Step 3 as an interface contract or architecture pattern, NOT as a Step 2 system.
+
+| If the player... | Then it's a... | Example |
+|-----------------|----------------|---------|
+| Can see it happening (haulers carrying items, delivery taking time) | **System** (Step 2) | Logistics — colonists physically move items, routes can fail, delivery is a visible process |
+| Can affect it (set priorities, assign routes, choose policies) | **System** (Step 2) | Alert system — player can configure alert thresholds and priority |
+| Is impacted by its failure (items don't arrive, zones miscalculate) | **System** (Step 2) if failure is player-visible | Zone Management — wrong zone assignment causes visible behavior changes |
+| Never sees, touches, or notices it | **Interface/Architecture** (Step 3) | Data bus pattern, event routing, internal state synchronization |
+
 **How to find emergent systems:**
 
-1. **Cross-system behavior scan** — for each proposed system, list what it needs to do beyond its core simulation responsibility. Look for behaviors that appear in 2+ systems:
-   - Moving items between locations (storage ↔ construction ↔ production → **Logistics**)
-   - Tracking spatial zones or regions (construction + farming + environment → **Zone Management**)
-   - Scheduling or prioritizing competing demands (work AI + construction + medical → **Priority Arbitration**)
-   - Emitting or aggregating alerts (combat + needs + environment → **Alert/Notification**)
-   - Tracking relationships or reputation (factions + trade + social → **Relationship Tracking**)
+1. **Cross-system behavior scan** — for each proposed system, list what it needs to do beyond its core simulation responsibility. Look for behaviors that appear in 2+ systems and pass the player-visibility gate:
+   - Moving items between locations — **only a system if** the player sees haulers, delivery takes simulation time, and routes can fail. If items just transfer instantly on the books, it's an interface contract.
+   - Tracking spatial zones — **only a system if** zones have player-visible behavior (room detection, zone effects, area control). If zones are just internal spatial queries, it's architecture.
+   - Scheduling competing demands — **only a system if** the player can see or influence priorities. If it's internal arbitration logic, it belongs in the consuming system or architecture.
+   - Aggregating alerts — **only a system if** alerts are gameplay state (the player reads them, they affect decisions, they have priority and lifecycle). If alerts are just UI events, it's a presentation concern (Step 5).
 
-2. **Shared state test** — if 3+ systems all need to read or write the same kind of state (e.g., "where is item X right now?", "what zone is this tile in?"), that state likely deserves its own owning system rather than being duplicated across each consumer.
+2. **Shared state test** — if 3+ systems all need to read or write the same kind of state (e.g., "where is item X right now?"), that state likely deserves its own owning system — **but only if that state has player-visible consequences**. If the shared state is purely internal bookkeeping, it goes to `authority.md` and `interfaces.md` in Step 3.
 
 3. **"Would this system simplify the others?" test** — if extracting a shared behavior into a new system would let 2+ existing systems drop that concern entirely (not just partially), the extraction is justified. If the existing systems would still need to handle it themselves even with the new system, the extraction just adds complexity.
 
-4. **Infrastructure vs. gameplay test** — emergent systems often sit at the infrastructure boundary. They must still own **gameplay-facing simulation state** (not just engine plumbing) to justify existence as a Step 2 system. A system whose entire purpose is "move data between other systems" with no player-visible behavior of its own may be an interface contract (Step 3), not a system (Step 2).
+4. **Player-visibility proof** — for each emergent candidate, answer: "What does the player see, hear, or react to because this system exists?" If the answer requires explaining internal mechanics ("well, behind the scenes it coordinates..."), it fails the gate. Demote it to a Step 3 note: "Shared concern — resolve as interface contract or architecture pattern in bulk-seed-references."
 
-**For each emergent system candidate:**
+**For each emergent system candidate that passes the player-visibility gate:**
 - Name it and describe its simulation responsibility.
 - List which existing proposed systems currently handle this concern and would give it up.
 - Explain what state the emergent system would own.
+- Describe what the player sees or does because this system exists (the proof it's a system, not architecture).
 - Note whether the design doc implicitly supports this (e.g., the design mentions "supply chains" without naming a logistics system).
 
-**Add emergent system candidates to the proposal before presenting in 2d.** Mark them as `[EMERGENT]` so the user can distinguish them from design-doc-derived systems. The user may accept, reject, or merge them.
+**For shared concerns that fail the player-visibility gate:**
+- Collect them in a "Step 3 Notes" list in the audit results. These become inputs for `bulk-seed-references` when it seeds `architecture.md` and `interfaces.md`.
+
+**Add emergent system candidates to the proposal before presenting in 2d.** Mark them as `[EMERGENT]` so the user can distinguish them from design-doc-derived systems. The user may accept, reject, or demote them to Step 3.
 
 ### 2d. Present for confirmation
 
@@ -211,9 +223,10 @@ After auditing the explicit proposals, analyze the proposed systems for **shared
 - **Granularity concerns:** [list or "None"]
 - **Layer boundary concerns:** [list or "None"]
 - **Emergent systems proposed:** N (list which existing systems would give up responsibilities)
+- **Shared concerns demoted to Step 3:** [list of concerns that failed the player-visibility gate, or "None"]
 - **System count:** N (target: 8–20 for this game's simulation depth)
 
-**Options:** Confirm all / Merge # and # / Split # / Rename # / Remove # / Add missing system
+**Options:** Confirm all / Merge # and # / Split # / Rename # / Remove # / Demote # to Step 3 / Add missing system
 ```
 
 Wait for user confirmation before creating any files.
