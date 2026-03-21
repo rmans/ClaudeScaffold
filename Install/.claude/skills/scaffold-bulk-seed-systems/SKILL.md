@@ -163,16 +163,44 @@ Before presenting to the user, run these checks:
 
 **Scope check** — is the total system count reasonable? Prefer broad, responsibility-based systems over narrow feature slices. For many games, 8–15 systems is a healthy early draft. Simulation-heavy games may need more, but if exceeding ~20, verify you are not splitting by feature instead of ownership.
 
+### 2c-ii. Emergent system extraction
+
+After auditing the explicit proposals, analyze the proposed systems for **shared responsibilities that should be extracted into their own systems**. These are systems the design doc doesn't name directly, but that emerge from studying what the proposed systems all need to do.
+
+**How to find emergent systems:**
+
+1. **Cross-system behavior scan** — for each proposed system, list what it needs to do beyond its core simulation responsibility. Look for behaviors that appear in 2+ systems:
+   - Moving items between locations (storage ↔ construction ↔ production → **Logistics**)
+   - Tracking spatial zones or regions (construction + farming + environment → **Zone Management**)
+   - Scheduling or prioritizing competing demands (work AI + construction + medical → **Priority Arbitration**)
+   - Emitting or aggregating alerts (combat + needs + environment → **Alert/Notification**)
+   - Tracking relationships or reputation (factions + trade + social → **Relationship Tracking**)
+
+2. **Shared state test** — if 3+ systems all need to read or write the same kind of state (e.g., "where is item X right now?", "what zone is this tile in?"), that state likely deserves its own owning system rather than being duplicated across each consumer.
+
+3. **"Would this system simplify the others?" test** — if extracting a shared behavior into a new system would let 2+ existing systems drop that concern entirely (not just partially), the extraction is justified. If the existing systems would still need to handle it themselves even with the new system, the extraction just adds complexity.
+
+4. **Infrastructure vs. gameplay test** — emergent systems often sit at the infrastructure boundary. They must still own **gameplay-facing simulation state** (not just engine plumbing) to justify existence as a Step 2 system. A system whose entire purpose is "move data between other systems" with no player-visible behavior of its own may be an interface contract (Step 3), not a system (Step 2).
+
+**For each emergent system candidate:**
+- Name it and describe its simulation responsibility.
+- List which existing proposed systems currently handle this concern and would give it up.
+- Explain what state the emergent system would own.
+- Note whether the design doc implicitly supports this (e.g., the design mentions "supply chains" without naming a logistics system).
+
+**Add emergent system candidates to the proposal before presenting in 2d.** Mark them as `[EMERGENT]` so the user can distinguish them from design-doc-derived systems. The user may accept, reject, or merge them.
+
 ### 2d. Present for confirmation
 
 ```
 ## Proposed Systems
 
-| # | Name | Purpose | Owns | Interacts With | Constraints |
-|---|------|---------|------|---------------|-------------|
-| 1 | Construction | Manages structure placement, building progress, and demolition | Build state, blueprints | Resources, Map, Work AI | Invariant: IndirectControl |
-| 2 | Colony Needs | Tracks colonist vital needs and satisfaction | Need levels, mood | Colonist AI, Resources, Alerts | Boundary: no micromanagement |
-| ... | ... | ... | ... | ... | ... |
+| # | Name | Source | Purpose | Owns | Interacts With | Constraints |
+|---|------|--------|---------|------|---------------|-------------|
+| 1 | Construction | Design doc | Manages structure placement, building progress, and demolition | Build state, blueprints | Resources, Map, Work AI | Invariant: IndirectControl |
+| 2 | Colony Needs | Design doc | Tracks colonist vital needs and satisfaction | Need levels, mood | Colonist AI, Resources, Alerts | Boundary: no micromanagement |
+| 3 | Logistics | EMERGENT | Manages item movement between locations — extracted from Storage, Construction, Production | Item locations, delivery queues | Storage, Construction, Production | — |
+| ... | ... | ... | ... | ... | ... | ... |
 
 ### Audit Results
 - **Overlaps detected:** [list or "None"]
@@ -182,6 +210,7 @@ Before presenting to the user, run these checks:
 - **Authority conflicts:** [list or "None — each state has a single owner"]
 - **Granularity concerns:** [list or "None"]
 - **Layer boundary concerns:** [list or "None"]
+- **Emergent systems proposed:** N (list which existing systems would give up responsibilities)
 - **System count:** N (target: 8–20 for this game's simulation depth)
 
 **Options:** Confirm all / Merge # and # / Split # / Rename # / Remove # / Add missing system
