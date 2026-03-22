@@ -397,6 +397,16 @@ DOC_TYPE_CRITERIA = {
 
 
 # ---------------------------------------------------------------------------
+# Per-Provider Config Helpers
+# ---------------------------------------------------------------------------
+
+def get_max_tokens(config, provider):
+    """Get max_tokens for a provider, falling back to global config."""
+    provider_config = config.get(provider, {})
+    return provider_config.get("max_tokens", config.get("max_tokens", 16384))
+
+
+# ---------------------------------------------------------------------------
 # API Calls — OpenAI
 # ---------------------------------------------------------------------------
 
@@ -412,7 +422,7 @@ def call_openai(api_key, config, messages):
     payload = {
         "model": model,
         "temperature": config.get("temperature", 0.3),
-        "max_completion_tokens": config.get("max_tokens", 16384),
+        "max_completion_tokens": get_max_tokens(config, "openai"),
         "response_format": {"type": "json_object"},
         "messages": messages,
     }
@@ -461,7 +471,7 @@ def call_openai_raw(api_key, config, messages):
     payload = {
         "model": model,
         "temperature": config.get("temperature", 0.3),
-        "max_completion_tokens": config.get("max_tokens", 16384),
+        "max_completion_tokens": get_max_tokens(config, "openai"),
         "messages": messages,
     }
 
@@ -518,7 +528,7 @@ def call_anthropic(api_key, config, messages):
     url = "https://api.anthropic.com/v1/messages"
     payload = {
         "model": model,
-        "max_tokens": config.get("max_tokens", 16384),
+        "max_tokens": get_max_tokens(config, "anthropic"),
         "temperature": config.get("temperature", 0.3),
         "messages": api_messages,
     }
@@ -575,7 +585,7 @@ def call_anthropic_raw(api_key, config, messages):
     url = "https://api.anthropic.com/v1/messages"
     payload = {
         "model": model,
-        "max_tokens": config.get("max_tokens", 16384),
+        "max_tokens": get_max_tokens(config, "anthropic"),
         "temperature": config.get("temperature", 0.3),
         "messages": api_messages,
     }
@@ -640,7 +650,7 @@ def call_google(api_key, config, messages):
         "contents": gemini_contents,
         "generationConfig": {
             "temperature": config.get("temperature", 0.3),
-            "maxOutputTokens": config.get("max_tokens", 16384),
+            "maxOutputTokens": get_max_tokens(config, "google"),
             "responseMimeType": "application/json",
         },
     }
@@ -696,7 +706,7 @@ def call_google_raw(api_key, config, messages):
         "contents": gemini_contents,
         "generationConfig": {
             "temperature": config.get("temperature", 0.3),
-            "maxOutputTokens": config.get("max_tokens", 16384),
+            "maxOutputTokens": get_max_tokens(config, "google"),
         },
     }
     if system_text:
