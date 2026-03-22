@@ -11,6 +11,7 @@ This project uses ClaudeScaffold — a document-driven pipeline for game develop
 5. **Systems are behavior, not implementation.** System designs in `scaffold/design/systems/` describe player-visible behavior. No signals, methods, nodes, or class names in system docs.
 6. **Theory informs, never dictates.** Documents in `scaffold/theory/` provide advisory context. Read them when creating or reviewing, but they carry no authority.
 7. **ADRs are the feedback mechanism.** When implementation conflicts with design, file an ADR via `/scaffold-file-decision --type adr`. ADRs feed back into upcoming phases, specs, and tasks. Never silently deviate from the plan.
+8. **Keep VERSION.md updated.** After every meaningful commit (task completion, doc creation, system changes, bug fixes), bump the PATCH segment in `VERSION.md` and add a changelog entry. Do not batch — bump after each commit. See the Project Version section below for format rules.
 
 ## Retrieval Protocol
 
