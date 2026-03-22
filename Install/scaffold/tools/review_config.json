@@ -2,7 +2,7 @@
   "provider": "openai",
   "fallback_order": ["openai", "anthropic", "google"],
   "openai": {
-    "model": "gpt-5.1",
+    "model": "gpt-5.4",
     "api_key_env": "OPENAI_API_KEY",
     "max_tokens": 128000
   },
