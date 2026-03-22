@@ -612,6 +612,122 @@ def call_anthropic_raw(api_key, config, messages):
         return {"error": f"Network error: {e.reason}"}
 
 
+# ---------------------------------------------------------------------------
+# API Calls — Google (Gemini)
+# ---------------------------------------------------------------------------
+
+def call_google(api_key, config, messages):
+    """Call Google Gemini API with JSON response. Used for review and consensus."""
+    import urllib.request
+    import urllib.error
+
+    provider_config = config.get("google", {})
+    model = provider_config.get("model", "gemini-2.5-pro")
+
+    # Convert OpenAI-style messages to Gemini format
+    system_text = ""
+    gemini_contents = []
+    for msg in messages:
+        if msg["role"] == "system":
+            system_text = msg["content"]
+        elif msg["role"] == "user":
+            gemini_contents.append({"role": "user", "parts": [{"text": msg["content"]}]})
+        elif msg["role"] == "assistant":
+            gemini_contents.append({"role": "model", "parts": [{"text": msg["content"]}]})
+
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={api_key}"
+    payload = {
+        "contents": gemini_contents,
+        "generationConfig": {
+            "temperature": config.get("temperature", 0.3),
+            "maxOutputTokens": config.get("max_tokens", 16384),
+            "responseMimeType": "application/json",
+        },
+    }
+    if system_text:
+        payload["systemInstruction"] = {"parts": [{"text": system_text}]}
+
+    headers = {"Content-Type": "application/json"}
+
+    req = urllib.request.Request(
+        url,
+        data=json.dumps(payload).encode("utf-8"),
+        headers=headers,
+        method="POST",
+    )
+
+    try:
+        with urllib.request.urlopen(req, timeout=180) as resp:
+            body = json.loads(resp.read().decode("utf-8"))
+            content = body["candidates"][0]["content"]["parts"][0]["text"]
+            return _extract_json(content)
+    except urllib.error.HTTPError as e:
+        error_body = e.read().decode("utf-8") if e.fp else ""
+        try:
+            error_json = json.loads(error_body)
+            msg = error_json.get("error", {}).get("message", error_body)
+        except json.JSONDecodeError:
+            msg = error_body
+        return {"error": f"Google API error ({e.code}): {msg}"}
+    except urllib.error.URLError as e:
+        return {"error": f"Network error: {e.reason}"}
+
+
+def call_google_raw(api_key, config, messages):
+    """Call Google Gemini API returning raw text. Used for inner loop exchanges."""
+    import urllib.request
+    import urllib.error
+
+    provider_config = config.get("google", {})
+    model = provider_config.get("model", "gemini-2.5-pro")
+
+    system_text = ""
+    gemini_contents = []
+    for msg in messages:
+        if msg["role"] == "system":
+            system_text = msg["content"]
+        elif msg["role"] == "user":
+            gemini_contents.append({"role": "user", "parts": [{"text": msg["content"]}]})
+        elif msg["role"] == "assistant":
+            gemini_contents.append({"role": "model", "parts": [{"text": msg["content"]}]})
+
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={api_key}"
+    payload = {
+        "contents": gemini_contents,
+        "generationConfig": {
+            "temperature": config.get("temperature", 0.3),
+            "maxOutputTokens": config.get("max_tokens", 16384),
+        },
+    }
+    if system_text:
+        payload["systemInstruction"] = {"parts": [{"text": system_text}]}
+
+    headers = {"Content-Type": "application/json"}
+
+    req = urllib.request.Request(
+        url,
+        data=json.dumps(payload).encode("utf-8"),
+        headers=headers,
+        method="POST",
+    )
+
+    try:
+        with urllib.request.urlopen(req, timeout=180) as resp:
+            body = json.loads(resp.read().decode("utf-8"))
+            content = body["candidates"][0]["content"]["parts"][0]["text"]
+            return {"content": content}
+    except urllib.error.HTTPError as e:
+        error_body = e.read().decode("utf-8") if e.fp else ""
+        try:
+            error_json = json.loads(error_body)
+            msg = error_json.get("error", {}).get("message", error_body)
+        except json.JSONDecodeError:
+            msg = error_body
+        return {"error": f"Google API error ({e.code}): {msg}"}
+    except urllib.error.URLError as e:
+        return {"error": f"Network error: {e.reason}"}
+
+
 def _extract_json(text):
     """Extract JSON object from text that may contain markdown fences or preamble."""
     # Try direct parse first
@@ -679,8 +795,13 @@ def _call_single_provider(provider, api_key, config, messages, json_mode):
             return call_anthropic(api_key, config, messages)
         else:
             return call_anthropic_raw(api_key, config, messages)
+    elif provider == "google":
+        if json_mode:
+            return call_google(api_key, config, messages)
+        else:
+            return call_google_raw(api_key, config, messages)
     else:
-        return {"error": f"Unknown provider: {provider}. Use 'openai' or 'anthropic'."}
+        return {"error": f"Unknown provider: {provider}. Use 'openai', 'anthropic', or 'google'."}
 
 
 def _get_api_key_for_provider(config, provider):
