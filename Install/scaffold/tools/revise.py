@@ -350,35 +350,68 @@ def _advance(session, config):
         })
 
     elif phase == "restabilize":
-        # Collect changed sections from auto-updates and escalations
-        changed_sections = set()
-        changed_files = set()
+        # Collect changed sections PER FILE from auto-updates and escalations
+        per_file_sections = {}  # file_path → set of section names
+
         for update in session.get("auto_updates", []):
             sec = update.get("affected_section", "")
+            # Try to determine which file was affected
+            update_desc = update.get("update_description", "")
+            # Look for SYS-###, SPEC-###, etc. in the description
+            file_ids = re.findall(r"(SYS|SPEC|TASK|SLICE|PHASE)-\d+", update_desc)
+            if not file_ids:
+                file_ids = re.findall(r"(SYS|SPEC|TASK|SLICE|PHASE)-\d+",
+                                     update.get("signal", {}).get("content_summary", ""))
+
             if sec:
-                # Convert ### to parent ## group name
                 parent = sec.lstrip("#").strip().split(" — ")[0].strip()
-                changed_sections.add(parent)
-            sig = update.get("signal", {})
-            # Track which files were affected
-            changed_files.add(sig.get("source_file", ""))
+                for fid in file_ids:
+                    per_file_sections.setdefault(fid, set()).add(parent)
+                if not file_ids:
+                    per_file_sections.setdefault("_unassigned", set()).add(parent)
 
         for esc in session.get("escalations", []):
             sec = esc.get("affected_section", "")
+            esc_desc = esc.get("reason", "")
+            file_ids = re.findall(r"(SYS|SPEC|TASK|SLICE|PHASE)-\d+", esc_desc)
+            if not file_ids:
+                file_ids = re.findall(r"(SYS|SPEC|TASK|SLICE|PHASE)-\d+",
+                                     esc.get("signal", {}).get("content_summary", ""))
             if sec:
                 for part in sec.split(","):
                     parent = part.strip().lstrip("#").strip()
-                    changed_sections.add(parent)
+                    for fid in file_ids:
+                        per_file_sections.setdefault(fid, set()).add(parent)
+                    if not file_ids:
+                        per_file_sections.setdefault("_unassigned", set()).add(parent)
 
-        sections_arg = ",".join(sorted(changed_sections)) if changed_sections else ""
+        # Build per-file review commands
+        reviews = []
+        for file_id, sections in per_file_sections.items():
+            if file_id == "_unassigned":
+                continue
+            sections_arg = ",".join(sorted(sections))
+            reviews.append({
+                "target": file_id,
+                "sections": sections_arg,
+            })
+
+        # If no per-file mapping, fall back to layer-wide with all sections
+        if not reviews:
+            all_sections = set()
+            for secs in per_file_sections.values():
+                all_sections.update(secs)
+            reviews.append({
+                "target": "",
+                "sections": ",".join(sorted(all_sections)) if all_sections else "",
+            })
 
         _write_action({
             "action": "restabilize",
             "session_id": sid,
             "layer": session["layer"],
-            "sections": sections_arg,
-            "changed_files": sorted(changed_files),
-            "message": f"Run /scaffold-review {session['layer']} --sections \"{sections_arg}\" to restabilize changed sections only.",
+            "reviews": reviews,
+            "message": f"Restabilize {len(reviews)} file(s) — each scoped to its changed sections only.",
         })
 
     elif phase == "report":
