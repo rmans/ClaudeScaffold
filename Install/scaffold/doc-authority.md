@@ -67,7 +67,7 @@ This table defines what each document reads (influenced by) and what reads it (i
 
 | Document | Influenced By (reads these) | Influences (read by these) |
 |----------|---------------------------|---------------------------|
-| **design-doc.md** | (foundation — self-contained) | Everything. Every doc, every skill, every decision traces back here. |
+| **design-doc.md** | (foundation — self-contained) | Everything. Every doc, every skill, every decision traces back here. Entity Presentation section feeds system Asset Needs, style-guide, and audio-direction. |
 | **style-guide.md** | design-doc, architecture (scene tree), engine UI doc, system designs | color-system, ui-kit, feedback-system, audio-direction, art assets, engine UI/post-processing/asset-import docs, tasks |
 | **color-system.md** | design-doc, style-guide, state-transitions (state→color mapping) | ui-kit, feedback-system, art assets, engine UI doc, tasks |
 | **ui-kit.md** | design-doc, style-guide, color-system, system designs (what info to surface), architecture (UI panel pattern), engine UI doc | feedback-system, interaction-model, engine UI/scene-architecture docs, tasks |
@@ -83,7 +83,7 @@ This table defines what each document reads (influenced by) and what reads it (i
 | **architecture.md** | design-doc, system designs | interfaces, authority, all reference docs, all engine docs, specs, tasks, code review |
 | **interfaces.md** | design-doc, system designs, architecture | signal-registry, engine coding/simulation-runtime docs, specs, tasks |
 | **authority.md** | design-doc, system designs, architecture | entity-components, engine coding doc, specs, tasks |
-| **systems/SYS-###** | design-doc, glossary | architecture, interfaces, authority, all reference docs, all Step 5 docs, engine docs, roadmap, specs, tasks |
+| **systems/SYS-###** | design-doc (incl. Entity Presentation), glossary | architecture, interfaces, authority, all reference docs, all Step 5 docs, engine docs, roadmap, specs (Asset Needs → spec Asset Requirements), tasks |
 | **state-transitions.md** | design-doc, system designs, architecture | enums-and-statuses, entity-components, feedback-system (state→response), specs, tasks |
 | **entity-components.md** | architecture, authority (ownership), state-transitions | engine coding/save-load docs, specs, tasks, code review |
 | **resource-definitions.md** | design-doc, system designs, architecture | style-guide, ui-kit, feedback-system, balance-params, engine data-pipeline doc, specs, tasks |

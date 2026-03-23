@@ -20,7 +20,7 @@ preflight:
 upstream_sources:
   - type: design
     glob: "design/design-doc.md"
-    extract: "Tone, aesthetic pillars, camera, player information model drive style"
+    extract: "Tone, aesthetic pillars, camera, Entity Presentation, player information model drive style"
   - type: system
     glob: "design/systems/SYS-*-*.md"
     extract: "System visibility and feel requirements inform UI and feedback"
