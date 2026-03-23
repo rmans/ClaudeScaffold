@@ -1,6 +1,6 @@
 # Skills Reference
 
-> Man-page reference for all 39 scaffold slash commands. Each entry shows synopsis, description, arguments, examples, and related skills.
+> Man-page reference for all 30 scaffold slash commands. Each entry shows synopsis, description, arguments, examples, and related skills.
 >
 > **When to use each skill** — see [WORKFLOW.md](WORKFLOW.md) for the step-by-step pipeline order.
 
@@ -24,16 +24,7 @@
 | **Iterate** | | |
 | `/scaffold-iterate` | `<layer> [target] [--topics "1,3"] [--focus "..."] [--iterations N]` | Adversarial per-topic review for any layer (design, systems, spec, task, slice, phase, roadmap, references, style, input, engine). Orchestrated by iterate.py with per-layer YAML configs. |
 | **Revise** | | |
-| `/scaffold-revise-design` | `[--source PHASE-###\|SLICE-###\|foundation-recheck]` | Detect design drift from implementation feedback |
-| `/scaffold-revise-systems` | `[--source SLICE-###]` | Detect system design drift from implementation feedback |
-| `/scaffold-revise-references` | `[--source SLICE-###]` | Detect Step 3 doc drift from implementation feedback |
-| `/scaffold-revise-engine` | `[--source SLICE-###]` | Detect engine doc drift from implementation feedback |
-| `/scaffold-revise-style` | `[--source SLICE-###]` | Detect Step 5 visual/UX doc drift from implementation feedback |
-| `/scaffold-revise-input` | `[--source SLICE-###] [--target doc.md]` | Detect Step 6 input doc drift from implementation feedback |
-| `/scaffold-revise-foundation` | `[--mode initial\|recheck]` | Verify foundation stability, dispatch revision loops |
-| `/scaffold-revise-roadmap` | — | Update roadmap after phase completion |
-| `/scaffold-revise-phases` | `[--source PHASE-###]` | Update remaining phases from implementation feedback |
-| `/scaffold-revise-slices` | `[--source SLICE-###]` | Update remaining slices from implementation feedback |
+| `/scaffold-revise` | `<layer> [--source PHASE-###\|SLICE-###] [--signals ADR-###,KI:keyword]` | Detect drift and revise any layer from implementation feedback. Classifies signals, auto-applies safe changes, escalates dangerous changes, dispatches restabilization. Orchestrated by revise.py with per-layer YAML configs. |
 | **Approve** | | |
 | `/scaffold-approve-phases` | — | Lifecycle gate: approve Draft phases for slice seeding |
 | `/scaffold-approve-slices` | — | Lifecycle gate: approve Draft slices for spec seeding |

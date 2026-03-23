@@ -115,7 +115,7 @@ Decision documents are the project's feedback mechanism. They record why decisio
 After filing, update affected documents:
 
 **For ADR (Accepted):**
-- If the ADR explicitly changes a design doc section → note it, but do NOT edit the design doc here. That's the job of `revise-design` or manual update. Log: "ADR-### accepted — run `/scaffold-revise-design` or manually update design-doc.md to reflect this decision."
+- If the ADR explicitly changes a design doc section → note it, but do NOT edit the design doc here. That's the job of `revise-design` or manual update. Log: "ADR-### accepted — run `/scaffold-revise design` or manually update design-doc.md to reflect this decision."
 - If the ADR affects system designs → same: note which systems, don't edit them. Log which systems need updating.
 - Add to the roadmap's ADR Feedback Log if a roadmap exists.
 

@@ -102,7 +102,7 @@ Each seeded layer follows the same stabilization loop: `fix → iterate → vali
 ### Phase 2 — Foundation gate
 
 ```
-/scaffold-revise-foundation          ← verify Steps 1-6 are stable
+/scaffold-revise foundation          ← verify Steps 1-6 are stable
 /scaffold-fix cross-cutting          ← resolve cross-document issues
 /scaffold-validate --scope foundation
 ```

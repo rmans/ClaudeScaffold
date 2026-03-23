@@ -11,7 +11,7 @@ Create a new system design for: **$ARGUMENTS**
 
 This skill creates a single system design document — unlike `/scaffold-seed systems` which proposes and creates an entire simulation layer at once. Use this when:
 
-- `/scaffold-revise-systems` escalates an emergent subsystem, ownership shift, or identity drift that requires a new system
+- `/scaffold-revise systems` escalates an emergent subsystem, ownership shift, or identity drift that requires a new system
 - `/scaffold-validate` detects a design-to-systems coverage gap
 - You need to add a system after the initial bulk seed
 

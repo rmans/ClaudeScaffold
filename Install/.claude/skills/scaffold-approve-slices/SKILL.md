@@ -179,7 +179,7 @@ If any check fails, **stop** and suggest running `/scaffold-review-slice` first.
 ### Next Steps
 - Run `/scaffold-seed specs` for SLICE-### to generate behavior specs
 - Or run `/scaffold-new-spec` to create specs one at a time
-- After implementing this slice, run `/scaffold-revise-slices SLICE-###` to update remaining slices
+- After implementing this slice, run `/scaffold-revise slices SLICE-###` to update remaining slices
 ```
 
 ## Rules

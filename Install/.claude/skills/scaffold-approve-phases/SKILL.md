@@ -156,7 +156,7 @@ If any content readiness or slice readiness check fails, **stop** and suggest ru
 ### Next Steps
 - Run `/scaffold-seed slices` to generate vertical slices for this phase
 - Or run `/scaffold-new-slice [slice-name]` to create slices one at a time
-- After implementing this phase, run `/scaffold-revise-phases PHASE-###` to update remaining phases
+- After implementing this phase, run `/scaffold-revise phases PHASE-###` to update remaining phases
 ```
 
 ## Rules

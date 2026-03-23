@@ -23,7 +23,9 @@
 | `configs/validate/*.yaml` | Per-scope validation configs for validate.py (checks, thresholds, activation rules) |
 | `configs/seed/*.yaml` | Per-layer seed configs for seed.py (upstream sources, dependency checks, coverage rules) |
 | `implement.py` | Implement orchestrator — step-by-step task implementation with file manifest tracking (used by `/scaffold-implement`) |
-| `utils.py` | Shared utilities — complete (mark doc Complete), build-test (run build/lint/tests), reorder (topological sort tasks). Callable standalone or imported by orchestrators. |
+| `utils.py` | Shared utilities — complete, build-test, reorder, sync-refs, sync-glossary. Callable standalone or imported by orchestrators. |
+| `revise.py` | Revise orchestrator — detect drift, classify signals, auto-apply safe changes, escalate dangerous changes (used by `/scaffold-revise`) |
+| `configs/revise/*.yaml` | Per-layer revise configs (feedback sources, safe/escalation patterns) |
 
 ## image-gen.py
 

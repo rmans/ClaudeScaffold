@@ -24,7 +24,7 @@ Every design decision, visual style rule, system behavior, interface contract, a
 - **Draft → Review → Approved → Complete lifecycle.** Documents start as `Draft`, move through adversarial review via `/scaffold-iterate`, are set to `Approved` by approval gates, and marked `Complete` by `utils.py complete` when implementation is done. Completion ripples up from tasks through specs, slices, and phases.
 - **Token-efficient retrieval.** Index files in every directory let Claude find what it needs without loading entire folders.
 - **Asset requirements in specs.** Specs identify what art and audio the behavior needs, scan for reusable assets, and track production status. Tasks wire the ready assets.
-- **41 skills automate the pipeline.** Create, seed, fix, iterate, revise, approve, implement, file decisions, generate art/audio, and edit documents with slash commands — no manual file wrangling.
+- **32 skills automate the pipeline.** Create, seed, fix, iterate, revise, approve, implement, file decisions, generate art/audio, and edit documents with slash commands — no manual file wrangling.
 
 ## How It Works
 
@@ -158,7 +158,7 @@ See [Install/README.md](Install/README.md) for full installation details.
 | **Create (6)** | `new-roadmap`, `new-phase`, `new-slice`, `new-spec`, `new-task`, `new-system` |
 | **Fix (1)** | `fix` — unified mechanical cleanup for all layers (design, systems, spec, task, slice, phase, roadmap, references, style, input, engine, cross-cutting). Orchestrated by `local-review.py` with per-layer YAML configs. |
 | **Iterate (1)** | `iterate` — unified adversarial review for all layers (design, systems, spec, task, slice, phase, roadmap, references, style, input, engine). Orchestrated by `iterate.py` with per-layer YAML configs. |
-| **Revise (10)** | `revise-design`, `revise-systems`, `revise-references`, `revise-engine`, `revise-style`, `revise-input`, `revise-foundation`, `revise-roadmap`, `revise-phases`, `revise-slices` |
+| **Revise (1)** | `revise` — detect drift and update any layer from implementation feedback. Orchestrated by `revise.py` with per-layer YAML configs. |
 | **Approve (4)** | `approve-phases`, `approve-slices`, `approve-specs`, `approve-tasks` |
 | **Triage (2)** | `triage-specs`, `triage-tasks` |
 | **Implement (1)** | `implement` — step-by-step via implement.py. Tests, build, sync, complete all handled in Python (utils.py). Code review via iterate.py --reviewer code. |
@@ -182,7 +182,7 @@ All skill names are prefixed with `/scaffold-` (e.g., `/scaffold-seed design`).
 7.  /scaffold-seed engine         ← select engine, seed engine docs
 8.  /scaffold-seed style          ← seed visual/UX docs
 9.  /scaffold-seed input          ← seed input docs
-10. /scaffold-revise-foundation        ← verify architecture stability
+10. /scaffold-revise foundation        ← verify architecture stability
 11. /scaffold-new-roadmap              ← create the project roadmap
 12. /scaffold-seed phases         ← seed phases from roadmap
 13. /scaffold-approve-phases           ← gate first phase
