@@ -12,7 +12,6 @@
 | `adversarial-review.py` | Adversarial document reviewer — multi-provider (OpenAI / Anthropic) |
 | `review_config.json` | Configuration for adversarial-review.py (provider, model, temperature) |
 | `code-review.py` | Adversarial code review — multi-provider LLM review for implementation code |
-| `validate-refs.py` | Cross-reference validator — checks referential integrity across all scaffold docs |
 | `iterate.py` | Iterate orchestrator — manages adversarial review sessions for scaffold documents (used by `/scaffold-iterate`) |
 | `local-review.py` | Local review orchestrator — runs mechanical checks (regex, patterns, template diffs) and routes judgment calls for scaffold documents (used by `/scaffold-fix`) |
 | `configs/iterate/*.yaml` | Per-layer review configs for iterate.py (topics, context files, scope guards, bias packs) |
@@ -298,61 +297,6 @@ Uses `review_config.json` (shared with adversarial-review.py). Supports OpenAI a
 ### Dependencies
 
 None — uses Python standard library only (`urllib`, `json`, `argparse`).
-
-## validate-refs.py
-
-Cross-reference validator that checks referential integrity across all scaffold documents. Detects broken references, missing registrations, glossary violations, and orphaned entries. Used by `/scaffold-validate`.
-
-### Commands
-
-```
-python scaffold/tools/validate-refs.py [--format json|text]
-```
-
-### Checks Performed
-
-| Check | What It Validates |
-|-------|------------------|
-| `system-ids` | Every SYS-### reference points to a registered system in systems/_index.md |
-| `authority-entities` | Entity authorities match authority.md owners |
-| `signals-systems` | Signal emitters/consumers are registered systems |
-| `interfaces-systems` | Interface sources/targets are registered systems |
-| `states-systems` | State machine authorities are registered systems |
-| `glossary-not` | No non-theory doc uses a term from the glossary NOT column |
-| `bidirectional-registration` | systems/_index.md and design-doc.md System Design Index match |
-| `spec-slice` | Every spec appears in at least one slice |
-| `task-spec` | Every task references a valid spec |
-
-### Usage
-
-```
-python scaffold/tools/validate-refs.py                  # Human-readable text output
-python scaffold/tools/validate-refs.py --format json     # JSON array of issues
-python scaffold/tools/validate-refs.py --format text     # Human-readable text output
-```
-
-### Output Format (JSON)
-
-```json
-[
-  {
-    "check": "system-ids",
-    "severity": "ERROR",
-    "message": "SYS-005 referenced in authority.md but not registered in systems/_index.md",
-    "file": "design/authority.md",
-    "line": 12
-  }
-]
-```
-
-### Exit Codes
-
-- `0` — All checks pass (no errors)
-- `1` — One or more errors found
-
-### Dependencies
-
-None — uses Python standard library only (`pathlib`, `re`, `json`, `argparse`).
 
 ## iterate.py
 

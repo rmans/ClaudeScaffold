@@ -141,7 +141,7 @@ cp ClaudeScaffold/Install/CLAUDE.md /path/to/your/project/
 This gives your project:
 
 ```
-.claude/skills/       ← 28 Claude Code skills
+.claude/skills/       ← 29 Claude Code skills (21 user-facing + 8 sub-skills)
 scaffold/             ← Document pipeline with templates and indexes
 CLAUDE.md             ← Instructions that tell Claude Code how to use the scaffold
 ```
@@ -150,7 +150,7 @@ See [Install/README.md](Install/README.md) for full installation details.
 
 ## Skills
 
-78 slash commands organized by workflow:
+21 slash commands organized by workflow:
 
 | Category | Skills |
 |----------|--------|

@@ -1,12 +1,12 @@
 # ClaudeScaffold — Installation
 
-This is the installable overlay. Copy its contents into any game project to give Claude Code a structured document pipeline, strict design authority, and 77 skills that automate the workflow from concept to code.
+This is the installable overlay. Copy its contents into any game project to give Claude Code a structured document pipeline, strict design authority, and 21 skills that automate the workflow from concept to code.
 
 ## What Gets Installed
 
 ```
 your-project/
-├── .claude/skills/       ← 77 slash commands (create, seed, fix, iterate, revise, approve, implement, art, audio)
+├── .claude/skills/       ← 21 slash commands (create, seed, fix, iterate, revise, approve, implement, art, audio)
 ├── scaffold/             ← Document pipeline with indexes and templates
 └── CLAUDE.md             ← Rules that tell Claude Code how to use the scaffold
 ```
@@ -15,7 +15,7 @@ your-project/
 
 **`scaffold/`** — A structured document hierarchy with 11 authority ranks. Every design decision, style rule, system behavior, interface contract, and implementation constraint has a home. Start at `scaffold/_index.md` — it's the master entry point.
 
-**`.claude/skills/`** — 77 slash commands that automate document creation, bulk seeding, mechanical fixes, adversarial iteration, revision, approval gates, implementation, art/audio generation, completion tracking, and editing. Skills read higher-authority documents to pre-fill lower ones, check ADRs before scoping new work, and cross-reference everything.
+**`.claude/skills/`** — 21 slash commands that automate document creation, bulk seeding, mechanical fixes, adversarial iteration, revision, approval gates, implementation, art/audio generation, completion tracking, and editing. Skills read higher-authority documents to pre-fill lower ones, check ADRs before scoping new work, and cross-reference everything.
 
 ## Prerequisites
 
@@ -129,26 +129,22 @@ For each approved phase:
 
 See `scaffold/WORKFLOW.md` for the full 24-step recipe.
 
-## All 77 Skills
+## All 21 Skills
 
 | Category | Skills |
 |----------|--------|
-| **Init** | `init-design` |
-| **Bulk seed** | `seed style`, `seed systems`, `seed references`, `seed engine`, `seed input`, `seed phases`, `seed slices`, `seed specs`, `seed tasks` |
-| **Create** | `new-roadmap`, `new-phase`, `new-slice`, `new-spec`, `new-task`, `new-system` |
-| **Fix** | `fix-design`, `fix-style`, `fix-systems`, `fix-references`, `fix-engine`, `fix-input`, `fix-roadmap`, `fix-phase`, `fix-slice`, `fix-spec`, `fix-task`, `fix-cross-cutting` |
-| **Iterate** | `iterate-design`, `iterate-style`, `iterate-systems`, `iterate-references`, `iterate-engine`, `iterate-input`, `iterate-roadmap`, `iterate-phase`, `iterate-slice`, `iterate-spec`, `iterate-task` |
-| **Revise** | `revise-design`, `revise-systems`, `revise-references`, `revise-engine`, `revise-style`, `revise-input`, `revise-foundation`, `revise-roadmap`, `revise-phases`, `revise-slices` |
-| **Approve** | `approve-phases`, `approve-slices`, `approve-specs`, `approve-tasks` |
-| **Triage** | `triage-specs`, `triage-tasks`, `reorder-tasks` |
-| **Implement** | `implement-task`, `build-and-test`, `code-review`, `add-regression-tests` |
-| **Complete** | `complete` |
-| **Edit** | `update-doc`, `sync-reference-docs`, `sync-glossary` |
-| **Validate** | `validate` |
-| **Decisions** | `file-decision` |
-| **Playtest** | `playtest-log`, `playtest-review` |
-| **Art** | `art-concept`, `art-ui-mockup`, `art-character`, `art-environment`, `art-sprite`, `art-icon`, `art-promo` |
-| **Audio** | `audio-music`, `audio-sfx`, `audio-ambience`, `audio-voice` |
+| **Seed (1)** | `seed` — dependency-aware document generation for all layers (design, systems, references, engine, style, input, phases, slices, specs, tasks, roadmap). Orchestrated by `seed.py`. |
+| **Fix (1)** | `fix` — mechanical cleanup for any layer. Orchestrated by `local-review.py`. |
+| **Iterate (1)** | `iterate` — adversarial review for any layer. Orchestrated by `iterate.py`. |
+| **Review (1)** | `review` — fix → iterate → validate chained. |
+| **Revise (1)** | `revise` — detect drift, classify signals, auto-apply/escalate. Orchestrated by `revise.py`. |
+| **Validate (1)** | `validate` — structural gate with per-scope YAML configs. |
+| **Triage (1)** | `triage` — resolve human-required issues from review passes. |
+| **Implement (1)** | `implement` — step-by-step code generation with file manifest. Orchestrated by `implement.py`. |
+| **Decisions (1)** | `file-decision` — file ADR/KI/DD with auto-review. |
+| **Playtest (1)** | `playtest` — log sessions and review feedback. |
+| **Art (7)** | `art-concept`, `art-ui-mockup`, `art-character`, `art-environment`, `art-sprite`, `art-icon`, `art-promo` |
+| **Audio (4)** | `audio-music`, `audio-sfx`, `audio-ambience`, `audio-voice` |
 
 All skill names are prefixed with `/scaffold-` (e.g., `/scaffold-seed design`).
 

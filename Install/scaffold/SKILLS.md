@@ -589,7 +589,7 @@ Run cross-reference validation across all scaffold documents.
 
 **Description**
 
-Runs `validate-refs.py` to check referential integrity across all scaffold documents. Reports broken references, missing registrations, glossary NOT-column violations, and orphaned entries. Checks: system IDs registered in `systems/_index.md`, authority ↔ entity ownership, signal emitters/consumers, interface sources/targets, state machine authorities, glossary NOT-column usage, bidirectional system registration (index ↔ design doc), spec ↔ slice coverage, and task ↔ spec links.
+Runs `validate.py` with per-scope YAML configs to check structural integrity and referential integrity across all scaffold documents. Normalizes markdown formatting, then runs deterministic checks: broken references, missing registrations, glossary NOT-column violations, orphaned entries, section structure, content health, cross-doc consistency, and more. Supports scoped validation (`--scope refs|design|systems|foundation|roadmap|phases|slices|specs|tasks|engine|style|input|all`).
 
 Presents results as a summary table with PASS/FAIL per check and lists each failing issue with file, line, and message. Suggests specific fixes for each issue. Read-only — does not modify any files.
 
