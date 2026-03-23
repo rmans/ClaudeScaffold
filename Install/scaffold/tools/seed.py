@@ -531,6 +531,110 @@ def _extract_section_content(doc_content, heading):
 
 
 # ---------------------------------------------------------------------------
+# Asset Requirement Extraction (for task seeding)
+# ---------------------------------------------------------------------------
+
+# Asset types that map to art vs audio tasks
+_ART_TYPES = {"sprite", "mesh", "icon", "ui element", "concept art", "texture", "tileset", "ui mockup"}
+_AUDIO_TYPES = {"sfx", "music", "ambience", "voice"}
+
+
+def _extract_asset_requirements_from_specs(config):
+    """Scan approved specs for Asset Requirements with Status: Needed.
+    Returns a list of synthetic asset task candidates."""
+    if config.get("layer") != "tasks":
+        return []
+
+    asset_candidates = []
+    specs = sorted(SCAFFOLD_DIR.glob("specs/SPEC-*_approved*.md"))
+
+    for spec_file in specs:
+        content = spec_file.read_text(encoding="utf-8")
+        spec_rel = str(spec_file.relative_to(SCAFFOLD_DIR))
+
+        # Extract spec ID
+        spec_id_match = re.search(r"(SPEC-\d+)", spec_file.name)
+        if not spec_id_match:
+            continue
+        spec_id = spec_id_match.group(1)
+
+        # Extract spec name from the H1 heading
+        h1_match = re.search(r"^#\s+SPEC-\d+\s*—\s*(.+)", content, re.MULTILINE)
+        spec_name = h1_match.group(1).strip() if h1_match else spec_id
+
+        # Find the Asset Requirements section
+        ar_section = _extract_section_content(content, "### Asset Requirements")
+        if not ar_section:
+            continue
+
+        # Parse table rows for Status: Needed
+        art_assets = []
+        audio_assets = []
+
+        for line in ar_section.splitlines():
+            stripped = line.strip()
+            if not stripped.startswith("|") or stripped.startswith("|---") or "Requirement" in stripped:
+                continue
+
+            cols = [c.strip() for c in stripped.split("|")]
+            # | Requirement | Type | Description | Source Section | Satisfied By | Status |
+            # cols[0] empty, cols[1]=Req, cols[2]=Type, cols[3]=Desc, cols[4]=Source, cols[5]=Satisfied, cols[6]=Status
+            if len(cols) < 7:
+                continue
+
+            status = cols[6].strip().lower() if len(cols) > 6 else ""
+            if "needed" not in status:
+                continue
+
+            asset_type = cols[2].strip().lower()
+            asset_entry = {
+                "requirement": cols[1],
+                "type": cols[2],
+                "description": cols[3],
+                "source_section": cols[4] if len(cols) > 4 else "",
+            }
+
+            if asset_type in _ART_TYPES:
+                art_assets.append(asset_entry)
+            elif asset_type in _AUDIO_TYPES:
+                audio_assets.append(asset_entry)
+
+        # Create art task candidate if needed
+        if art_assets:
+            slug = re.sub(r"[^a-z0-9]+", "-", spec_name.lower()).strip("-")
+            asset_candidates.append({
+                "name": f"{spec_name} Art",
+                "proposed_id": None,  # assigned during confirm
+                "source": spec_id,
+                "source_file": spec_rel,
+                "task_type": "art",
+                "name_suffix": "_art",
+                "depends_on": [],
+                "assets": art_assets,
+                "prompt_context_docs": ["design/style-guide.md", "design/color-system.md"],
+                "_synthetic": True,
+            })
+
+        # Create audio task candidate if needed
+        if audio_assets:
+            slug = re.sub(r"[^a-z0-9]+", "-", spec_name.lower()).strip("-")
+            asset_candidates.append({
+                "name": f"{spec_name} Audio",
+                "proposed_id": None,
+                "source": spec_id,
+                "source_file": spec_rel,
+                "task_type": "audio",
+                "name_suffix": "_audio",
+                "depends_on": [],
+                "assets": audio_assets,
+                "prompt_context_docs": ["design/style-guide.md", "design/audio-direction.md"],
+                "_synthetic": True,
+            })
+
+    return asset_candidates
+
+
+# ---------------------------------------------------------------------------
 # Dependency Graph
 # ---------------------------------------------------------------------------
 
@@ -613,6 +717,9 @@ def cmd_next_action(args):
         # Analyze existing docs for this layer (delta mode)
         existing_analysis = _analyze_existing(config, inventory, requirements)
 
+        # For task seeding: extract asset requirements from specs
+        asset_candidates = _extract_asset_requirements_from_specs(config)
+
         session = {
             "session_id": session_id,
             "layer": args.layer,
@@ -622,12 +729,13 @@ def cmd_next_action(args):
             "requirements": requirements,
             "existing_analysis": existing_analysis,
             "requirement_index": 0,
-            "candidates": [],
+            "candidates": list(asset_candidates),  # pre-seed with synthetic asset candidates
             "confirmed_candidates": [],
             "created_docs": [],
             "dependency_graph": {},
             "coverage_gaps": [],
             "assumptions": [],
+            "asset_candidates": asset_candidates,  # track separately for reporting
             "auto_fill": getattr(args, 'auto_fill', False),
             "created": datetime.now().isoformat(),
         }

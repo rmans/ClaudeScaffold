@@ -92,6 +92,14 @@ mechanical_checks:
       auto_fix: true
       fix_action: "Add explicit exclusions derived from spec boundaries"
 
+  asset_requirements:
+    - id: empty_asset_requirements
+      description: "Asset Requirements section is still template comment or empty"
+      detection: template_comment_check
+      section: "### Asset Requirements"
+      auto_fix: true
+      fix_action: "Fill table or write 'No art or audio assets required for this behavior.'"
+
   adr:
     - id: missing_adr_reflection
       description: "Accepted ADR affecting this spec not reflected"

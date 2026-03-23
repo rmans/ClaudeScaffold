@@ -190,7 +190,7 @@ Display what was created, the dependency graph, and any remaining assumptions.
 | `phases` | roadmap, design-doc | PHASE-### phase scope gates |
 | `slices` | phase, system designs, interfaces | SLICE-### vertical slices |
 | `specs` | slices, system designs, state-transitions | SPEC-### behavior specs |
-| `tasks` | specs, engine docs, architecture | TASK-### implementation tasks |
+| `tasks` | specs, engine docs, architecture | TASK-### implementation tasks (+ art/audio tasks from spec Asset Requirements) |
 
 ### Design Layer (special)
 
@@ -213,3 +213,26 @@ This replaces `/scaffold-seed design`. The Technical Stack section becomes the a
 - **Create prerequisites, don't work around them.** Missing dependency → create a task for it.
 - **Verify after creation.** Coverage check catches what was missed.
 - **Flag assumptions explicitly.** Unverifiable claims go in the report, not hidden in content.
+
+## Asset Task Candidates (task seeding only)
+
+When seeding tasks, `seed.py` scans all approved specs for Asset Requirements with `Status: Needed`. For each spec with needed assets, it auto-generates synthetic candidates with `"_synthetic": true`:
+
+- **Art tasks** — one per spec with needed art assets (Sprite, Mesh, Icon, UI Element, Concept Art, Texture, Tileset)
+- **Audio tasks** — one per spec with needed audio assets (SFX, Music, Ambience, Voice)
+
+These synthetic candidates are pre-seeded into the candidate list before Claude proposes any code tasks. They appear in the confirm phase alongside Claude's proposals.
+
+### Creating asset task files
+
+When creating a file for a synthetic asset candidate (check `candidate._synthetic == true`):
+
+1. Use the task template with `Task Type: art` or `Task Type: audio`
+2. **Delete the Implementation section** (Steps, Files Created, Files Modified, etc.) — asset tasks don't have code steps
+3. **Fill the Asset Delivery section** with a table row per asset from `candidate.assets`:
+   - **File Path** — determine the correct path under `scaffold/assets/` based on asset type and the parent spec's system/entity context
+   - **Dimensions / Duration** — appropriate defaults for the type (e.g., 64x64 for sprites, 1024x1024 for concept art, 2-5s for SFX)
+   - **Prompt** — a ready-to-use generation prompt. Read the docs listed in `candidate.prompt_context_docs` (style-guide, color-system for art; style-guide, audio-direction for audio) and incorporate their direction into a concrete, specific prompt for this asset.
+4. **Fill the Style Context** subsection listing which docs were read and what was extracted
+5. **Set `Depends on: —`** — asset tasks have no task dependencies (they're created by the user externally)
+6. When Claude proposes code tasks that wire these assets, those wiring tasks should `Depend on` the art/audio task
