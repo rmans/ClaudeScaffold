@@ -19,7 +19,9 @@
 | `configs/fix/*.yaml` | Per-layer fix configs for local-review.py (mechanical checks, judgment checks, signals) |
 | `review.py` | Review orchestrator — chains local-review.py (fix) then iterate.py (adversarial) for full document review (used by `/scaffold-review`) |
 | `validate.py` | Validate orchestrator — runs deterministic structural checks from per-scope YAML configs (used by `/scaffold-validate`) |
+| `seed.py` | Seed orchestrator — dependency-aware document generation from upstream context (used by `/scaffold-seed`) |
 | `configs/validate/*.yaml` | Per-scope validation configs for validate.py (checks, thresholds, activation rules) |
+| `configs/seed/*.yaml` | Per-layer seed configs for seed.py (upstream sources, dependency checks, coverage rules) |
 
 ## image-gen.py
 

@@ -1,0 +1,675 @@
+#!/usr/bin/env python3
+"""
+Seed orchestrator — dependency-aware document generation for scaffold.
+
+Reads upstream docs + project state, generates candidates one at a time,
+discovers dependencies, verifies coverage, creates files in order.
+
+Uses the same action.json/result.json pattern as iterate/fix/validate.
+Claude handles creative work (proposing candidates, verifying coverage)
+via focused sub-skills. Python handles inventory, dependency graphs,
+topological sorting, and file creation orchestration.
+
+Commands:
+    preflight    Check if layer is ready for seeding.
+    next-action  Write action.json with the next instruction.
+    resolve      Read result.json, process it, write next action.json.
+"""
+
+import json
+import os
+import sys
+import argparse
+import hashlib
+import re
+from pathlib import Path
+from datetime import datetime
+
+
+# ---------------------------------------------------------------------------
+# Paths
+# ---------------------------------------------------------------------------
+
+TOOLS_DIR = Path(__file__).parent
+CONFIGS_DIR = TOOLS_DIR / "configs" / "seed"
+SCAFFOLD_DIR = TOOLS_DIR.parent
+REVIEWS_DIR = SCAFFOLD_DIR / ".reviews" / "seed"
+ACTION_FILE = REVIEWS_DIR / "action.json"
+RESULT_FILE = REVIEWS_DIR / "result.json"
+
+
+# ---------------------------------------------------------------------------
+# YAML Parser (shared)
+# ---------------------------------------------------------------------------
+
+def _parse_yaml_value(val):
+    val = val.strip()
+    if val == "" or val == "~" or val == "null":
+        return None
+    if val == "true" or val == "True":
+        return True
+    if val == "false" or val == "False":
+        return False
+    try:
+        return int(val)
+    except ValueError:
+        pass
+    try:
+        return float(val)
+    except ValueError:
+        pass
+    if (val.startswith('"') and val.endswith('"')) or \
+       (val.startswith("'") and val.endswith("'")):
+        return val[1:-1]
+    return val
+
+
+def _count_indent(line):
+    return len(line) - len(line.lstrip())
+
+
+def load_yaml(path):
+    path = Path(path)
+    if not path.exists():
+        return None
+    lines = path.read_text(encoding="utf-8").splitlines()
+    return _parse_yaml_block(lines, 0, 0)[0]
+
+
+def _parse_yaml_block(lines, start, base_indent):
+    result = {}
+    i = start
+    is_list = False
+    result_list = []
+    while i < len(lines):
+        line = lines[i]
+        stripped = line.strip()
+        if not stripped or stripped.startswith("#"):
+            i += 1
+            continue
+        indent = _count_indent(line)
+        if indent < base_indent:
+            break
+        if indent == base_indent:
+            if stripped.startswith("- "):
+                is_list = True
+                item_text = stripped[2:].strip()
+                if ":" in item_text and not item_text.startswith('"'):
+                    colon_pos = item_text.index(":")
+                    key = item_text[:colon_pos].strip()
+                    val_text = item_text[colon_pos + 1:].strip()
+                    item_dict = {key: _parse_yaml_value(val_text)} if val_text else {key: None}
+                    next_i = i + 1
+                    if next_i < len(lines):
+                        ns = lines[next_i].strip()
+                        ni = _count_indent(lines[next_i]) if ns else 0
+                        if ns and ni > indent:
+                            child, next_i = _parse_yaml_block(lines, next_i, ni)
+                            if not val_text:
+                                item_dict[key] = child
+                            i = next_i
+                            result_list.append(item_dict)
+                            continue
+                    i += 1
+                    result_list.append(item_dict)
+                    continue
+                else:
+                    result_list.append(_parse_yaml_value(item_text))
+                    i += 1
+                    continue
+            if ":" in stripped:
+                colon_pos = stripped.index(":")
+                key = stripped[:colon_pos].strip()
+                val_text = stripped[colon_pos + 1:].strip()
+                if val_text.startswith("[") and val_text.endswith("]"):
+                    inner = val_text[1:-1]
+                    items = [_parse_yaml_value(x.strip()) for x in inner.split(",")] if inner.strip() else []
+                    result[key] = items
+                    i += 1
+                    continue
+                if val_text:
+                    result[key] = _parse_yaml_value(val_text)
+                    i += 1
+                    continue
+                next_i = i + 1
+                while next_i < len(lines) and not lines[next_i].strip():
+                    next_i += 1
+                if next_i < len(lines):
+                    ni = _count_indent(lines[next_i])
+                    if ni > base_indent:
+                        child, next_i = _parse_yaml_block(lines, next_i, ni)
+                        result[key] = child
+                        i = next_i
+                        continue
+                result[key] = None
+                i += 1
+                continue
+        i += 1
+    if is_list:
+        return result_list, i
+    return result, i
+
+
+# ---------------------------------------------------------------------------
+# Config & Session
+# ---------------------------------------------------------------------------
+
+def load_layer_config(layer):
+    config_path = CONFIGS_DIR / f"{layer}.yaml"
+    if not config_path.exists():
+        return None
+    return load_yaml(config_path)
+
+
+def _session_id(layer, target):
+    key = f"seed:{layer}:{target or 'all'}"
+    h = hashlib.md5(key.encode()).hexdigest()[:8]
+    return f"seed-{layer}-{h}"
+
+
+def _session_path(session_id):
+    REVIEWS_DIR.mkdir(parents=True, exist_ok=True)
+    return REVIEWS_DIR / f"session-{session_id}.json"
+
+
+def _load_session(session_id):
+    path = _session_path(session_id)
+    if not path.exists():
+        return None
+    with open(path, encoding="utf-8") as f:
+        return json.load(f)
+
+
+def _save_session(session_id, data):
+    path = _session_path(session_id)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(data, f, indent=2)
+
+
+def _write_action(data):
+    REVIEWS_DIR.mkdir(parents=True, exist_ok=True)
+    with open(ACTION_FILE, "w", encoding="utf-8") as f:
+        json.dump(data, f, indent=2)
+
+
+def _read_result():
+    if not RESULT_FILE.exists():
+        return None
+    with open(RESULT_FILE, encoding="utf-8") as f:
+        return json.load(f)
+
+
+def _output(data):
+    print(json.dumps(data, indent=2))
+
+
+# ---------------------------------------------------------------------------
+# Project State Inventory
+# ---------------------------------------------------------------------------
+
+def _build_inventory(config):
+    """Build an inventory of what exists in the project."""
+    inventory = {
+        "scaffold_docs": {},
+        "engine_config": {},
+        "file_system": {},
+    }
+
+    # Existing scaffold docs by type
+    doc_patterns = {
+        "systems": "design/systems/SYS-*-*.md",
+        "specs": "specs/SPEC-*-*.md",
+        "tasks": "tasks/TASK-*-*.md",
+        "slices": "slices/SLICE-*-*.md",
+        "phases": "phases/P*-*.md",
+        "engine": "engine/*.md",
+        "style": "design/style-guide.md",
+        "references": "reference/*.md",
+    }
+
+    for doc_type, pattern in doc_patterns.items():
+        matches = sorted(SCAFFOLD_DIR.glob(pattern))
+        inventory["scaffold_docs"][doc_type] = [
+            str(m.relative_to(SCAFFOLD_DIR)) for m in matches
+        ]
+
+    # Engine configuration detection
+    project_root = SCAFFOLD_DIR.parent
+    engine_indicators = {
+        "godot4": {
+            "project_file": "project.godot",
+            "gdextension": "*.gdextension",
+            "scons": "SConstruct",
+            "cpp_src": "src/**/*.cpp",
+            "gdscript": "**/*.gd",
+        },
+        "unity": {
+            "project_file": "ProjectSettings/ProjectSettings.asset",
+        },
+        "unreal": {
+            "project_file": "*.uproject",
+        },
+    }
+
+    for engine, indicators in engine_indicators.items():
+        for name, pattern in indicators.items():
+            matches = list(project_root.glob(pattern))
+            if matches:
+                inventory["engine_config"][f"{engine}.{name}"] = True
+            else:
+                inventory["engine_config"][f"{engine}.{name}"] = False
+
+    # Key directories
+    for dir_name in ["src", "game", "scripts", "addons", "data", "tests"]:
+        dir_path = project_root / dir_name
+        inventory["file_system"][dir_name] = dir_path.exists()
+
+    # Game data directories
+    game_dir = project_root / "game"
+    if game_dir.exists():
+        for sub in ["data/balance", "data/content", "data/display", "translations", "tests"]:
+            inventory["file_system"][f"game/{sub}"] = (game_dir / sub).exists()
+
+    return inventory
+
+
+# ---------------------------------------------------------------------------
+# Upstream Requirement Extraction
+# ---------------------------------------------------------------------------
+
+def _extract_upstream_requirements(config, inventory):
+    """Extract what needs to be seeded from upstream docs."""
+    requirements = []
+    upstream_sources = config.get("upstream_sources", [])
+
+    for source in upstream_sources:
+        if not isinstance(source, dict):
+            continue
+
+        source_type = source.get("type", "")
+        glob_pattern = source.get("glob", "")
+        extract_from = source.get("extract", "")
+
+        if glob_pattern:
+            matches = sorted(SCAFFOLD_DIR.glob(glob_pattern))
+            for match in matches:
+                content = match.read_text(encoding="utf-8") if match.exists() else ""
+                req = {
+                    "source_file": str(match.relative_to(SCAFFOLD_DIR)),
+                    "source_type": source_type,
+                    "content_summary": content[:3000],
+                    "extract_rule": extract_from,
+                }
+                requirements.append(req)
+
+    return requirements
+
+
+# ---------------------------------------------------------------------------
+# Dependency Graph
+# ---------------------------------------------------------------------------
+
+def _topological_sort(candidates):
+    """Sort candidates by dependencies. Returns ordered list."""
+    # Build adjacency
+    id_to_candidate = {c.get("proposed_id", f"c{i}"): c for i, c in enumerate(candidates)}
+    in_degree = {cid: 0 for cid in id_to_candidate}
+    graph = {cid: [] for cid in id_to_candidate}
+
+    for cid, candidate in id_to_candidate.items():
+        for dep in candidate.get("depends_on", []):
+            if dep in graph:
+                graph[dep].append(cid)
+                in_degree[cid] = in_degree.get(cid, 0) + 1
+
+    # Kahn's algorithm
+    queue = [cid for cid, deg in in_degree.items() if deg == 0]
+    result = []
+
+    while queue:
+        node = queue.pop(0)
+        result.append(id_to_candidate[node])
+        for neighbor in graph.get(node, []):
+            in_degree[neighbor] -= 1
+            if in_degree[neighbor] == 0:
+                queue.append(neighbor)
+
+    # If there are remaining nodes, there's a cycle — append them anyway with warning
+    remaining = [id_to_candidate[cid] for cid in id_to_candidate if cid not in [c.get("proposed_id") for c in result]]
+    for r in remaining:
+        r["_cycle_warning"] = True
+        result.append(r)
+
+    return result
+
+
+# ---------------------------------------------------------------------------
+# Preflight
+# ---------------------------------------------------------------------------
+
+def cmd_preflight(args):
+    config = load_layer_config(args.layer)
+    if not config:
+        _output({"status": "error", "message": f"No config found for layer '{args.layer}'"})
+        return
+
+    preflight = config.get("preflight", {})
+    issues = []
+
+    for rel_path in preflight.get("required_files", []):
+        if not (SCAFFOLD_DIR / rel_path).exists():
+            issues.append(f"Required file missing: {rel_path}")
+
+    if issues:
+        _output({"status": "blocked", "message": preflight.get("blocked_message", "Preflight failed."), "issues": issues})
+        return
+
+    _output({"status": "ready", "layer": args.layer})
+
+
+# ---------------------------------------------------------------------------
+# Next Action
+# ---------------------------------------------------------------------------
+
+def cmd_next_action(args):
+    config = load_layer_config(args.layer)
+    if not config:
+        _write_action({"action": "blocked", "message": f"No config for layer '{args.layer}'"})
+        return
+
+    session_id = _session_id(args.layer, args.target)
+    session = _load_session(session_id)
+
+    if not session:
+        # Build inventory and extract requirements
+        inventory = _build_inventory(config)
+        requirements = _extract_upstream_requirements(config, inventory)
+
+        session = {
+            "session_id": session_id,
+            "layer": args.layer,
+            "target": args.target or "",
+            "phase": "propose",
+            "inventory": inventory,
+            "requirements": requirements,
+            "requirement_index": 0,
+            "candidates": [],
+            "confirmed_candidates": [],
+            "created_docs": [],
+            "dependency_graph": {},
+            "coverage_gaps": [],
+            "assumptions": [],
+            "created": datetime.now().isoformat(),
+        }
+        _save_session(session_id, session)
+
+    _advance(session, config)
+
+
+def _advance(session, config):
+    """Determine and write the next action based on session phase."""
+    phase = session.get("phase", "propose")
+
+    if phase == "propose":
+        # Send one upstream requirement at a time for candidate proposal
+        idx = session.get("requirement_index", 0)
+        requirements = session.get("requirements", [])
+
+        if idx >= len(requirements):
+            # All requirements processed — move to confirm
+            session["phase"] = "confirm"
+            _save_session(session["session_id"], session)
+            _advance(session, config)
+            return
+
+        req = requirements[idx]
+        _write_action({
+            "action": "propose",
+            "session_id": session["session_id"],
+            "layer": session["layer"],
+            "requirement": req,
+            "inventory": session["inventory"],
+            "existing_candidates": session["candidates"],
+            "template": config.get("template", ""),
+            "dependency_checks": config.get("dependency_checks", []),
+            "message": f"Propose candidates for requirement {idx + 1}/{len(requirements)}: {req.get('source_file', '')}",
+        })
+
+    elif phase == "confirm":
+        # Present all candidates for user confirmation
+        candidates = session.get("candidates", [])
+        if not candidates:
+            session["phase"] = "done"
+            _save_session(session["session_id"], session)
+            _write_action({
+                "action": "done",
+                "session_id": session["session_id"],
+                "message": "No candidates to create.",
+                "created_docs": [],
+            })
+            return
+
+        # Topological sort
+        sorted_candidates = _topological_sort(candidates)
+        session["sorted_candidates"] = sorted_candidates
+        _save_session(session["session_id"], session)
+
+        _write_action({
+            "action": "confirm",
+            "session_id": session["session_id"],
+            "layer": session["layer"],
+            "candidates": sorted_candidates,
+            "total": len(sorted_candidates),
+            "assumptions": session.get("assumptions", []),
+            "message": f"Confirm {len(sorted_candidates)} candidates for creation (sorted by dependencies).",
+        })
+
+    elif phase == "create":
+        # Create docs one at a time in dependency order
+        confirmed = session.get("confirmed_candidates", [])
+        create_idx = session.get("create_index", 0)
+
+        if create_idx >= len(confirmed):
+            # All created — move to verify
+            session["phase"] = "verify"
+            _save_session(session["session_id"], session)
+            _advance(session, config)
+            return
+
+        candidate = confirmed[create_idx]
+        _write_action({
+            "action": "create",
+            "session_id": session["session_id"],
+            "layer": session["layer"],
+            "candidate": candidate,
+            "inventory": session["inventory"],
+            "created_so_far": session["created_docs"],
+            "template": config.get("template", ""),
+            "index_file": config.get("index_file", ""),
+            "message": f"Create {create_idx + 1}/{len(confirmed)}: {candidate.get('proposed_id', '')} — {candidate.get('name', '')}",
+        })
+
+    elif phase == "verify":
+        # Coverage verification
+        _write_action({
+            "action": "verify",
+            "session_id": session["session_id"],
+            "layer": session["layer"],
+            "requirements": session["requirements"],
+            "created_docs": session["created_docs"],
+            "inventory": session["inventory"],
+            "coverage_rules": config.get("coverage_rules", []),
+            "message": "Verify coverage — check all upstream requirements are covered.",
+        })
+
+    elif phase == "fill_gaps":
+        # Fill gaps found by verification
+        gaps = session.get("coverage_gaps", [])
+        gap_idx = session.get("gap_index", 0)
+
+        if gap_idx >= len(gaps):
+            # All gaps addressed — move to report
+            session["phase"] = "report"
+            _save_session(session["session_id"], session)
+            _advance(session, config)
+            return
+
+        gap = gaps[gap_idx]
+        _write_action({
+            "action": "propose",
+            "session_id": session["session_id"],
+            "layer": session["layer"],
+            "requirement": gap,
+            "inventory": session["inventory"],
+            "existing_candidates": session["created_docs"],
+            "template": config.get("template", ""),
+            "dependency_checks": config.get("dependency_checks", []),
+            "is_gap_fill": True,
+            "message": f"Fill gap {gap_idx + 1}/{len(gaps)}: {gap.get('description', '')}",
+        })
+
+    elif phase == "report":
+        _write_action({
+            "action": "report",
+            "session_id": session["session_id"],
+            "layer": session["layer"],
+            "created_docs": session["created_docs"],
+            "assumptions": session.get("assumptions", []),
+            "coverage_gaps": session.get("coverage_gaps", []),
+            "dependency_graph": session.get("dependency_graph", {}),
+        })
+
+    else:
+        _write_action({"action": "done", "session_id": session["session_id"]})
+
+
+# ---------------------------------------------------------------------------
+# Resolve
+# ---------------------------------------------------------------------------
+
+def cmd_resolve(args):
+    session = _load_session(args.session)
+    if not session:
+        _write_action({"action": "blocked", "message": f"Session '{args.session}' not found."})
+        return
+
+    config = load_layer_config(session["layer"])
+    result = _read_result()
+
+    if RESULT_FILE.exists():
+        RESULT_FILE.unlink()
+
+    if not result:
+        _advance(session, config)
+        return
+
+    phase = session.get("phase", "propose")
+
+    if phase == "propose" or (phase == "fill_gaps"):
+        # Proposal result — add candidates
+        new_candidates = result.get("candidates", [])
+        new_assumptions = result.get("assumptions", [])
+
+        session["candidates"].extend(new_candidates)
+        session["assumptions"].extend(new_assumptions)
+
+        # Track dependencies
+        for candidate in new_candidates:
+            cid = candidate.get("proposed_id", "")
+            deps = candidate.get("depends_on", [])
+            session["dependency_graph"][cid] = deps
+
+        if phase == "propose":
+            session["requirement_index"] = session.get("requirement_index", 0) + 1
+        else:
+            session["gap_index"] = session.get("gap_index", 0) + 1
+
+        _save_session(args.session, session)
+        _advance(session, config)
+
+    elif phase == "confirm":
+        # User confirmation result
+        confirmed = result.get("confirmed", [])
+        removed = result.get("removed", [])
+
+        session["confirmed_candidates"] = confirmed
+        session["phase"] = "create"
+        session["create_index"] = 0
+        _save_session(args.session, session)
+        _advance(session, config)
+
+    elif phase == "create":
+        # Creation result
+        created = result.get("created_file", "")
+        if created:
+            session["created_docs"].append({
+                "file": created,
+                "candidate": session["confirmed_candidates"][session.get("create_index", 0)],
+            })
+            # Update inventory
+            layer = session["layer"]
+            docs = session["inventory"].get("scaffold_docs", {}).get(layer, [])
+            docs.append(created)
+            session["inventory"]["scaffold_docs"][layer] = docs
+
+        session["create_index"] = session.get("create_index", 0) + 1
+        _save_session(args.session, session)
+        _advance(session, config)
+
+    elif phase == "verify":
+        # Verification result
+        gaps = result.get("gaps", [])
+        if gaps:
+            session["coverage_gaps"] = gaps
+            session["phase"] = "fill_gaps"
+            session["gap_index"] = 0
+        else:
+            session["phase"] = "report"
+
+        _save_session(args.session, session)
+        _advance(session, config)
+
+    elif phase == "report":
+        session["phase"] = "done"
+        _save_session(args.session, session)
+        _write_action({
+            "action": "done",
+            "session_id": session["session_id"],
+            "report_summary": result.get("report_summary", ""),
+            "created_count": len(session.get("created_docs", [])),
+        })
+
+    else:
+        _advance(session, config)
+
+
+# ---------------------------------------------------------------------------
+# CLI
+# ---------------------------------------------------------------------------
+
+def main():
+    parser = argparse.ArgumentParser(description="Seed orchestrator — dependency-aware generation")
+    subparsers = parser.add_subparsers(dest="command")
+
+    p_pre = subparsers.add_parser("preflight")
+    p_pre.add_argument("--layer", required=True)
+    p_pre.add_argument("--target", default="")
+
+    p_next = subparsers.add_parser("next-action")
+    p_next.add_argument("--layer", required=True)
+    p_next.add_argument("--target", default="")
+
+    p_res = subparsers.add_parser("resolve")
+    p_res.add_argument("--session", required=True)
+
+    args = parser.parse_args()
+    if not args.command:
+        parser.print_help()
+        sys.exit(1)
+
+    {"preflight": cmd_preflight, "next-action": cmd_next_action, "resolve": cmd_resolve}[args.command](args)
+
+
+if __name__ == "__main__":
+    main()
