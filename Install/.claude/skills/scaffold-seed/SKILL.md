@@ -28,6 +28,7 @@ The key difference from the old seed skill: Claude only thinks about one thing a
 |----------|----------|---------|-------------|
 | `<layer>` | Yes | — | What to seed: `systems`, `references`, `engine`, `style`, `input`, `phases`, `slices`, `specs`, `tasks` |
 | `--target` | No | — | Scope within layer (e.g., `SLICE-001` to seed specs for one slice) |
+| `--auto-fill` | No | false | Fill coverage gaps automatically without asking. Default: present gaps for user decision (fill/defer/dismiss). |
 
 ## How It Works
 
@@ -103,7 +104,14 @@ loop:
     "verify":
       call /scaffold-seed-verify
       python seed.py resolve --session <id>
-      # gaps → more propose actions; no gaps → report
+      # gaps found → review_gaps (or fill_gaps if --auto-fill)
+      # no gaps → report
+
+    "review_gaps":
+      call /scaffold-review-adjudicate      ← user decides: fill / defer / dismiss each gap
+      python seed.py resolve --session <id>
+      # fill gaps → propose → confirm → create → re-verify
+      # all deferred/dismissed → report
 
     "report":
       call /scaffold-review-report

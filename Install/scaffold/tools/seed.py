@@ -400,6 +400,7 @@ def cmd_next_action(args):
             "dependency_graph": {},
             "coverage_gaps": [],
             "assumptions": [],
+            "auto_fill": getattr(args, 'auto_fill', False),
             "created": datetime.now().isoformat(),
         }
         _save_session(session_id, session)
@@ -509,6 +510,18 @@ def _advance(session, config):
             "inventory": session["inventory"],
             "coverage_rules": config.get("coverage_rules", []),
             "message": "Verify coverage — check all upstream requirements are covered.",
+        })
+
+    elif phase == "review_gaps":
+        # Present gaps to user for decision: fill / defer / dismiss
+        gaps = session.get("coverage_gaps", [])
+        _write_action({
+            "action": "review_gaps",
+            "session_id": session["session_id"],
+            "layer": session["layer"],
+            "gaps": gaps,
+            "total": len(gaps),
+            "message": f"Coverage verification found {len(gaps)} gap(s). For each: fill (create docs), defer (track as known issue), or dismiss.",
         })
 
     elif phase == "fill_gaps":
@@ -639,13 +652,37 @@ def cmd_resolve(args):
         _save_session(args.session, session)
         _advance(session, config)
 
+    elif phase == "review_gaps":
+        # User decided which gaps to fill / defer / dismiss
+        fill = result.get("fill", [])
+        deferred = result.get("deferred", [])
+        dismissed = result.get("dismissed", [])
+
+        # Track deferred gaps for the report
+        session["deferred_gaps"] = session.get("deferred_gaps", []) + deferred
+
+        if fill:
+            session["coverage_gaps"] = fill
+            session["phase"] = "fill_gaps"
+            session["gap_index"] = 0
+        else:
+            session["phase"] = "report"
+
+        _save_session(args.session, session)
+        _advance(session, config)
+
     elif phase == "verify":
         # Verification result
         gaps = result.get("gaps", [])
         if gaps:
             session["coverage_gaps"] = gaps
-            session["phase"] = "fill_gaps"
-            session["gap_index"] = 0
+            if session.get("auto_fill"):
+                # Auto-fill: skip asking, go straight to proposing gap-fills
+                session["phase"] = "fill_gaps"
+                session["gap_index"] = 0
+            else:
+                # Default: ask user which gaps to fill
+                session["phase"] = "review_gaps"
         else:
             session["phase"] = "report"
 
@@ -681,6 +718,7 @@ def main():
     p_next = subparsers.add_parser("next-action")
     p_next.add_argument("--layer", required=True)
     p_next.add_argument("--target", default="")
+    p_next.add_argument("--auto-fill", action="store_true", help="Fill coverage gaps automatically without asking")
 
     p_res = subparsers.add_parser("resolve")
     p_res.add_argument("--session", required=True)
