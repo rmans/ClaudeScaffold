@@ -846,6 +846,159 @@ def _advance(session, config):
 
 
 # ---------------------------------------------------------------------------
+# Upstream Doc Updates After Creation
+# ---------------------------------------------------------------------------
+
+def _update_upstream_after_creation(layer, created_file, candidate, config):
+    """Update parent docs' tables after creating a new doc.
+    E.g., when a task is created, update the slice's Tasks table."""
+    created_path = SCAFFOLD_DIR / created_file
+    if not created_path.exists():
+        return
+
+    # Extract the new doc's ID
+    id_match = re.search(r"(SYS|SPEC|TASK|SLICE|PHASE)-\d+", Path(created_file).name)
+    if not id_match:
+        return
+    new_id = id_match.group()
+    doc_name = candidate.get("name", "")
+
+    today = datetime.now().strftime("%Y-%m-%d")
+
+    if layer == "tasks":
+        # Add task to parent slice's Tasks table
+        spec_id = candidate.get("source", "")
+        # Find which slice contains the parent spec
+        spec_match = re.search(r"SPEC-\d+", spec_id)
+        if spec_match:
+            spec_ref = spec_match.group()
+            for slice_file in SCAFFOLD_DIR.glob("slices/SLICE-*-*.md"):
+                content = slice_file.read_text(encoding="utf-8")
+                if spec_ref in content and new_id not in content:
+                    # Find the Tasks table and add a row
+                    content = _add_table_row(
+                        content, "### Tasks",
+                        f"| — | {new_id} | {doc_name} | Draft |"
+                    )
+                    _update_last_updated(content, slice_file, today)
+                    break
+
+    elif layer == "specs":
+        # Add spec to parent slice's Specs Included table
+        source = candidate.get("source", "")
+        slice_match = re.search(r"SLICE-\d+", source)
+        if slice_match:
+            slice_ref = slice_match.group()
+            for slice_file in SCAFFOLD_DIR.glob(f"slices/{slice_ref}-*.md"):
+                content = slice_file.read_text(encoding="utf-8")
+                if new_id not in content:
+                    content = _add_table_row(
+                        content, "### Specs Included",
+                        f"| {new_id} | {doc_name} |"
+                    )
+                    _update_last_updated(content, slice_file, today)
+                    break
+
+    elif layer == "slices":
+        # Add slice to parent phase's references
+        phase_id = candidate.get("source", "")
+        phase_match = re.search(r"PHASE-\d+", phase_id)
+        if phase_match:
+            phase_ref = phase_match.group()
+            for phase_file in SCAFFOLD_DIR.glob(f"phases/{phase_ref}-*.md"):
+                content = phase_file.read_text(encoding="utf-8")
+                if new_id not in content:
+                    content = _add_table_row(
+                        content, "### Slice Strategy",
+                        f"| {new_id} | {doc_name} | Draft |"
+                    )
+                    _update_last_updated(content, phase_file, today)
+                    break
+
+    elif layer == "systems":
+        # Add system to design doc's System Design Index
+        design_doc = SCAFFOLD_DIR / "design" / "design-doc.md"
+        if design_doc.exists():
+            content = design_doc.read_text(encoding="utf-8")
+            if new_id not in content:
+                content = _add_table_row(
+                    content, "## System Design Index",
+                    f"| {new_id} | {doc_name} | Draft |"
+                )
+                _update_last_updated(content, design_doc, today)
+
+        # Add to systems/_index.md
+        sys_index = SCAFFOLD_DIR / "design" / "systems" / "_index.md"
+        if sys_index.exists():
+            idx_content = sys_index.read_text(encoding="utf-8")
+            if new_id not in idx_content:
+                idx_content = _add_table_row(
+                    idx_content, "## Systems",
+                    f"| {new_id} | {doc_name} | Draft |"
+                )
+                sys_index.write_text(idx_content, encoding="utf-8")
+
+    elif layer == "phases":
+        # Add phase to roadmap
+        roadmap = SCAFFOLD_DIR / "phases" / "roadmap.md"
+        if roadmap.exists():
+            content = roadmap.read_text(encoding="utf-8")
+            if new_id not in content:
+                content = _add_table_row(
+                    content, "## Phase Overview",
+                    f"| {new_id} | {doc_name} | Draft |"
+                )
+                _update_last_updated(content, roadmap, today)
+
+
+def _add_table_row(content, section_heading, row):
+    """Add a row to a markdown table under a section heading."""
+    # Find the section
+    pattern = rf"^#+\s+{re.escape(section_heading.lstrip('# '))}"
+    match = re.search(pattern, content, re.MULTILINE)
+    if not match:
+        return content
+
+    # Find the end of the table (next blank line or next heading after table rows)
+    section_start = match.end()
+    lines = content[section_start:].splitlines()
+
+    # Find the last table row (line starting with |)
+    last_table_line = -1
+    in_table = False
+    insert_pos = section_start
+    for i, line in enumerate(lines):
+        if line.strip().startswith("|"):
+            in_table = True
+            last_table_line = i
+        elif in_table and not line.strip().startswith("|") and line.strip():
+            break
+
+    if last_table_line >= 0:
+        # Insert after the last table row
+        pos = section_start
+        for i in range(last_table_line + 1):
+            pos = content.find("\n", pos) + 1
+        content = content[:pos] + row + "\n" + content[pos:]
+    else:
+        # No table found — add one with header
+        pos = content.find("\n", section_start) + 1
+        content = content[:pos] + "\n" + row + "\n" + content[pos:]
+
+    return content
+
+
+def _update_last_updated(content, file_path, today):
+    """Update Last Updated field and write file."""
+    content = re.sub(
+        r"(>\s*\*\*Last Updated:\*\*)\s*[\d-]+",
+        rf"\1 {today}",
+        content
+    )
+    file_path.write_text(content, encoding="utf-8")
+
+
+# ---------------------------------------------------------------------------
 # Resolve
 # ---------------------------------------------------------------------------
 
@@ -955,15 +1108,19 @@ def cmd_resolve(args):
         # Creation result
         created = result.get("created_file", "")
         if created:
+            candidate = session["confirmed_candidates"][session.get("create_index", 0)]
             session["created_docs"].append({
                 "file": created,
-                "candidate": session["confirmed_candidates"][session.get("create_index", 0)],
+                "candidate": candidate,
             })
             # Update inventory
             layer = session["layer"]
             docs = session["inventory"].get("scaffold_docs", {}).get(layer, [])
             docs.append(created)
             session["inventory"]["scaffold_docs"][layer] = docs
+
+            # Update upstream doc tables
+            _update_upstream_after_creation(session["layer"], created, candidate, config)
 
         session["create_index"] = session.get("create_index", 0) + 1
         _save_session(args.session, session)
