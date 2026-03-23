@@ -437,17 +437,23 @@ def _advance(session, config):
         })
 
     elif phase == "confirm":
-        # Present all candidates for user confirmation
-        candidates = session.get("candidates", [])
+        # Present candidates for user confirmation
+        # If coming from gap-fill, only present new gap-fill candidates
+        gap_candidates = session.pop("_gap_fill_candidates", None)
+        candidates = gap_candidates if gap_candidates else session.get("candidates", [])
+
         if not candidates:
-            session["phase"] = "done"
+            session["phase"] = "report" if gap_candidates is not None else "done"
             _save_session(session["session_id"], session)
-            _write_action({
-                "action": "done",
-                "session_id": session["session_id"],
-                "message": "No candidates to create.",
-                "created_docs": [],
-            })
+            if session["phase"] == "done":
+                _write_action({
+                    "action": "done",
+                    "session_id": session["session_id"],
+                    "message": "No candidates to create.",
+                    "created_docs": [],
+                })
+            else:
+                _advance(session, config)
             return
 
         # Topological sort
@@ -455,6 +461,7 @@ def _advance(session, config):
         session["sorted_candidates"] = sorted_candidates
         _save_session(session["session_id"], session)
 
+        is_gap_fill = gap_candidates is not None
         _write_action({
             "action": "confirm",
             "session_id": session["session_id"],
@@ -462,7 +469,8 @@ def _advance(session, config):
             "candidates": sorted_candidates,
             "total": len(sorted_candidates),
             "assumptions": session.get("assumptions", []),
-            "message": f"Confirm {len(sorted_candidates)} candidates for creation (sorted by dependencies).",
+            "is_gap_fill": is_gap_fill,
+            "message": f"Confirm {len(sorted_candidates)} {'gap-fill ' if is_gap_fill else ''}candidates for creation (sorted by dependencies).",
         })
 
     elif phase == "create":
@@ -509,10 +517,24 @@ def _advance(session, config):
         gap_idx = session.get("gap_index", 0)
 
         if gap_idx >= len(gaps):
-            # All gaps addressed — move to report
-            session["phase"] = "report"
-            _save_session(session["session_id"], session)
-            _advance(session, config)
+            # All gap proposals collected — check if new candidates exist
+            # that haven't been confirmed/created yet
+            gap_candidates = [c for c in session.get("candidates", [])
+                            if c.get("proposed_id", "") not in
+                            [d.get("candidate", {}).get("proposed_id", "") for d in session.get("created_docs", [])]]
+
+            if gap_candidates:
+                # New candidates from gap-fill — go through confirm → create → verify
+                session["phase"] = "confirm"
+                # Only present the new gap-fill candidates, not already-created ones
+                session["_gap_fill_candidates"] = gap_candidates
+                _save_session(session["session_id"], session)
+                _advance(session, config)
+            else:
+                # No new candidates — gaps were informational only, proceed to report
+                session["phase"] = "report"
+                _save_session(session["session_id"], session)
+                _advance(session, config)
             return
 
         gap = gaps[gap_idx]
