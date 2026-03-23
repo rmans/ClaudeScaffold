@@ -350,12 +350,35 @@ def _advance(session, config):
         })
 
     elif phase == "restabilize":
-        # Dispatch restabilization loop
+        # Collect changed sections from auto-updates and escalations
+        changed_sections = set()
+        changed_files = set()
+        for update in session.get("auto_updates", []):
+            sec = update.get("affected_section", "")
+            if sec:
+                # Convert ### to parent ## group name
+                parent = sec.lstrip("#").strip().split(" — ")[0].strip()
+                changed_sections.add(parent)
+            sig = update.get("signal", {})
+            # Track which files were affected
+            changed_files.add(sig.get("source_file", ""))
+
+        for esc in session.get("escalations", []):
+            sec = esc.get("affected_section", "")
+            if sec:
+                for part in sec.split(","):
+                    parent = part.strip().lstrip("#").strip()
+                    changed_sections.add(parent)
+
+        sections_arg = ",".join(sorted(changed_sections)) if changed_sections else ""
+
         _write_action({
             "action": "restabilize",
             "session_id": sid,
             "layer": session["layer"],
-            "message": f"Run /scaffold-review {session['layer']} to restabilize after revisions.",
+            "sections": sections_arg,
+            "changed_files": sorted(changed_files),
+            "message": f"Run /scaffold-review {session['layer']} --sections \"{sections_arg}\" to restabilize changed sections only.",
         })
 
     elif phase == "report":
