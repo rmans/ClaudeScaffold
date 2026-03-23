@@ -143,7 +143,7 @@ For each approved phase, write the confirmed content into the corresponding inpu
 ### Next Steps
 - Run `/scaffold-sync-glossary --scope input` to register new domain terms (action names, input concepts) in the glossary
 - Review each doc and fill in remaining TODOs
-- Run `/scaffold-fix-style --target interaction-model.md` if input seeding revealed interaction model gaps
+- Run `/scaffold-fix style --target interaction-model.md` if input seeding revealed interaction model gaps
 - Run `/scaffold-validate --scope all` to check cross-references when ready to stabilize
 ```
 

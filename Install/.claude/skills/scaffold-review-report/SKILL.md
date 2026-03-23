@@ -1,7 +1,7 @@
 ---
-name: scaffold-iterate-report
-description: "Write the review log and report summary after adversarial review completes. Reads action.json for session data. Writes review log to decisions/review/. Writes result.json."
-argument-hint: (called by /scaffold-iterate dispatcher — not user-invocable)
+name: scaffold-review-report
+description: "Write the review log and report summary after document review completes. Reads action.json for session data. Writes review log to decisions/review/. Writes result.json. Shared by /scaffold-iterate and /scaffold-fix."
+argument-hint: (called by review dispatchers — not user-invocable)
 allowed-tools: Read, Edit, Write, Grep, Glob
 ---
 
@@ -153,5 +153,5 @@ The `report_summary` field is what the dispatcher displays to the user.
 ## What NOT to Do
 
 - **Don't re-adjudicate issues.** The decisions are made. Report them.
-- **Don't edit the target document.** That was `/scaffold-iterate-apply`'s job.
+- **Don't edit the target document.** That was `/scaffold-review-apply`'s job.
 - **Don't run additional review passes.** The review is over.

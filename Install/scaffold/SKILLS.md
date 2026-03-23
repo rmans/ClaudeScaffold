@@ -1,6 +1,6 @@
 # Skills Reference
 
-> Man-page reference for all 67 scaffold slash commands. Each entry shows synopsis, description, arguments, examples, and related skills.
+> Man-page reference for all 56 scaffold slash commands. Each entry shows synopsis, description, arguments, examples, and related skills.
 >
 > **When to use each skill** — see [WORKFLOW.md](WORKFLOW.md) for the step-by-step pipeline order.
 
@@ -30,18 +30,7 @@
 | `/scaffold-bulk-seed-specs` | — | Seed spec stubs from slices + systems + states |
 | `/scaffold-bulk-seed-tasks` | — | Seed task stubs from specs + engine docs + signals |
 | **Fix** | | |
-| `/scaffold-fix-design` | `[--iterate N]` | Mechanical cleanup for design doc |
-| `/scaffold-fix-style` | `[--target doc.md] [--iterate N]` | Mechanical cleanup for all 6 Step 5 visual/UX docs |
-| `/scaffold-fix-systems` | `[--target SYS-###] [--iterate N]` | Mechanical cleanup for system designs |
-| `/scaffold-fix-references` | `[--target doc.md] [--iterate N]` | Mechanical cleanup for Step 3 reference/architecture docs |
-| `/scaffold-fix-engine` | `[--target doc.md] [--iterate N]` | Mechanical cleanup for engine docs |
-| `/scaffold-fix-roadmap` | `[--iterate N]` | Mechanical cleanup for roadmap |
-| `/scaffold-fix-phase` | `[--target P#-###] [--iterate N]` | Mechanical cleanup for phase docs |
-| `/scaffold-fix-slice` | `[--target SLICE-###] [--iterate N]` | Mechanical cleanup for slice docs |
-| `/scaffold-fix-spec` | `[--target SPEC-###] [--iterate N]` | Mechanical cleanup for spec docs |
-| `/scaffold-fix-task` | `[--target TASK-###] [--iterate N]` | Mechanical cleanup for task docs |
-| `/scaffold-fix-input` | `[--target doc.md] [--iterate N]` | Mechanical cleanup for Step 6 input docs |
-| `/scaffold-fix-cross-cutting` | — | Resolve cross-document integrity findings |
+| `/scaffold-fix` | `<layer> [target] [--sections "..."] [--iterations N]` | Mechanical cleanup for any layer (design, systems, spec, task, slice, phase, roadmap, references, style, input, engine, cross-cutting). Orchestrated by fix.py with per-layer YAML configs. |
 | **Iterate** | | |
 | `/scaffold-iterate` | `<layer> [target] [--topics "1,3"] [--focus "..."] [--iterations N]` | Adversarial per-topic review for any layer (design, systems, spec, task, slice, phase, roadmap, references, style, input, engine). Orchestrated by iterate.py with per-layer YAML configs. |
 | **Revise** | | |
@@ -214,7 +203,7 @@ Creates a single system design at `design/systems/SYS-###-<name>_draft.md` with 
 
 **See Also**
 
-`/scaffold-bulk-seed-systems`, `/scaffold-fix-systems`, `/scaffold-iterate systems`
+`/scaffold-bulk-seed-systems`, `/scaffold-fix systems`, `/scaffold-iterate systems`
 
 ---
 
@@ -302,13 +291,13 @@ Reads the design doc, system designs, and supporting docs to seed `style-guide.m
 
 ---
 
-### /scaffold-fix-style
+### /scaffold-fix style
 
 Mechanical cleanup for all 6 Step 5 visual/UX docs.
 
 **Synopsis**
 
-    /scaffold-fix-style [--target doc.md] [--iterate N]
+    /scaffold-fix style [--target doc.md] [--iterate N]
 
 **Description**
 
@@ -323,9 +312,9 @@ Formatter and linter for Step 5 docs: style-guide, color-system, ui-kit, interac
 
 **Examples**
 
-    /scaffold-fix-style
-    /scaffold-fix-style --target ui-kit.md
-    /scaffold-fix-style --target feedback-system.md --iterate 5
+    /scaffold-fix style
+    /scaffold-fix style --target ui-kit.md
+    /scaffold-fix style --target feedback-system.md --iterate 5
 
 **See Also**
 
@@ -364,7 +353,7 @@ Each of the 6 Step 5 docs gets its own specialized review lens targeting its uni
 
 **See Also**
 
-`/scaffold-fix-style`, `/scaffold-bulk-seed-style`
+`/scaffold-fix style`, `/scaffold-bulk-seed-style`
 
 ---
 
@@ -386,7 +375,7 @@ Reads the completed design doc and bulk-seeds the glossary and system design stu
 
 **See Also**
 
-`/scaffold-fix-systems`, `/scaffold-iterate systems`
+`/scaffold-fix systems`, `/scaffold-iterate systems`
 
 ---
 
@@ -408,7 +397,7 @@ Reads all completed system designs and bulk-populates 7 companion docs in order:
 
 **See Also**
 
-`/scaffold-fix-references`, `/scaffold-iterate references`
+`/scaffold-fix references`, `/scaffold-iterate references`
 
 ---
 
@@ -430,7 +419,7 @@ Asks which engine the project uses (Godot 4, Unity, Unreal 5, or custom), then c
 
 **See Also**
 
-`/scaffold-fix-engine`, `/scaffold-iterate engine`
+`/scaffold-fix engine`, `/scaffold-iterate engine`
 
 ---
 
@@ -452,7 +441,7 @@ Reads the completed design doc and bulk-seeds all 5 input documents in 5 sequent
 
 **See Also**
 
-`/scaffold-fix-style`, `/scaffold-bulk-seed-input`
+`/scaffold-fix style`, `/scaffold-bulk-seed-input`
 
 ---
 

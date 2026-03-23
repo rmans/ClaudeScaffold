@@ -130,7 +130,7 @@ Ingests existing project material, classifies each design doc section (Complete/
 ### 1b — Fix (mechanical cleanup)
 
 ```
-/scaffold-fix-design
+/scaffold-fix design
 ```
 
 Auto-fixes template text, incomplete governance formats (invariants, pressure tests), terminology drift, system index mismatches, and missing section stubs. Surfaces strategic issues (contradictions, invariant violations from downstream, unescalated mechanics, layer violations, philosophy drift) for human decision.
@@ -188,7 +188,7 @@ Performs the same overlap/authority/invariant audit as bulk-seed but for one sys
 ### 2b — Fix (mechanical cleanup)
 
 ```
-/scaffold-fix-systems SYS-###-SYS-###
+/scaffold-fix systems SYS-###-SYS-###
 ```
 
 Mechanical cleanup pass — normalizes structure, repairs terminology drift, fixes registration gaps, detects dependency asymmetry. Detects design signals (invariant violations, ownership conflicts, layer breaches) and reports them for adversarial review. All individual fix loops run in parallel; a cross-system pass runs after to catch inter-system issues.
@@ -245,7 +245,7 @@ Reads all system designs and bulk-populates: architecture (foundation area defin
 ### 3b — Fix (mechanical cleanup)
 
 ```
-/scaffold-fix-references
+/scaffold-fix references
 ```
 
 Mechanical cleanup pass for all 9 Step 3 docs. Per-doc checks (section structure, table columns, terminology, registration) followed by cross-doc consistency pass (authority→entity-components, interfaces→signals, state-transitions→enums, architecture→scene tree). Auto-fixes alignment issues and detects design signals for adversarial review. Supports `--target doc.md` for single-doc focus (used by revise-foundation when only one doc was revised).
@@ -293,7 +293,7 @@ Asks which engine and implementation stack, then seeds all 14 engine docs from t
 ### 4b — Fix (mechanical cleanup)
 
 ```
-/scaffold-fix-engine [--target doc-stem]
+/scaffold-fix engine [--target doc-stem]
 ```
 
 Mechanical cleanup pass for all 15 engine docs. Per-doc checks (section structure, terminology, registration, constrained TODO currency) plus alignment signal detection (architecture contradictions, authority assumptions, interface timing mismatches, layer breaches). Cross-doc pass checks convention consistency, architecture alignment coverage, and maturity imbalance. Supports `--target` for single-doc focus.
@@ -395,7 +395,7 @@ After seeding, review the report for medium-confidence assumptions and low-confi
 ### 5b — Fix (mechanical cleanup)
 
 ```
-/scaffold-fix-style
+/scaffold-fix style
 ```
 
 Mechanical cleanup pass for all 6 Step 5 docs. Auto-fixes template text, terminology drift, cross-doc inconsistencies, token normalization, and boundary violations. Detects design signals (tone mismatches, component gaps, scope creep, priority conflicts) for adversarial review. Supports `--target` for single-doc focus. Authority flows downstream within Step 5: style-guide → color-system → ui-kit; interaction-model ↔ feedback-system (peers); audio-direction derives priority from feedback-system.
@@ -443,7 +443,7 @@ Reads the design doc, interaction model, and engine input docs to pre-fill actio
 ### 6b — Fix (mechanical cleanup)
 
 ```
-/scaffold-fix-input [--target doc.md] [--iterate N]
+/scaffold-fix input [--target doc.md] [--iterate N]
 ```
 
 Mechanical cleanup pass for input docs. Auto-fixes action ID naming conventions, binding collisions, orphan bindings, template text, terminology drift, and cross-doc inconsistencies (action-map ↔ bindings ↔ navigation ↔ interaction-model ↔ design doc). Detects design signals (missing player verbs, namespace confusion, action bloat, philosophy-interaction mismatches, accessibility gaps, button exhaustion) for adversarial review. Supports `--target` for single-doc focus. Context-aware collision detection — namespace-separated and mode-separated overlaps are not flagged.
@@ -513,7 +513,7 @@ The purpose is not to finalize every low-level implementation detail — it's to
 
 Deterministic checks: foundation area coverage, area status (Locked/Partial/Deferred), authority-architecture consistency, interface completeness, signal consistency, entity consistency, iterate freshness.
 
-If cross-cutting findings are surfaced, run `/scaffold-fix-cross-cutting` to resolve them interactively.
+If cross-cutting findings are surfaced, run `/scaffold-fix cross-cutting` to resolve them interactively.
 
 **Gate assessment:**
 - **PASS** — all areas are Locked, or Partial with tracked bounded gaps. Safe to proceed into planning.
@@ -523,7 +523,7 @@ If cross-cutting findings are surfaced, run `/scaffold-fix-cross-cutting` to res
 ### 7c — Fix Cross-Cutting Issues
 
 ```
-/scaffold-fix-cross-cutting [--category decision-closure|workflow|staleness] [--id XC-###]
+/scaffold-fix cross-cutting [--category decision-closure|workflow|staleness] [--id XC-###]
 ```
 
 Reads `scaffold/decisions/cross-cutting-findings.md` (populated by `/scaffold-validate --scope all` Section 2l checks) and dispatches resolution actions per finding category:
@@ -555,7 +555,7 @@ Proposes a phase skeleton from design context, maps systems to phases, validates
 #### 8b — Fix mechanical issues
 
 ```
-/scaffold-fix-roadmap
+/scaffold-fix roadmap
 ```
 
 Auto-fixes template text, vague phase goals, vision checkpoint drift, stale ADR log entries, terminology drift, and registration mismatches. Surfaces strategic issues (coverage gaps, over-scoping, ordering conflicts) for human decision.
@@ -593,7 +593,7 @@ Formalizes the Phase Transition Protocol. Moves the completed phase to Completed
 **8f — Fix the revised roadmap**
 
 ```
-/scaffold-fix-roadmap
+/scaffold-fix roadmap
 ```
 
 Auto-fixes any mechanical issues introduced by the revision — stale ADR log entries, capability ladder drift, system coverage gaps, vision checkpoint drift.
@@ -635,7 +635,7 @@ Generates phase scope gate stubs from the roadmap, design doc, system designs, a
 #### 9b — Fix mechanical issues in phases
 
 ```
-/scaffold-fix-phase P#-###-P#-###
+/scaffold-fix phase P#-###-P#-###
 ```
 
 Auto-fixes mechanical issues (template text, vague criteria, broken system references, terminology drift). Surfaces strategic issues (scope too broad, entry/exit chain breaks, ADR contradictions) for human decision.
@@ -678,7 +678,7 @@ Reads ADRs, known issues, playtest patterns, triage logs, foundation recheck res
 #### 9g — Fix the next phase
 
 ```
-/scaffold-fix-phase P#-###
+/scaffold-fix phase P#-###
 ```
 
 Auto-fixes mechanical issues in the revised phase before adversarial review.
@@ -730,7 +730,7 @@ Generates slice stubs for the phase from phase goals, system designs, and interf
 #### 10b — Fix mechanical issues in the first slice
 
 ```
-/scaffold-fix-slice SLICE-###
+/scaffold-fix slice SLICE-###
 ```
 
 Reviews the first slice, auto-fixes mechanical issues (template text, vague done criteria, broken references, stale dependencies, terminology drift), and surfaces strategic issues (goal quality, boundary design, proof value) for human decision.
@@ -775,7 +775,7 @@ Reads ADRs, known issues, triage decision logs, and from the completed slice's i
 #### 10g — Fix the next slice
 
 ```
-/scaffold-fix-slice SLICE-###
+/scaffold-fix slice SLICE-###
 ```
 
 Auto-fixes mechanical issues in the revised slice before adversarial review.
@@ -823,7 +823,7 @@ Generates spec stubs for all slices from system designs and state transitions. E
 #### 11b — Fix mechanical issues
 
 ```
-/scaffold-fix-spec SPEC-###-SPEC-###
+/scaffold-fix spec SPEC-###-SPEC-###
 ```
 
 Reviews all specs, auto-fixes mechanical issues (vague ACs, missing sections, implementation leaks, terminology drift, registration gaps), and surfaces strategic issues for human decision (system scope mismatches, authority violations, state machine conflicts, spec overlaps).
@@ -899,7 +899,7 @@ Creates initial task stubs from the slice's specs, engine docs, and architecture
 #### 12b — Fix mechanical issues
 
 ```
-/scaffold-fix-task TASK-###-TASK-###
+/scaffold-fix task TASK-###-TASK-###
 ```
 
 Reviews all tasks, auto-fixes mechanical issues (vague objectives, weak verification, missing files, terminology drift, bad step order, missing integration touchpoints), and surfaces strategic issues for human decision.

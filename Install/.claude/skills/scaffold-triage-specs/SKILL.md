@@ -9,7 +9,7 @@ allowed-tools: Read, Edit, Write, Grep, Glob
 
 Collect and resolve human-required planning issues for specs in: **$ARGUMENTS**
 
-This skill is the human decision gate in the spec planning loop. It gathers unresolved issues from `/scaffold-fix-spec` and `/scaffold-iterate` runs, presents them as a decision checklist, and applies the user's decisions.
+This skill is the human decision gate in the spec planning loop. It gathers unresolved issues from `/scaffold-fix spec` and `/scaffold-iterate` runs, presents them as a decision checklist, and applies the user's decisions.
 
 ## Arguments
 
@@ -287,7 +287,7 @@ If a previous triage log exists for this slice's specs, append a new dated secti
 
 ### Next Steps
 - If **Stable**: Run `/scaffold-validate` then `/scaffold-approve-specs SLICE-###` then proceed to task seeding
-- If **Needs another pass**: Run `/scaffold-fix-spec` on new/modified specs, then `/scaffold-iterate spec`, then `/scaffold-triage-specs` again
+- If **Needs another pass**: Run `/scaffold-fix spec` on new/modified specs, then `/scaffold-iterate spec`, then `/scaffold-triage-specs` again
 ```
 
 ## Rules

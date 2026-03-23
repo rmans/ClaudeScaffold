@@ -1,7 +1,7 @@
 ---
-name: scaffold-iterate-apply
-description: "Apply accepted changes to target files during adversarial review. Reads action.json for the change list. Edits files. Writes result.json."
-argument-hint: (called by /scaffold-iterate dispatcher — not user-invocable)
+name: scaffold-review-apply
+description: "Apply accepted changes to target files during document review. Reads action.json for the change list. Edits files. Writes result.json. Shared by /scaffold-iterate and /scaffold-fix."
+argument-hint: (called by review dispatchers — not user-invocable)
 allowed-tools: Read, Edit, Write, Grep, Glob
 ---
 

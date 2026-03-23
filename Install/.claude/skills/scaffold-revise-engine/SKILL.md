@@ -348,7 +348,7 @@ This is a lightweight post-edit validation, not a full `/scaffold-validate --sco
 **Stable / Decreased / Improved** — [Based on: number and severity of drift signals, whether conventions held, whether cross-engine consistency is intact, how many constrained TODOs were resolved.]
 
 ### Next Steps
-- Run `/scaffold-fix-engine [--target X]` to clean up mechanical issues from updates
+- Run `/scaffold-fix engine [--target X]` to clean up mechanical issues from updates
 - Run `/scaffold-iterate engine [--target X --topics "affected"]` to review changed areas
 - Run `/scaffold-validate --scope engine` to confirm structural readiness
 ```

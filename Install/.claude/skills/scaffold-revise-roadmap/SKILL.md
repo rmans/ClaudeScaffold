@@ -24,7 +24,7 @@ This is distinct from `/scaffold-revise-phases` which updates remaining phase *f
 1. **Source phase exists** — glob `scaffold/phases/P#-###-*.md`. If not found, stop.
 2. **Source phase is Complete** — verify `> **Status:**` is `Complete`. If not Complete, stop.
 3. **Roadmap exists** — verify `scaffold/phases/roadmap.md` exists and is not at template defaults.
-4. **Required sections exist** — verify the roadmap contains: Completed Phases, ADR Feedback Log, Phase Overview, Current Phase, Revision History. If any are missing, stop and instruct to run `/scaffold-fix-roadmap` first. Writing into missing sections corrupts the document.
+4. **Required sections exist** — verify the roadmap contains: Completed Phases, ADR Feedback Log, Phase Overview, Current Phase, Revision History. If any are missing, stop and instruct to run `/scaffold-fix roadmap` first. Writing into missing sections corrupts the document.
 
 ## Step 1 — Gather Completion Context
 
@@ -174,7 +174,7 @@ Append to the Revision History section:
 
 ### Next Steps
 - Run `/scaffold-revise-phases P#-###` to update remaining phase files from feedback
-- Run `/scaffold-fix-phase P#-###` on the next phase
+- Run `/scaffold-fix phase P#-###` on the next phase
 - Run `/scaffold-iterate phase P#-###` for adversarial review
 - Run `/scaffold-approve-phases P#-###` to approve the next phase
 ```

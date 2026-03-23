@@ -68,7 +68,7 @@ Verify an iterate log exists:
 
 If no iterate log exists, **stop**: "P#-### was never iterated. Run `/scaffold-iterate phase` before approving."
 
-If the phase file was modified after the most recent iterate log, **stop**: "P#-### was modified after its last review (log: YYYY-MM-DD, file modified: YYYY-MM-DD). Rerun `/scaffold-fix-phase` and `/scaffold-iterate phase`."
+If the phase file was modified after the most recent iterate log, **stop**: "P#-### was modified after its last review (log: YYYY-MM-DD, file modified: YYYY-MM-DD). Rerun `/scaffold-fix phase` and `/scaffold-iterate phase`."
 
 This is a **hard stop**.
 
@@ -111,11 +111,11 @@ This is a **hard stop with explicit override**.
 
 Verify that In Scope items are specific enough to generate slice candidates without introducing new systems or inventing undefined behaviors. This is the final gate before slice generation — approval unlocks `/scaffold-bulk-seed-slices`.
 
-If In Scope items are too abstract (system names instead of behaviors), **stop**: "In Scope items are not sliceable. Run `/scaffold-fix-phase` or `/scaffold-iterate phase` to tighten scope."
+If In Scope items are too abstract (system names instead of behaviors), **stop**: "In Scope items are not sliceable. Run `/scaffold-fix phase` or `/scaffold-iterate phase` to tighten scope."
 
 This is a **hard stop**.
 
-If any content readiness or slice readiness check fails, **stop** and suggest running `/scaffold-fix-phase`.
+If any content readiness or slice readiness check fails, **stop** and suggest running `/scaffold-fix phase`.
 
 ## Step 1 — Approve the Phase
 
@@ -162,7 +162,7 @@ If any content readiness or slice readiness check fails, **stop** and suggest ru
 ## Rules
 
 - **This is a lifecycle gate, not a review skill.** It checks whether the phase has passed through the pipeline and is ready to transition.
-- **This skill never rewrites phase content to make it approvable.** If any check fails, stop and direct the user to `/scaffold-fix-phase` or `/scaffold-iterate phase`. The gate is pure — it only reads and judges.
+- **This skill never rewrites phase content to make it approvable.** If any check fails, stop and direct the user to `/scaffold-fix phase` or `/scaffold-iterate phase`. The gate is pure — it only reads and judges.
 - **One phase at a time.** Only one Approved-not-Complete phase may exist.
 - **Roadmap order is enforced.** Out-of-order approval requires explicit override.
 - **Entry criteria are a hard stop.** No override — prerequisites must be met.

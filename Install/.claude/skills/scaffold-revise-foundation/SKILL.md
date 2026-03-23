@@ -197,7 +197,7 @@ Layer N revision → escalation pending?
 1. `/scaffold-revise-design --source foundation-recheck --signals [signals]`
    - **What:** Reads only the specific drift signals passed via `--signals`. Classifies each as design-led vs implementation-led. Auto-updates safe mechanical changes. Dispatches to `init-design --mode reconcile/refresh` for design decisions. Escalates governance impacts.
    - **Why:** Targeted revision — doesn't re-scan the universe, just processes signals this skill identified.
-2. `/scaffold-fix-design`
+2. `/scaffold-fix design`
    - **What:** Auto-fixes template text, governance format normalization, terminology drift, system index mismatches. Surfaces contradictions, drift, and layer violations.
    - **Why:** Revise-design may have changed sections — fix catches mechanical issues introduced by those changes.
 3. `/scaffold-iterate design --sections "[changed groups]"`
@@ -217,7 +217,7 @@ Layer N revision → escalation pending?
 1. `/scaffold-revise-systems --source foundation-recheck --signals [signals]`
    - **What:** Reads only the specific drift signals passed via `--signals`. Classifies each as design-led vs implementation-led. Auto-updates safe changes (dependency entries, edge cases). Escalates ownership shifts and authority violations.
    - **Why:** Targeted revision — doesn't re-scan everything, just processes signals this skill identified.
-2. `/scaffold-fix-systems SYS-###-SYS-###`
+2. `/scaffold-fix systems SYS-###-SYS-###`
    - **What:** Mechanical cleanup pass on affected systems. Normalizes structure, detects design signals.
    - **Why:** Revise-systems may have changed sections — fix catches mechanical issues introduced by those changes.
 3. `/scaffold-iterate systems --topics "[affected topics]" SYS-###-SYS-###`
@@ -237,7 +237,7 @@ Layer N revision → escalation pending?
 1. `/scaffold-revise-references --source foundation-recheck --signals [signals]`
    - **What:** Reads only the specific drift signals passed via `--signals`. Classifies each as design-led vs implementation-led. Auto-updates safe changes (missing registrations, stale references, column updates). Escalates authority changes, architecture changes, contract changes, and state machine changes.
    - **Why:** Targeted revision — doesn't re-scan everything, just processes signals this skill identified. Respects canonical direction (authority→entity, interfaces→signals, states→enums).
-2. `/scaffold-fix-references --target [affected-doc.md]`
+2. `/scaffold-fix references --target [affected-doc.md]`
    - **What:** Mechanical cleanup targeted at the specific doc(s) that were revised. Per-doc structural checks plus cross-doc consistency against all 9 Step 3 docs. Auto-fixes alignment issues. Detects design signals.
    - **Why:** Revise may have changed authority entries, interface contracts, or state names — fix-references catches mechanical inconsistencies introduced by those changes and propagates alignment fixes.
    - **Target selection:** If drift affected authority.md, target authority.md. If multiple docs affected, run without `--target` to fix all.
@@ -258,7 +258,7 @@ Layer N revision → escalation pending?
 1. `/scaffold-revise-engine --source foundation-recheck --signals [signals]`
    - **What:** Detects engine doc drift from Step 3 changes, ADRs, code review findings, and implementation friction. Auto-applies safe updates (stale references, Step 3 alignment, constrained TODO resolution). Escalates convention changes and performance budget revisions.
    - **Why:** Engine docs are Rank 9 — they implement Step 3 decisions. When Step 3 changes, engine docs must follow. revise-engine classifies drift and applies safe changes directly.
-2. `/scaffold-fix-engine` (if revise-engine made changes)
+2. `/scaffold-fix engine` (if revise-engine made changes)
    - **What:** Mechanical cleanup after revision — cross-engine consistency, template structure, terminology.
    - **When to skip:** If revise-engine made no changes (only found no drift), skip fix.
 3. `/scaffold-iterate engine --target [affected-doc] --topics "1,2"` (for specifically affected engine docs)
@@ -277,7 +277,7 @@ Layer N revision → escalation pending?
 1. `/scaffold-revise-style --source foundation-recheck --signals [signals]`
    - **What:** Reads only the specific drift signals passed via `--signals`. Classifies each as design-led, playtest-led, or implementation-led. Auto-updates safe changes (missing tokens, stale references, new feedback entries, cross-doc alignment). Escalates aesthetic direction changes, interaction model changes, priority hierarchy changes, accessibility changes, and component removals.
    - **Why:** Targeted revision — doesn't re-scan everything, just processes signals this skill identified. Respects Step 5 authority flow (style-guide → color-system → ui-kit; feedback-system → audio-direction).
-2. `/scaffold-fix-style --target [affected-doc.md]`
+2. `/scaffold-fix style --target [affected-doc.md]`
    - **What:** Mechanical cleanup targeted at the specific doc(s) that were revised. Per-doc structural checks plus cross-doc consistency across all 6 Step 5 docs. Auto-fixes alignment issues. Detects design signals.
    - **Why:** Revise may have added tokens, feedback entries, or interaction mappings — fix-style catches mechanical inconsistencies introduced by those changes and propagates alignment fixes.
    - **Target selection:** If drift affected a single doc, target it. If multiple docs affected, run without `--target` to fix all.
@@ -299,7 +299,7 @@ Layer N revision → escalation pending?
    - **What:** Reads implementation feedback, classifies drift (design-led vs implementation-led), auto-updates safe changes (stale references, missing actions from upstream, orphan bindings), escalates design-level changes (philosophy violations, navigation model changes, device parity gaps).
    - **Why:** Detects misalignment between input docs and the (potentially revised) interaction model, design doc, and ui-kit.
    - **When to skip:** If revise-input made no changes (only found no drift), skip iterate.
-2. `/scaffold-fix-input` (if revise-input made changes)
+2. `/scaffold-fix input` (if revise-input made changes)
    - **What:** Mechanical cleanup after revision edits.
 3. `/scaffold-iterate input --topics "[affected topics]"` (if revise-input surfaced design signals)
    - **What:** Adversarial review of changed areas.
@@ -313,7 +313,7 @@ Layer N revision → escalation pending?
 **Global convergence requirement.** Individual layer validates confirm per-layer health, but they do not verify cross-layer coherence. After all dispatched revisions:
 
 1. `/scaffold-validate --scope all` — full cross-layer validation including cross-cutting and cross-layer integrity checks.
-2. `/scaffold-fix-cross-cutting` — if validate surfaces cross-cutting findings, resolve them interactively.
+2. `/scaffold-fix cross-cutting` — if validate surfaces cross-cutting findings, resolve them interactively.
 
 If validate fails, the revision cycle is incomplete. Report the failures and recommend targeted re-revision of the affected layers.
 

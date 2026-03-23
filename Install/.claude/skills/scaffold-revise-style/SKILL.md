@@ -391,7 +391,7 @@ This is a lightweight post-edit validation, not a full `/scaffold-validate --sco
 **Stable / Decreased / Improved** — [Based on: number and severity of drift signals, whether aesthetic direction held, whether cross-doc consistency is intact, whether token system stayed clean, how many playtest patterns were addressed.]
 
 ### Next Steps
-- Run `/scaffold-fix-style [--target X]` to clean up mechanical issues from updates
+- Run `/scaffold-fix style [--target X]` to clean up mechanical issues from updates
 - Run `/scaffold-iterate style [--target X --topics "affected"]` to review changed areas
 - Run `/scaffold-validate --scope style` to confirm structural readiness
 ```

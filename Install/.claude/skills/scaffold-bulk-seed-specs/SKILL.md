@@ -222,7 +222,7 @@ Flag any remaining gaps:
 - ADRs that affect specs (annotated in the spec files)
 
 Remind the user of next steps. Seeded specs go through a stabilization loop before task generation:
-- Run `/scaffold-fix-spec SPEC-###-SPEC-###` to auto-fix mechanical issues
+- Run `/scaffold-fix spec SPEC-###-SPEC-###` to auto-fix mechanical issues
 - Run `/scaffold-iterate` on specs for adversarial review
 - Run `/scaffold-triage-specs SLICE-###` to resolve human-required issues
 - Repeat fix → iterate → triage until stable

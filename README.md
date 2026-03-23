@@ -24,7 +24,7 @@ Every design decision, visual style rule, system behavior, interface contract, a
 - **Draft → Review → Approved → Complete lifecycle.** Documents start as `Draft`, move through adversarial review via `/scaffold-iterate`, are set to `Approved` by approval gates, and marked `Complete` by `/scaffold-complete` when implementation is done. Completion ripples up from tasks through specs, slices, and phases.
 - **Token-efficient retrieval.** Index files in every directory let Claude find what it needs without loading entire folders.
 - **Asset requirements in specs.** Specs identify what art and audio the behavior needs, scan for reusable assets, and track production status. Tasks wire the ready assets.
-- **69 skills automate the pipeline.** Create, seed, fix, iterate, revise, approve, implement, file decisions, generate art/audio, and edit documents with slash commands — no manual file wrangling.
+- **58 skills automate the pipeline.** Create, seed, fix, iterate, revise, approve, implement, file decisions, generate art/audio, and edit documents with slash commands — no manual file wrangling.
 
 ## How It Works
 
@@ -141,7 +141,7 @@ cp ClaudeScaffold/Install/CLAUDE.md /path/to/your/project/
 This gives your project:
 
 ```
-.claude/skills/       ← 68 Claude Code skills
+.claude/skills/       ← 57 Claude Code skills
 scaffold/             ← Document pipeline with templates and indexes
 CLAUDE.md             ← Instructions that tell Claude Code how to use the scaffold
 ```
@@ -157,7 +157,7 @@ See [Install/README.md](Install/README.md) for full installation details.
 | **Init** | `init-design` |
 | **Bulk seed (9)** | `bulk-seed-style`, `bulk-seed-systems`, `bulk-seed-references`, `bulk-seed-engine`, `bulk-seed-input`, `bulk-seed-phases`, `bulk-seed-slices`, `bulk-seed-specs`, `bulk-seed-tasks` |
 | **Create (6)** | `new-roadmap`, `new-phase`, `new-slice`, `new-spec`, `new-task`, `new-system` |
-| **Fix (12)** | `fix-design`, `fix-style`, `fix-systems`, `fix-references`, `fix-engine`, `fix-input`, `fix-roadmap`, `fix-phase`, `fix-slice`, `fix-spec`, `fix-task`, `fix-cross-cutting` |
+| **Fix (1)** | `fix` — unified mechanical cleanup for all layers (design, systems, spec, task, slice, phase, roadmap, references, style, input, engine, cross-cutting). Orchestrated by `fix.py` with per-layer YAML configs. |
 | **Iterate (1)** | `iterate` — unified adversarial review for all layers (design, systems, spec, task, slice, phase, roadmap, references, style, input, engine). Orchestrated by `iterate.py` with per-layer YAML configs. |
 | **Revise (10)** | `revise-design`, `revise-systems`, `revise-references`, `revise-engine`, `revise-style`, `revise-input`, `revise-foundation`, `revise-roadmap`, `revise-phases`, `revise-slices` |
 | **Approve (4)** | `approve-phases`, `approve-slices`, `approve-specs`, `approve-tasks` |
@@ -177,7 +177,7 @@ All skill names are prefixed with `/scaffold-` (e.g., `/scaffold-init-design`).
 
 ```
 1.  /scaffold-init-design              ← fill out the design doc
-2.  /scaffold-fix-design               ← mechanical cleanup
+2.  /scaffold-fix design               ← mechanical cleanup
 3.  /scaffold-iterate design            ← adversarial review
 4.  /scaffold-bulk-seed-systems        ← glossary + system stubs
 5.  Fill in each system design

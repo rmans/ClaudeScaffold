@@ -215,7 +215,7 @@ Write to `scaffold/decisions/revision-logs/REVISION-post-P#-###.md`. If the file
 **P#-### — [Name]** is the next phase in roadmap order.
 
 ### Next Steps
-- Run `/scaffold-fix-phase P#-###` on the next phase
+- Run `/scaffold-fix phase P#-###` on the next phase
 - Run `/scaffold-iterate phase P#-###` for adversarial review
 - Run `/scaffold-validate --scope phases` to check structural integrity
 - Run `/scaffold-approve-phases P#-###` to approve the next phase for slice seeding

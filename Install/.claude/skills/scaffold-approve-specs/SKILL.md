@@ -27,7 +27,7 @@ Run `/scaffold-validate --scope specs`. Approval cannot proceed if validation fa
 
 Additionally, check content readiness: no `<!-- TODO -->` markers in Summary, Proof Intent, Trigger, Preconditions, Behavior, Observable Outcome, Failure Outcome, Postconditions, Edge Cases, Secondary Effects, Acceptance Criteria, or Out of Scope sections. This is a content-quality check that validate does not cover.
 
-If validation fails, stop and suggest running `/scaffold-fix-spec` or `/scaffold-triage-specs` first.
+If validation fails, stop and suggest running `/scaffold-fix spec` or `/scaffold-triage-specs` first.
 
 ### 2. No pending upstream actions that affect spec behavior
 

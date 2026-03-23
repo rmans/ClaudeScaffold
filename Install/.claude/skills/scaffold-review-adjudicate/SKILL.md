@@ -1,7 +1,7 @@
 ---
-name: scaffold-iterate-adjudicate
-description: "Judge one reviewer issue during adversarial review. Reads action.json for the issue, section content, and layer rules. Decides accept/reject/escalate/pushback. Writes result.json."
-argument-hint: (called by /scaffold-iterate dispatcher — not user-invocable)
+name: scaffold-review-adjudicate
+description: "Judge one issue during document review. Reads action.json for the issue, section content, and layer rules. Decides accept/reject/escalate/pushback. Writes result.json. Shared by /scaffold-iterate and /scaffold-fix."
+argument-hint: (called by review dispatchers — not user-invocable)
 allowed-tools: Read, Write, Grep, Glob
 ---
 
@@ -49,7 +49,7 @@ Read `.reviews/iterate/action.json`. It contains:
 5. **Decide one outcome:**
 
    - **Accept** — the issue is valid and the suggestion improves the document.
-     - Write a clear fix description that `/scaffold-iterate-apply` can act on.
+     - Write a clear fix description that `/scaffold-review-apply` can act on.
      - Be specific: "Rewrite ### Purpose to: '...'" not "make it clearer."
 
    - **Reject** — the issue is wrong, out of scope, or contradicted by higher-authority docs.
@@ -99,6 +99,6 @@ Only include fields relevant to the outcome:
 ## What NOT to Do
 
 - **Don't read the target file.** The section content is in the action.
-- **Don't edit any files.** That's `/scaffold-iterate-apply`'s job.
-- **Don't run scope checks.** That's `/scaffold-iterate-scope-check`'s job. iterate.py will route there if needed.
+- **Don't edit any files.** That's `/scaffold-review-apply`'s job.
+- **Don't run scope checks.** That's `/scaffold-review-scope-check`'s job. iterate.py will route there if needed.
 - **Don't worry about what comes next.** The dispatcher handles sequencing.

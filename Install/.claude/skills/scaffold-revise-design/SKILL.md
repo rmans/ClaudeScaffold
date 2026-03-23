@@ -283,7 +283,7 @@ After all actions in this run (auto-updates applied, reconciliations dispatched,
 **Stable / Decreased / Improved** — [Based on: number and severity of drift signals, governance mechanism integrity, number of escalations vs auto-updates.]
 
 ### Next Steps
-- Run `/scaffold-fix-design` to clean up any mechanical issues from edits
+- Run `/scaffold-fix design` to clean up any mechanical issues from edits
 - Run `/scaffold-iterate design --sections "[changed groups]"` to review only the changed areas (converges early if clean)
 - Run `/scaffold-validate --scope design` to confirm structural readiness
 ```

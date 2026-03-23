@@ -9,7 +9,7 @@ allowed-tools: Read, Edit, Write, Grep, Glob
 
 Collect and resolve human-required planning issues for: **$ARGUMENTS**
 
-This skill is the human decision gate in the task planning loop. It gathers unresolved issues from `/scaffold-fix-task` and `/scaffold-iterate` runs, presents them as a decision checklist, and applies the user's decisions.
+This skill is the human decision gate in the task planning loop. It gathers unresolved issues from `/scaffold-fix task` and `/scaffold-iterate` runs, presents them as a decision checklist, and applies the user's decisions.
 
 ## Arguments
 
@@ -29,7 +29,7 @@ Grep `scaffold/decisions/review/REVIEW-*` for review logs that reference tasks i
 
 ### 1b. Scan Fix-Task Output
 
-If `/scaffold-fix-task` was run recently, its output contains a Human-Required Issues table. Read the task files themselves for clues — fix-task may have added Notes about human-required issues it couldn't resolve.
+If `/scaffold-fix task` was run recently, its output contains a Human-Required Issues table. Read the task files themselves for clues — fix-task may have added Notes about human-required issues it couldn't resolve.
 
 ### 1c. Scan Task Files for Annotations
 
@@ -373,7 +373,7 @@ After applying all decisions, assess whether the task graph is stable:
 
 ### Next Steps
 - If **Stable**: Run `/scaffold-reorder-tasks SLICE-###` then `/scaffold-implement-task`
-- If **Needs another pass**: Run `/scaffold-fix-task` on new/modified tasks, then `/scaffold-iterate task`, then `/scaffold-triage-tasks` again
+- If **Needs another pass**: Run `/scaffold-fix task` on new/modified tasks, then `/scaffold-iterate task`, then `/scaffold-triage-tasks` again
 ```
 
 ## Rules

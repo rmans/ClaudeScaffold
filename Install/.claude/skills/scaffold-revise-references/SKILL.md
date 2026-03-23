@@ -265,7 +265,7 @@ Apply safe alignment updates within Step 3 docs following canonical direction. F
 **Stable / Decreased / Improved** — [Based on: number and severity of drift signals, whether authority boundaries held, whether cross-doc consistency is intact.]
 
 ### Next Steps
-- Run `/scaffold-fix-references [--target X]` to clean up mechanical issues from updates
+- Run `/scaffold-fix references [--target X]` to clean up mechanical issues from updates
 - Run `/scaffold-iterate references [--target X --topics "affected"]` to review changed areas
 - Run `/scaffold-validate --scope refs` to confirm structural readiness
 ```

@@ -314,7 +314,7 @@ For each confirmed system:
 
 ### Next Steps
 - Fill in each system design (ownership, dependencies, state transitions, interfaces)
-- Run `/scaffold-fix-systems` after systems are complete to check cross-system consistency
+- Run `/scaffold-fix systems` after systems are complete to check cross-system consistency
 - Run `/scaffold-bulk-seed-references` once systems are stable
 ```
 

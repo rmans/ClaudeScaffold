@@ -227,7 +227,7 @@ Update `scaffold/engine/_index.md` to list all created docs with correct prefix 
 ### Next Steps
 - Fill in Open TODOs with project-specific decisions
 - Resolve Constrained TODOs after Step 3 locks the blocking decisions
-- Run `/scaffold-fix-engine` (when available) to normalize structure
+- Run `/scaffold-fix engine` (when available) to normalize structure
 - Run `/scaffold-iterate engine` (when available) for adversarial review
 ```
 

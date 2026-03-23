@@ -226,7 +226,7 @@ Include back-propagation needs (e.g., "interaction-model implies a context menu 
 - Run `/scaffold-sync-glossary --scope style` to register new domain terms (color tokens, UI component names, interaction patterns) in the glossary
 - Review Medium-confidence sections (listed above) — these are reasonable but unverified
 - Fill remaining TODOs where upstream docs are missing information
-- Run `/scaffold-fix-systems` or `/scaffold-fix-references` if tensions reveal upstream gaps
+- Run `/scaffold-fix systems` or `/scaffold-fix references` if tensions reveal upstream gaps
 - Run `/scaffold-validate --scope all` to check cross-references
 ```
 

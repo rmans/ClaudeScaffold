@@ -1,7 +1,7 @@
 ---
-name: scaffold-iterate-scope-check
-description: "Evaluate scope guard tests on a proposed change during adversarial review. Reads action.json for the change and tests. Writes result.json with pass/fail."
-argument-hint: (called by /scaffold-iterate dispatcher — not user-invocable)
+name: scaffold-review-scope-check
+description: "Evaluate scope guard tests on a proposed change during document review. Reads action.json for the change and tests. Writes result.json with pass/fail. Shared by /scaffold-iterate and /scaffold-fix."
+argument-hint: (called by review dispatchers — not user-invocable)
 allowed-tools: Read, Write
 ---
 

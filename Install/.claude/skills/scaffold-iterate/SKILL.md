@@ -14,10 +14,10 @@ This skill is a **thin dispatcher**. It does not read documents, make judgments,
 
 | Sub-skill | What it does |
 |-----------|-------------|
-| `/scaffold-iterate-adjudicate` | Judge one issue — accept, reject, escalate, or pushback |
-| `/scaffold-iterate-scope-check` | Evaluate scope guard tests on a proposed change |
-| `/scaffold-iterate-apply` | Edit target files based on accepted issues |
-| `/scaffold-iterate-report` | Write the review log and fill in final questions/rating |
+| `/scaffold-review-adjudicate` | Judge one issue — accept, reject, escalate, or pushback |
+| `/scaffold-review-scope-check` | Evaluate scope guard tests on a proposed change |
+| `/scaffold-review-apply` | Edit target files based on accepted issues |
+| `/scaffold-review-report` | Write the review log and fill in final questions/rating |
 
 Communication between iterate.py and sub-skills uses two temp files:
 - **`action.json`** — iterate.py writes the next instruction (what to do + all context needed)
@@ -84,25 +84,25 @@ loop:
   switch action.type:
 
     "adjudicate":
-      call /scaffold-iterate-adjudicate         ← reads action.json, writes result.json
+      call /scaffold-review-adjudicate         ← reads action.json, writes result.json
       python iterate.py resolve --session <id>  ← reads result.json, writes next action.json
       # accept → scope_check action next
       # reject/escalate → next issue or next section
       # pushback → sends counter to reviewer, new adjudicate action
 
     "scope_check":
-      call /scaffold-iterate-scope-check        ← reads action.json, writes result.json
+      call /scaffold-review-scope-check        ← reads action.json, writes result.json
       python iterate.py resolve --session <id>
       # pass → confirms accept, next issue or next section
       # fail → converts to reject, next issue or next section
 
     "apply":
-      call /scaffold-iterate-apply              ← reads action.json, edits files, writes result.json
+      call /scaffold-review-apply              ← reads action.json, edits files, writes result.json
       python iterate.py resolve --session <id>
       # advances to next pass level; if changes + under limit → inserts verification pass
 
     "report":
-      call /scaffold-iterate-report             ← reads action.json, writes review log + result.json
+      call /scaffold-review-report             ← reads action.json, writes review log + result.json
       python iterate.py resolve --session <id>  ← writes "done" action
 
     "done":
@@ -118,7 +118,7 @@ Escalated issues are collected during adjudication and presented in the final re
 
 ### Step 4 — Summary
 
-After the loop ends with `"done"`, display the report summary that `/scaffold-iterate-report` generated.
+After the loop ends with `"done"`, display the report summary that `/scaffold-review-report` generated.
 
 ## What iterate.py Manages
 
@@ -138,24 +138,24 @@ The Python orchestrator owns all the logic the old 11 skills used to carry in th
 
 Each sub-skill reads `action.json`, does its focused job, writes `result.json`.
 
-### /scaffold-iterate-adjudicate
+### /scaffold-review-adjudicate
 - Reads the issue, the relevant section content, layer rules, and context
 - Decides: accept, reject, escalate, or pushback (with counter-argument)
 - If accept: includes a description of the proposed fix
 - If pushback: includes the counter-argument text to send back to the reviewer
 
-### /scaffold-iterate-scope-check
+### /scaffold-review-scope-check
 - Reads the proposed change and scope guard tests from the action
 - Evaluates each test (upward leakage, downward leakage, survival test)
 - Returns pass/fail per test with reasoning
 
-### /scaffold-iterate-apply
+### /scaffold-review-apply
 - Reads the list of accepted issues with their fix descriptions
 - Reads the target file
 - Interprets each suggestion and makes the actual edits
 - Returns what was changed (files, sections, line counts)
 
-### /scaffold-iterate-report
+### /scaffold-review-report
 - Reads the full session data (all adjudications, per-section summaries)
 - Synthesizes across all passes to answer final questions
 - Assigns the rating with justification
@@ -199,7 +199,7 @@ For ranges (e.g., `SYS-001-SYS-043`):
 ## Rules
 
 - **This skill never reads documents or makes judgments.** That's what sub-skills are for.
-- **This skill never edits files.** That's what `/scaffold-iterate-apply` is for.
+- **This skill never edits files.** That's what `/scaffold-review-apply` is for.
 - **Clean up temp files** (action.json, result.json) after each exchange.
 - **Sleep between API calls** as configured per layer.
 - **If iterate.py errors**, report the error and stop — don't retry.

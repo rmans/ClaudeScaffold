@@ -266,7 +266,7 @@ After all actions (auto-updates, escalation resolutions), append a revision entr
 **Stable / Decreased / Improved** — [Based on: number and severity of drift signals, whether ownership boundaries held, whether cross-system consistency is intact.]
 
 ### Next Steps
-- Run `/scaffold-fix-systems SYS-###-SYS-###` to clean up mechanical issues from updates
+- Run `/scaffold-fix systems SYS-###-SYS-###` to clean up mechanical issues from updates
 - Run `/scaffold-iterate systems --topics "[affected topics]" SYS-###-SYS-###` to review changed areas
 - Run `/scaffold-validate --scope systems` to confirm structural readiness
 ```

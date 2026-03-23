@@ -14,7 +14,9 @@
 | `code-review.py` | Adversarial code review — multi-provider LLM review for implementation code |
 | `validate-refs.py` | Cross-reference validator — checks referential integrity across all scaffold docs |
 | `iterate.py` | Iterate orchestrator — manages adversarial review sessions for scaffold documents (used by `/scaffold-iterate`) |
+| `fix.py` | Fix orchestrator — runs mechanical checks and routes judgment calls for scaffold documents (used by `/scaffold-fix`) |
 | `configs/iterate/*.yaml` | Per-layer review configs for iterate.py (topics, context files, scope guards, bias packs) |
+| `configs/fix/*.yaml` | Per-layer fix configs for fix.py (mechanical checks, judgment checks, signals) |
 
 ## image-gen.py
 

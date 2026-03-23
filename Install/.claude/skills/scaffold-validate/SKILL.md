@@ -993,10 +993,10 @@ These compare input docs against each other and against upstream canon.
 - UI-kit alignment checks require `design/ui-kit.md` to exist. SKIP if missing.
 
 **Suggested fixes:**
-- `input-action-id-convention` → "Action ID '[id]' violates naming convention. Expected `lowercase_snake_case` with namespace prefix. Run `/scaffold-fix-input` to auto-fix."
+- `input-action-id-convention` → "Action ID '[id]' violates naming convention. Expected `lowercase_snake_case` with namespace prefix. Run `/scaffold-fix input` to auto-fix."
 - `input-action-source-column` → "Action '[id]' missing Source traceability. Add a Source column entry in the format `doc-name: section`."
 - `input-action-design-coverage` → "Player verb '[verb]' has no action in action-map. Create an action via `/scaffold-update-doc action-map` or confirm the verb is covered by an existing action."
-- `input-binding-orphans` → "Binding references non-existent action '[id]'. Remove the binding or create the action. Run `/scaffold-fix-input` to auto-remove orphan bindings."
+- `input-binding-orphans` → "Binding references non-existent action '[id]'. Remove the binding or create the action. Run `/scaffold-fix input` to auto-remove orphan bindings."
 - `input-binding-collision-*` → "Same-context binding collision: '[key]' bound to both '[action1]' and '[action2]' in namespace '[ns]'. Review whether these are truly in different contexts."
 - `input-navigation-actions-exist` → "Navigation references undefined action '[id]'. Create the action in action-map or update the navigation doc."
 - `input-philosophy-binding-compliance` → "Philosophy says '[constraint]' but bindings violate it. Update bindings to comply or update philosophy to acknowledge the exception."
@@ -1013,7 +1013,7 @@ These checks span all document types. They enforce decision closure, workflow co
 2. For any with Status: **Acknowledged**, downgrade to INFO in output (do not re-report as FAIL).
 3. For any with Status: **Deferred**, verify the tracking reference (KI-### or ADR-###) still exists. If missing, reopen as **Open**.
 4. New findings not already in the table get appended with Status: **Open**.
-5. Use `/scaffold-fix-cross-cutting` to resolve findings interactively.
+5. Use `/scaffold-fix cross-cutting` to resolve findings interactively.
 
 **Decision Closure:**
 
@@ -1187,7 +1187,7 @@ These checks span multiple document layers. They detect structural problems that
 - Pipeline design-to-systems orphan → "Design concept [concept] has no system coverage. Create a system for it via `/scaffold-new-system` or remove the concept from the design doc if it's been descoped"
 - Pipeline systems-to-specs uncovered → "System SYS-### responsibility [responsibility] has no spec coverage. Create a spec via `/scaffold-new-spec` or mark the responsibility as deferred"
 - Pipeline specs-to-tasks unimplemented → "SPEC-### (Approved) has no implementing tasks. Create tasks via `/scaffold-new-task` or defer the spec"
-- Pipeline tasks-to-engine uncovered → "TASK-### references engine concepts not covered by any engine doc. Run `/scaffold-fix-engine` or create a new engine doc"
+- Pipeline tasks-to-engine uncovered → "TASK-### references engine concepts not covered by any engine doc. Run `/scaffold-fix engine` or create a new engine doc"
 
 ### 3. Report
 
@@ -1261,8 +1261,8 @@ After the report table, always output a Validation Verdict block:
 
 **Next Recommended Step logic:**
 - If Critical FAIL exists → recommend the fix skill for the highest-impact failing layer
-- If High FAIL exists → recommend the specific fix skill (e.g., `/scaffold-fix-systems` for system FAILs)
-- If only Medium/Low FAIL → recommend `/scaffold-fix-<layer>` for the first failing layer
+- If High FAIL exists → recommend the specific fix skill (e.g., `/scaffold-fix systems` for system FAILs)
+- If only Medium/Low FAIL → recommend `/scaffold-fix <layer>` for the first failing layer
 - If only WARN → recommend reviewing the warnings, then proceeding
 - If PASS → recommend the next pipeline step (e.g., if validating after fix, recommend iterate; if after iterate, recommend approve)
 
@@ -1298,19 +1298,19 @@ Based on failing checks, suggest the specific fix skill to run. Group by layer a
 
 | Failing Layer | Suggested Fix Skill |
 |--------------|-------------------|
-| Design doc checks | `/scaffold-fix-design` |
-| System design checks | `/scaffold-fix-systems [--range]` |
-| Foundation checks | `/scaffold-fix-cross-cutting` (for cross-doc findings), per-layer fix skills for layer-specific issues |
-| Reference (Step 3) checks | `/scaffold-fix-references` |
-| Engine checks | `/scaffold-fix-engine` |
-| Style (Step 5) checks | `/scaffold-fix-style` |
-| Input (Step 6) checks | `/scaffold-fix-input` |
-| Roadmap checks | `/scaffold-fix-roadmap` |
-| Phase checks | `/scaffold-fix-phase` |
-| Slice checks | `/scaffold-fix-slice` |
-| Spec checks | `/scaffold-fix-spec` |
-| Task checks | `/scaffold-fix-task` |
-| Cross-cutting findings | `/scaffold-fix-cross-cutting` |
+| Design doc checks | `/scaffold-fix design` |
+| System design checks | `/scaffold-fix systems [--range]` |
+| Foundation checks | `/scaffold-fix cross-cutting` (for cross-doc findings), per-layer fix skills for layer-specific issues |
+| Reference (Step 3) checks | `/scaffold-fix references` |
+| Engine checks | `/scaffold-fix engine` |
+| Style (Step 5) checks | `/scaffold-fix style` |
+| Input (Step 6) checks | `/scaffold-fix input` |
+| Roadmap checks | `/scaffold-fix roadmap` |
+| Phase checks | `/scaffold-fix phase` |
+| Slice checks | `/scaffold-fix slice` |
+| Spec checks | `/scaffold-fix spec` |
+| Task checks | `/scaffold-fix task` |
+| Cross-cutting findings | `/scaffold-fix cross-cutting` |
 | Pipeline chain gaps | Depends on which layer broke — suggest the creation skill for the missing artifact |
 
 When multiple layers fail, present them in priority order: Critical-impact failures first, then High, then Medium, then Low.
@@ -1353,25 +1353,25 @@ For each failing check, suggest the specific edit needed:
 - Phase entry chain broken → "Entry criteria reference P#-### but that phase doesn't exist or isn't Complete — update entry criteria or complete the prerequisite"
 - Single active phase violation → "Phase P#-### is already Approved and not Complete. Complete it before approving another."
 - Phase system reference broken → "In Scope references SYS-### but no matching system file exists — update the In Scope list or create the system"
-- Phase review freshness (stale) → "P#-### was modified after its last iterate log. Rerun `/scaffold-fix-phase` and `/scaffold-iterate phase`."
+- Phase review freshness (stale) → "P#-### was modified after its last iterate log. Rerun `/scaffold-fix phase` and `/scaffold-iterate phase`."
 - Phase review freshness (missing) → "P#-### has no iterate log. Run `/scaffold-iterate phase` before approving."
 - Design doc at template defaults → "Run `/scaffold-init-design` to populate the design document."
 - Design doc missing section group → "Design doc is missing the [Group] section group. Run `/scaffold-init-design --mode fill-gaps --sections [Group]`."
 - Design doc below 50% health → "Design doc is too incomplete for downstream work. Run `/scaffold-init-design --mode fill-gaps` to fill remaining sections."
-- Invariant missing fields → "Invariant '[ShortName]' is missing [field]. Run `/scaffold-fix-design` to auto-fix format issues."
-- Invariant missing ShortName → "Invariant has no ShortName — downstream docs cannot cite it. Add `Invariant: <ShortName>` or run `/scaffold-fix-design`."
+- Invariant missing fields → "Invariant '[ShortName]' is missing [field]. Run `/scaffold-fix design` to auto-fix format issues."
+- Invariant missing ShortName → "Invariant has no ShortName — downstream docs cannot cite it. Add `Invariant: <ShortName>` or run `/scaffold-fix design`."
 - Invariant count outside range → "Design has [N] invariants (target: 3-7). Run `/scaffold-init-design --mode refresh --sections Identity` to adjust."
-- Anchor format wrong → "Decision Anchor '[text]' is not in 'X over Y' format. Run `/scaffold-fix-design` to flag for correction."
+- Anchor format wrong → "Decision Anchor '[text]' is not in 'X over Y' format. Run `/scaffold-fix design` to flag for correction."
 - Anchor count outside range → "Design has [N] anchors (target: 3-5). Run `/scaffold-init-design --mode refresh --sections Philosophy` to adjust."
-- Pressure test missing fields → "Pressure Test '[name]' is missing [field]. Run `/scaffold-fix-design` to auto-fix format issues."
+- Pressure test missing fields → "Pressure Test '[name]' is missing [field]. Run `/scaffold-fix design` to auto-fix format issues."
 - Pressure test count outside range → "Design has [N] pressure tests (target: 3-6). Run `/scaffold-init-design --mode refresh --sections Philosophy` to adjust."
 - Design gravity empty → "Design Gravity section is empty. Run `/scaffold-init-design --mode fill-gaps --sections Philosophy`."
 - Design gravity count outside range → "Design has [N] gravity directions (target: 3-4). Consider adjusting."
-- System index mismatch → "Design doc System Design Index doesn't match `design/systems/_index.md`. Run `/scaffold-fix-design` to sync."
+- System index mismatch → "Design doc System Design Index doesn't match `design/systems/_index.md`. Run `/scaffold-fix design` to sync."
 - Design glossary violation → "Design doc uses NOT-column term '[term]' — replace with canonical term '[canonical]' from glossary."
 - Design-ADR contradiction → "Design doc section [section] contradicts accepted ADR-###. Run `/scaffold-init-design --mode reconcile` to resolve."
 - Provisional markers remaining → "[N] PROVISIONAL markers remain in the design doc. Confirm or remove each before proceeding to Step 2+."
-- Design review freshness (stale) → "Design doc was modified after its last iterate log. Rerun `/scaffold-fix-design` and `/scaffold-iterate design`."
+- Design review freshness (stale) → "Design doc was modified after its last iterate log. Rerun `/scaffold-fix design` and `/scaffold-iterate design`."
 - Engine doc not in index → "Add `<filename>` to `scaffold/engine/_index.md` Documents table"
 - Engine file in index but missing → "Create the engine doc or remove the stale row from `scaffold/engine/_index.md`"
 - Engine missing header field → "Add `> **<Field>:** <value>` to the engine doc's blockquote header"
@@ -1379,7 +1379,7 @@ For each failing check, suggest the specific edit needed:
 - Engine Conforms-to target missing → "Update the `Conforms to` link to reference an existing document, or create the missing document"
 - Engine missing common section → "Add `## <Section>` to the engine doc — all engine docs require Purpose, Project Overrides, and Rules"
 - Engine template section missing → "Add `## <Section>` from the matching template `scaffold/templates/<template>.md`, or document why it was intentionally omitted"
-- Engine section health below threshold → "Fill remaining TODO sections. Run `/scaffold-fix-engine <topic>` to auto-fix structural issues"
+- Engine section health below threshold → "Fill remaining TODO sections. Run `/scaffold-fix engine <topic>` to auto-fix structural issues"
 - Engine Purpose empty → "Fill the Purpose section explaining what this doc governs and why it exists"
 - Engine TODOs in Approved doc → "Resolve all remaining `*TODO:` markers before keeping Approved status, or revert to Draft"
 - Engine stale constrained TODO → "The blocking document has been resolved. Update or remove the constrained TODO"
@@ -1394,7 +1394,7 @@ For each failing check, suggest the specific edit needed:
 - Engine template mapping missing → "Add the template mapping to the `_index.md` Templates table"
 - Engine seeded marker remaining → "Review the seeded content and remove the `<!-- SEEDED -->` marker"
 - Engine stale template comment → "Remove the template instruction comment — the section has authored content"
-- Engine review freshness (stale) → "Engine doc was modified after its last review log. Rerun `/scaffold-fix-engine` and `/scaffold-iterate engine`"
+- Engine review freshness (stale) → "Engine doc was modified after its last review log. Rerun `/scaffold-fix engine` and `/scaffold-iterate engine`"
 - Engine review freshness (missing, Approved) → "No review log exists for this Approved engine doc. Run `/scaffold-iterate engine` before keeping Approved status"
 - Engine topic overlap → "Two engine docs have overlapping Purpose scope. Clarify boundaries or merge into one doc. Check `_index.md` Topic column for uniqueness"
 - Engine Conforms-to missing links → "Add at least one `Conforms to` link to a Step 3 or design doc that this engine doc implements"
@@ -1403,7 +1403,7 @@ For each failing check, suggest the specific edit needed:
 - Style doc wrong Authority Rank → "Change to `Rank 2` in the doc header to match the authority chain"
 - Style doc Conforms-to missing → "Add `Conforms to` link to at least design-doc.md"
 - Style doc missing template section → "Add `## <Section>` from `scaffold/templates/<template>.md`"
-- Style doc health below threshold → "Fill remaining TODO sections. Run `/scaffold-fix-style --target <doc>` to auto-fix structural issues"
+- Style doc health below threshold → "Fill remaining TODO sections. Run `/scaffold-fix style --target <doc>` to auto-fix structural issues"
 - Style token missing in color-system → "Add the token to `scaffold/design/color-system.md` or update the ui-kit reference"
 - Style raw hex found → "Replace raw hex value with the corresponding color-system token"
 - Style unmapped state → "Add a color token for the entity state in `scaffold/design/color-system.md`"
@@ -1420,12 +1420,12 @@ For each failing check, suggest the specific edit needed:
 - Style single-channel critical → "Add a second feedback channel (audio or UI) for the critical event in the feedback-system Event-Response Table"
 - Style color-only state → "Add a non-color differentiator (icon, shape, text) for the gameplay state"
 - Style hover-only cue → "Add keyboard/gamepad alternative for the hover-dependent interaction in interaction-model"
-- Style review freshness (stale) → "Step 5 doc was modified after its last review log. Run `/scaffold-fix-style` and `/scaffold-iterate style`"
+- Style review freshness (stale) → "Step 5 doc was modified after its last review log. Run `/scaffold-fix style` and `/scaffold-iterate style`"
 - Style review freshness (missing, Approved) → "No review log exists for this Approved Step 5 doc. Run `/scaffold-iterate style` before keeping Approved status"
 - Style ui-kit scope guard → "Remove screen map / scene hierarchy / HUD layout content from ui-kit — belongs in engine UI doc"
 - Style duplicate tokens → "Merge duplicate token entries in color-system, keeping the more complete version"
 - Style malformed hex → "Fix hex value to #RRGGBB or #RRGGBBAA format"
-- Style design intent misalignment → "Review style-guide tone vs design doc Core Fantasy. Run `/scaffold-fix-style` then `/scaffold-iterate style --topics 1,7` to realign"
+- Style design intent misalignment → "Review style-guide tone vs design doc Core Fantasy. Run `/scaffold-fix style` then `/scaffold-iterate style --topics 1,7` to realign"
 - Style unmapped interaction → "Add a UI affordance in ui-kit for the player action, or remove the action from interaction-model if it's not real"
 - Style orphan UI element → "Remove the UI element from ui-kit or add its interaction in interaction-model"
 - Style feedback signal overload → "Designate one channel as primary and others as supportive for the event in feedback-system"
@@ -1433,7 +1433,7 @@ For each failing check, suggest the specific edit needed:
 - Style visual hierarchy violation → "Update feedback-system to use signal-palette danger tokens for Critical events and subdued tokens for Info/Low events"
 - Style unused token → "Remove the unused token from color-system, or add a reference in the appropriate Step 5 doc"
 - Style scalability concern → "Review token system for extensibility. Consider consolidating overlapping tokens or restructuring the Event-Response Table for clearer category boundaries"
-- Style end-to-end chain broken → "The interaction [action] cannot be fully specified: [step N] is missing in [doc]. Fill the missing entry or run `/scaffold-fix-style` to detect the gap"
+- Style end-to-end chain broken → "The interaction [action] cannot be fully specified: [step N] is missing in [doc]. Fill the missing entry or run `/scaffold-fix style` to detect the gap"
 
 ## Rules
 

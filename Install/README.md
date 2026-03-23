@@ -82,7 +82,7 @@ Follow the pipeline in order. Each step builds on the last.
 
 ```
 /scaffold-init-design               ← core vision, pillars, mechanics, loops, scope
-/scaffold-fix-design                 ← mechanical cleanup
+/scaffold-fix design                 ← mechanical cleanup
 /scaffold-iterate design             ← adversarial review
 /scaffold-validate --scope design    ← gate check
 ```
@@ -103,7 +103,7 @@ Each seeded layer follows the same stabilization loop: `fix → iterate → vali
 
 ```
 /scaffold-revise-foundation          ← verify Steps 1-6 are stable
-/scaffold-fix-cross-cutting          ← resolve cross-document issues
+/scaffold-fix cross-cutting          ← resolve cross-document issues
 /scaffold-validate --scope foundation
 ```
 

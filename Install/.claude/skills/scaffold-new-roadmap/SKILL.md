@@ -12,7 +12,7 @@ Instead of purely conversational phase-by-phase questioning, this skill proposes
 
 ## Step 1 — Read Context
 
-1. **Read `scaffold/phases/roadmap.md`** to check its current state. If already populated (not template defaults), stop: "Roadmap already exists. Use `/scaffold-fix-roadmap` to clean up or `/scaffold-revise-roadmap` after phase completion."
+1. **Read `scaffold/phases/roadmap.md`** to check its current state. If already populated (not template defaults), stop: "Roadmap already exists. Use `/scaffold-fix roadmap` to clean up or `/scaffold-revise-roadmap` after phase completion."
 2. **Read `scaffold/design/design-doc.md`** — especially Core Fantasy, Design Pillars, Scope Reality Check, Core Loop, Secondary Loops, Content Structure, and Target Platforms.
 3. **Read `scaffold/design/systems/_index.md`** and skim system files for maturity.
 4. **Read `scaffold/design/architecture.md`** for foundation decisions.
@@ -181,7 +181,7 @@ Write `scaffold/phases/roadmap.md` with these sections:
 | ... | ... |
 
 ### Next Steps
-- Run `/scaffold-fix-roadmap` to clean up any mechanical issues
+- Run `/scaffold-fix roadmap` to clean up any mechanical issues
 - Run `/scaffold-iterate roadmap` for adversarial review
 - Run `/scaffold-validate --scope roadmap` to check structural integrity
 - Run `/scaffold-bulk-seed-phases` to create phase scope gate documents
