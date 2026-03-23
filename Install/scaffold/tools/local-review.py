@@ -821,12 +821,14 @@ def cmd_resolve(args):
 
     config = load_layer_config(session["layer"])
     result = _read_result()
-    if not result:
-        _write_action({"action": "blocked", "message": "No result.json found."})
-        return
 
     if RESULT_FILE.exists():
         RESULT_FILE.unlink()
+
+    # No result.json — advance to next queue item (valid after no_issues actions)
+    if not result:
+        _advance_and_write_action(session, config)
+        return
 
     queue = session.get("queue", [])
     idx = session.get("queue_index", 0)

@@ -105,6 +105,10 @@ loop:
       call /scaffold-review-report             ← reads action.json, writes review log + result.json
       python iterate.py resolve --session <id>  ← writes "done" action
 
+    "no_issues":
+      log action.message                            ← e.g., "No issues found in ### Purpose"
+      python iterate.py resolve --session <id>      ← no result.json needed, advances to next section
+
     "done":
       break
 

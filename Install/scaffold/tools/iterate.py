@@ -669,10 +669,17 @@ def _advance_and_write_action(session, config):
     issues = _call_reviewer(session, config, section_content, questions, context_files)
 
     if not issues:
-        # No issues — advance
+        # No issues — write no_issues action so dispatcher sees progress
         session["queue_index"] = idx + 1
         _save_session(session["session_id"], session)
-        _advance_and_write_action(session, config)
+        section_name = item.get("section", f"queue item {idx}")
+        _write_action({
+            "action": "no_issues",
+            "session_id": session["session_id"],
+            "pass": item.get("pass", ""),
+            "section": section_name,
+            "message": f"No issues found in {section_name}",
+        })
         return
 
     # Filter through review lock
@@ -684,9 +691,17 @@ def _advance_and_write_action(session, config):
         filtered.append(issue)
 
     if not filtered:
+        # All issues filtered by review lock
         session["queue_index"] = idx + 1
         _save_session(session["session_id"], session)
-        _advance_and_write_action(session, config)
+        section_name = item.get("section", f"queue item {idx}")
+        _write_action({
+            "action": "no_issues",
+            "session_id": session["session_id"],
+            "pass": item.get("pass", ""),
+            "section": section_name,
+            "message": f"No new issues in {section_name} (all filtered by review lock)",
+        })
         return
 
     # Store issues and write adjudicate action for the first one
@@ -729,13 +744,16 @@ def cmd_resolve(args):
 
     config = load_layer_config(session["layer"])
     result = _read_result()
-    if not result:
-        _write_action({"action": "blocked", "message": "No result.json found."})
-        return
 
     # Clean up result file
     if RESULT_FILE.exists():
         RESULT_FILE.unlink()
+
+    # No result.json — this is valid after no_issues actions (no sub-skill ran)
+    # Just advance to the next queue item
+    if not result:
+        _advance_and_write_action(session, config)
+        return
 
     # Determine what to do based on the last action type
     queue = session.get("queue", [])

@@ -85,10 +85,13 @@ loop:
       call /scaffold-review-report
       python review.py resolve --session <id>
 
+    "no_issues":
+      log action.message
+      python review.py resolve --session <id>
+
     "phase_complete":
       log action.message
       python review.py next-action --layer <layer> --target <target> [args]
-      # review.py sees phase=iterate, starts iterate phase, writes next action
 
     "done":
       break

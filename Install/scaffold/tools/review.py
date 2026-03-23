@@ -242,13 +242,10 @@ def cmd_resolve(args):
         _write_action({"action": "blocked", "message": f"Session '{args.session}' not found."})
         return
 
-    # Guard: if result.json doesn't exist, nothing to resolve
-    # This can happen if the dispatcher calls resolve after phase_complete
-    if not RESULT_FILE.exists():
-        _write_action({"action": "blocked", "message": "No result.json — use next-action after phase transitions."})
-        return
-
     phase = session.get("phase", "fix")
+
+    # If no result.json, delegate to sub-orchestrator's resolve anyway
+    # (iterate.py and local-review.py handle missing results for no_issues actions)
 
     if phase == "fix":
         # Copy result to fix's result.json, then call fix resolve
