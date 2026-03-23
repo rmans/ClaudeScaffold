@@ -320,6 +320,95 @@ def _extract_task_steps(content):
 
 
 # ---------------------------------------------------------------------------
+# Asset Delivery Check (art/audio tasks)
+# ---------------------------------------------------------------------------
+
+def _check_asset_delivery(content, task_file, task_type):
+    """Check if all assets in an art/audio task exist. Auto-complete if yes."""
+    # Extract file paths from the Asset Delivery table
+    # Table format: | Asset | Type | File Path | Dimensions / Duration | Prompt |
+    asset_paths = []
+    in_table = False
+    for line in content.splitlines():
+        stripped = line.strip()
+        # Detect table rows (skip header and separator)
+        if stripped.startswith("|") and "File Path" in stripped:
+            in_table = True
+            continue
+        if in_table and stripped.startswith("|---"):
+            continue
+        if in_table and stripped.startswith("|"):
+            cols = [c.strip() for c in stripped.split("|")]
+            # cols[0] is empty (before first |), cols[-1] is empty (after last |)
+            # File Path is column 3 (index 3)
+            if len(cols) >= 4 and cols[3] and cols[3] != "—":
+                asset_paths.append(cols[3])
+        elif in_table and not stripped.startswith("|"):
+            in_table = False
+
+    if not asset_paths:
+        return {
+            "status": "blocked",
+            "message": (
+                f"This is a {task_type} task but no asset file paths found in the "
+                f"Asset Delivery table. Fill in the table first."
+            ),
+        }
+
+    # Check which assets exist
+    project_root = SCAFFOLD_DIR.parent
+    missing = []
+    found = []
+    for p in asset_paths:
+        # Paths may be relative to project root or scaffold dir
+        candidates = [
+            project_root / p,
+            SCAFFOLD_DIR / p,
+        ]
+        if any(c.exists() for c in candidates):
+            found.append(p)
+        else:
+            missing.append(p)
+
+    if missing:
+        missing_list = "\n".join(f"  - {p}" for p in missing)
+        found_count = len(found)
+        total = len(asset_paths)
+        return {
+            "status": "blocked",
+            "message": (
+                f"This is a {task_type} task — {found_count}/{total} assets delivered. "
+                f"Missing:\n{missing_list}\n\n"
+                f"Create the missing assets and place them at the listed paths. "
+                f"Run implement again to auto-complete once all assets are in place."
+            ),
+        }
+
+    # All assets exist — auto-complete via utils.py
+    try:
+        # Import complete_doc from utils.py (same directory)
+        import importlib.util
+        utils_path = TOOLS_DIR / "utils.py"
+        spec = importlib.util.spec_from_file_location("utils", utils_path)
+        utils = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(utils)
+        result = utils.complete_doc(task_file, scaffold_dir=str(SCAFFOLD_DIR))
+        return {
+            "status": "complete",
+            "message": (
+                f"All {len(asset_paths)} assets delivered. "
+                f"Task marked Complete with upstream ripple."
+            ),
+            "complete_result": result,
+        }
+    except Exception as e:
+        return {
+            "status": "error",
+            "message": f"All assets exist but auto-complete failed: {e}",
+        }
+
+
+# ---------------------------------------------------------------------------
 # Preflight
 # ---------------------------------------------------------------------------
 
@@ -348,15 +437,8 @@ def cmd_preflight(args):
     if type_match:
         tt = type_match.group(1).strip().lower()
         if tt in ("art", "audio"):
-            _output({
-                "status": "blocked",
-                "message": (
-                    f"{args.task} is a {tt} task — assets must be created externally by the user. "
-                    f"Review the Asset Delivery section for file paths, specs, and prompts. "
-                    f"Once all assets are placed, mark the task Complete with: "
-                    f"python scaffold/tools/utils.py complete {task_file}"
-                ),
-            })
+            result = _check_asset_delivery(content, task_file, tt)
+            _output(result)
             return
 
     # Check dependencies

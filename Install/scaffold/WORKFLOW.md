@@ -877,7 +877,7 @@ Runs the full implementation pipeline for a single task or a range (`TASK-###-TA
 
 The pipeline stops on failure — build errors, test failures, or unresolvable review issues must be fixed before proceeding. For ranges, later tasks are skipped if an earlier task fails (they may depend on it).
 
-> **Art/audio tasks:** `/scaffold-implement` skips `art` and `audio` task types — these require the user to create assets externally. The task's Asset Delivery section lists every asset with file paths, dimensions/duration, and generation prompts. Once all assets are placed at the listed paths, mark the task Complete with `python scaffold/tools/utils.py complete tasks/TASK-###-name.md`. Wiring tasks that depend on the art/audio task will then unblock.
+> **Art/audio tasks:** When `/scaffold-implement` hits an `art` or `audio` task, it checks if all assets in the Asset Delivery table exist at their listed file paths. If any are missing, it reports which ones and blocks. If all assets are present, it auto-completes the task (with upstream ripple) and unblocks dependent wiring tasks. Create assets externally using the prompts in the Asset Delivery section, place them at the listed paths, then run implement again.
 
 > **ADRs during implementation:** When a conflict or ambiguity arises during implementation, create `decisions/ADR-###.md` using `templates/decision-template.md`. ADRs are permanent records that feed back into upcoming phases, specs, and tasks. This happens naturally during implementation — it's not a separate step.
 
@@ -1023,7 +1023,7 @@ The outer loop is a stability check. Most cycles pass through quickly — it onl
 
 | Skill | What | Why | How |
 |-------|------|-----|-----|
-| `implement-task` | Build it | End-to-end task execution | Code → tests → build → code review → doc sync → mark complete. Skips art/audio tasks (human-delivered). |
+| `implement-task` | Build it | End-to-end task execution | Code → tests → build → code review → doc sync → mark complete. Art/audio tasks: checks asset delivery, auto-completes when all files present. |
 | `add-regression-tests` | Test coverage | Ensure implementation correctness | Adds tests to regression harness from implementation files |
 | `build-and-test` | Verification gate | Confirm build + tests pass | Build, lint, regression, GUT suite |
 | `code-review` | Code quality | Adversarial review of code | 7 topics via external LLM. File-scope (pipeline) or system-scope (manual) |
