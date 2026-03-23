@@ -94,7 +94,7 @@ When a skill requires human input (triage, seed confirmation, revision proposals
 
 This pattern applies to:
 - `/scaffold-triage-tasks` and `/scaffold-triage-specs` (the original triage skills)
-- `/scaffold-bulk-seed-slices` and `/scaffold-bulk-seed-phases` (candidate confirmation)
+- `/scaffold-seed slices` and `/scaffold-seed phases` (candidate confirmation)
 - `/scaffold-revise-slices` and `/scaffold-revise-phases` (revision proposals)
 - Any skill with a "user must confirm" or "override" path
 
@@ -170,7 +170,7 @@ Called from the outer loop (Step 14) or when `/scaffold-revise-foundation --mode
 ### 2a — Create
 
 ```
-/scaffold-bulk-seed-systems
+/scaffold-seed systems
 ```
 
 Proposes systems from simulation responsibilities and owned player-facing concerns — not raw verbs. Reads Design Invariants, Player Control Model, Major System Domains, and Simulation Depth Target to shape proposals. Audits for overlap, missing coverage, invariant conflicts, and system category coverage before creation. Seeds glossary terms and creates system stubs with pre-filled purpose, simulation responsibility, design constraints, owned state, and dependencies.
@@ -235,7 +235,7 @@ Called from the outer loop (Step 14) or when `/scaffold-revise-foundation --mode
 ### 3a — Create
 
 ```
-/scaffold-bulk-seed-references
+/scaffold-seed references
 ```
 
 Reads all system designs and bulk-populates: architecture (foundation area definitions derived from system patterns), authority table, interface contracts, state transitions, entity components (including identity semantics — handle format, invalidation, persistence mapping), resource definitions, signal registry (with event-level taxonomy: gameplay/domain/engine), balance parameters, and shared enums/statuses. These docs surface the cross-cutting architecture assumptions that must be locked in Step 7.
@@ -277,7 +277,7 @@ Step 4 runs after systems and references are defined, so engine decisions have f
 ### 4a — Create
 
 ```
-/scaffold-bulk-seed-engine
+/scaffold-seed engine
 ```
 
 Asks which engine and implementation stack, then seeds all 14 engine docs from templates in one pass — no per-doc confirmation. Reads Step 1-3 outputs to align with architecture decisions. Confidence-tiered pre-fill: Strong (engine conventions known + Step 3 locked), Constrained TODO (Step 3 is TBD), Open TODO (no basis). Reports architecture alignment and constrained TODOs.
@@ -327,7 +327,7 @@ Step 5 runs after engine constraints are locked, so visual/UX decisions have ful
 ### 5a — Create
 
 ```
-/scaffold-bulk-seed-style
+/scaffold-seed style
 ```
 
 Reads the design doc and system designs (primary), architecture/reference/engine docs (secondary constraints), and theory docs (advisory) to seed all 6 docs. Auto-writes high-confidence sections directly, tags medium-confidence sections with rationale in the changelog, and leaves low-confidence sections as TODOs. Only pauses for user confirmation on ambiguous style direction, competing visual interpretations, major UX model choices, or decisions that would materially change downstream docs. Phases are processed in order (style-guide → color-system → ui-kit → interaction-model → feedback-system → audio-direction) but ui-kit and interaction-model may reveal back-propagation needs — these are noted in the report, not silently fixed. Skips already-authored docs.
@@ -427,7 +427,7 @@ Detect Step 5 doc drift from implementation feedback. Reads ADRs, known issues, 
 ### 6a — Create
 
 ```
-/scaffold-bulk-seed-input
+/scaffold-seed input
 ```
 
 Reads the design doc, interaction model, and engine input docs to pre-fill action-map, input-philosophy, keyboard/mouse bindings, gamepad bindings, and UI navigation.
@@ -617,7 +617,7 @@ Phases follow the same pipeline pattern as slices. **Loop 1** runs once when the
 #### 9a — Seed phases
 
 ```
-/scaffold-bulk-seed-phases
+/scaffold-seed phases
 ```
 
 Generates phase scope gate stubs from the roadmap, design doc, system designs, and ADR/KI history. Roadmap goals drive phase selection. Uses temporary labels during confirmation; assigns permanent IDs only after the user confirms. Additive-aware — won't re-generate existing phases.
@@ -712,7 +712,7 @@ Slices have two loops depending on where you are in the phase. **Loop 1** runs o
 #### 10a — Seed slices
 
 ```
-/scaffold-bulk-seed-slices
+/scaffold-seed slices
 ```
 
 Generates slice stubs for the phase from phase goals, system designs, and interface contracts. Phase goals drive slice selection. Lifecycle-aware — behaves differently for fresh phases vs phases with existing slices. Filters weak candidates (progress theater, fake verticality, duplicate proof) before presentation. Uses temporary labels during confirmation; assigns permanent IDs only after the user confirms the full candidate set, order, and dependencies. Defines implementation order and `Depends on` declarations — only the first slice will be approved initially.
@@ -805,7 +805,7 @@ This step uses a multi-pass planning loop to produce behavior-ready specs. The l
 #### 11a — Seed specs
 
 ```
-/scaffold-bulk-seed-specs
+/scaffold-seed specs
 ```
 
 Generates spec stubs for all slices from system designs and state transitions. Each spec describes BEHAVIOR, not implementation — no engine constructs.
@@ -881,7 +881,7 @@ This step uses a multi-pass planning loop to produce implementation-ready tasks.
 #### 12a — Seed tasks
 
 ```
-/scaffold-bulk-seed-tasks SLICE-###
+/scaffold-seed tasks SLICE-###
 ```
 
 Creates initial task stubs from the slice's specs, engine docs, and architecture context. Tasks describe HOW to implement spec behavior in the target engine.
@@ -1032,7 +1032,7 @@ The outer loop is a stability check. Most cycles pass through quickly — it onl
 
 | Skill | What | Why | How |
 |-------|------|-----|-----|
-| `bulk-seed-systems` | Propose and create system stubs | Define simulation layer from design intent | Proposes systems by ownership (not verbs). 9 category coverage audit, overlap/gap/invariant checks. Batch confirmation |
+| `seed systems` | Propose and create system stubs | Define simulation layer from design intent | Proposes systems by ownership (not verbs). 9 category coverage audit, overlap/gap/invariant checks. Batch confirmation |
 | `new-system` | Create a single system | Add a system after initial seeding | Overlap/authority/invariant audit for one system. Supports `--split-from` (split context) and `--trigger` (ADR/KI context). Pre-fills from parent or trigger |
 | `fix-systems` | Mechanical cleanup | Normalize before adversarial review | Formatter + linter. Auto-fixes structure/terminology/registration. Detects design signals for iterate-systems. All loops parallel |
 | `iterate-systems` | Adversarial review | Challenge system design quality | 5 topics (ownership, behavior, governance, cross-system, fitness) + System Identity Check + Reviewer Bias Pack. External LLM |
@@ -1043,7 +1043,7 @@ The outer loop is a stability check. Most cycles pass through quickly — it onl
 
 | Skill | What | Why | How |
 |-------|------|-----|-----|
-| `bulk-seed-references` | Create all Step 3 docs (9 docs) | Surface cross-cutting assumptions for Step 7 | 10-phase pipeline: architecture (scene tree, dependencies, tick order, update semantics, identity model, data flow rules, forbidden patterns, code patterns) → authority → interfaces → state transitions → entity components (with identity semantics) → resources → signals (with event taxonomy + Level column) → balance params → enums/statuses → report. Creates from templates if docs don't exist. Flags identity model decisions for Step 7 |
+| `seed references` | Create all Step 3 docs (9 docs) | Surface cross-cutting assumptions for Step 7 | 10-phase pipeline: architecture (scene tree, dependencies, tick order, update semantics, identity model, data flow rules, forbidden patterns, code patterns) → authority → interfaces → state transitions → entity components (with identity semantics) → resources → signals (with event taxonomy + Level column) → balance params → enums/statuses → report. Creates from templates if docs don't exist. Flags identity model decisions for Step 7 |
 | `fix-references` | Mechanical cleanup (Step 3) | Normalize before adversarial review | Per-doc checks (section structure, columns, terminology) + cross-doc consistency (authority↔entities, interfaces↔signals, states↔enums). Supports `--target doc.md` for single-doc focus |
 | `iterate-references` | Adversarial review (Step 3) | Challenge reference doc quality | 6 topics (architecture coherence, ownership model, contract quality, data model fitness, cross-doc consistency, simulation readiness) + Reviewer Bias Pack (8 patterns). Supports `--target` and `--topics` |
 | `revise-references` | Post-implementation drift | Keep reference docs matching accepted reality | Reads ADRs/KIs/system doc changes/spec friction/code review. Classifies design-led vs implementation-led. Auto-updates safe changes, escalates authority/architecture/contract/state changes. Supports `--target` and `--signals` |
@@ -1053,7 +1053,7 @@ The outer loop is a stability check. Most cycles pass through quickly — it onl
 
 | Skill | What | Why | How |
 |-------|------|-----|-----|
-| `bulk-seed-engine` | Create engine docs (15 total) | Lock technical foundations before visual/UX | One-pass seed of 15 docs from templates. Auto-detects engine + implementation stack. Confidence-tiered: Strong/Constrained TODO/Open TODO based on Step 3 maturity. No per-doc confirmation. Create-missing-only by default. |
+| `seed engine` | Create engine docs (15 total) | Lock technical foundations before visual/UX | One-pass seed of 15 docs from templates. Auto-detects engine + implementation stack. Confidence-tiered: Strong/Constrained TODO/Open TODO based on Step 3 maturity. No per-doc confirmation. Create-missing-only by default. |
 | `fix-engine` | Mechanical cleanup (Step 4) | Normalize before adversarial review | Per-doc checks (section structure, terminology, constrained TODO currency) + alignment signals (architecture contradictions, authority assumptions, timing mismatches, layer breaches). Cross-doc consistency pass. Supports `--target` |
 | `iterate-engine` | Adversarial review (Step 4) | Catch Step 3 violations, convention gaps, cross-engine inconsistencies | 6 topics via external LLM. Scope collapse guard, ambiguous upstream handling, review consistency lock, practicality check. Supports `--target` and `--topics` |
 | `validate --scope engine` | Structural gate (Step 4) | Deterministic engine doc validation | 28 checks: index, headers, structure, health, Step 3 alignment, cross-engine consistency, layer boundary, template drift, review freshness. Heuristic checks labeled [ADVISORY] |
@@ -1063,14 +1063,14 @@ The outer loop is a stability check. Most cycles pass through quickly — it onl
 
 | Skill | What | Why | How |
 |-------|------|-----|-----|
-| `bulk-seed-style` | Create style/UX docs (6 total) | Define visual language, interaction, feedback, audio | Seeds 6 docs in order: style-guide → color-system → ui-kit → interaction-model → feedback-system → audio-direction. Auto-writes high-confidence, tags medium in changelog, leaves low as TODO. Design doc and system designs are primary sources; architecture/reference/engine are secondary constraints. Pauses only on ambiguous or high-impact decisions. Reports confidence, assumptions, and cross-doc tensions. |
+| `seed style` | Create style/UX docs (6 total) | Define visual language, interaction, feedback, audio | Seeds 6 docs in order: style-guide → color-system → ui-kit → interaction-model → feedback-system → audio-direction. Auto-writes high-confidence, tags medium in changelog, leaves low as TODO. Design doc and system designs are primary sources; architecture/reference/engine are secondary constraints. Pauses only on ambiguous or high-impact decisions. Reports confidence, assumptions, and cross-doc tensions. |
 | `revise-style` | Post-implementation drift (Step 5) | Keep style docs matching accepted reality | Signal-driven. Reads ADRs/KIs/playtest patterns/design doc changes/system changes/Step 3 changes/code review/task friction. Auto-updates safe changes (tokens, entries, alignment), escalates aesthetic/interaction/accessibility with CRITICAL/HIGH/MEDIUM priority. Playtest patterns rank above individual specs. Follows Step 5 authority flow. Supports `--target` and `--signals` |
 
 ### Step 6 — Input
 
 | Skill | What | Why | How |
 |-------|------|-----|-----|
-| `bulk-seed-input` | Create input docs | Map interaction primitives to hardware | Seeds action-map, bindings, navigation, philosophy from design doc + interaction model + engine input docs |
+| `seed input` | Create input docs | Map interaction primitives to hardware | Seeds action-map, bindings, navigation, philosophy from design doc + interaction model + engine input docs |
 | `fix-input` | Mechanical cleanup | Normalize before adversarial review | Auto-fixes ID conventions, binding collisions, orphan bindings, terminology. Detects missing verbs, namespace confusion, action bloat, philosophy-interaction mismatches. Supports `--target` |
 | `iterate-input` | Adversarial review | Challenge input design quality | 6 topics (action traceability, philosophy coherence, binding fitness, navigation completeness, cross-doc, readiness) + mandatory end-to-end + device parity tests. External LLM. Supports `--target` and `--topics` |
 | `validate --scope input` | Structural gate | Confirm input docs are structurally ready | Action ID conventions, traceability (Source column), binding coverage/collisions, navigation completeness, upstream alignment, philosophy compliance, device parity, review freshness |
@@ -1093,7 +1093,7 @@ The outer loop is a stability check. Most cycles pass through quickly — it onl
 | `fix-roadmap` | Mechanical cleanup | Normalize roadmap structure | Auto-fixes vague goals, vision drift, stale ADR log, terminology |
 | `iterate-roadmap` | Adversarial review | Stress-test the roadmap | 5 topics (vision coverage, sequencing, milestones, risk, player experience). Roadmap Strength Rating |
 | `revise-roadmap` | Post-phase update | Keep roadmap current | Moves phase to Completed, updates Current Phase, logs ADRs, surfaces roadmap-level changes |
-| `bulk-seed-phases` | Create phase stubs | Define scope gates from roadmap | Seeds from roadmap goals + design doc + systems + ADRs |
+| `seed phases` | Create phase stubs | Define scope gates from roadmap | Seeds from roadmap goals + design doc + systems + ADRs |
 | `new-phase` | Create one phase | Individual phase with ADR context | Reads ADRs from prior phases to inform scope |
 | `fix-phase` | Mechanical cleanup | Normalize phases | Auto-fixes template text, vague criteria, broken references |
 | `iterate-phase` | Adversarial review | Stress-test phases | 4 topics (scope, entry/exit, systems, risk). Phase Strength Rating |
@@ -1106,21 +1106,21 @@ The outer loop is a stability check. Most cycles pass through quickly — it onl
 
 | Skill | What | Why | How |
 |-------|------|-----|-----|
-| `bulk-seed-slices` | Create slice stubs | Define vertical proof chunks | Lifecycle-aware seeding from phases + systems + interfaces |
+| `seed slices` | Create slice stubs | Define vertical proof chunks | Lifecycle-aware seeding from phases + systems + interfaces |
 | `new-slice` | Create one slice | Individual vertical slice | End-to-end playable chunk that proves something works |
 | `fix-slice` | Mechanical cleanup | Normalize slices | Auto-fixes template text, vague criteria, broken refs, stale dependencies |
 | `iterate-slice` | Adversarial review | Stress-test slices | 5 topics (proof, boundaries, integration, demo, sequencing) |
 | `approve-slices` | Lifecycle gate | Approve for spec seeding | 8 preconditions: order, dependencies, freshness, single-active |
 | `revise-slices` | Post-implementation update | Adjust remaining slices | Reads ADRs/KIs/triage/friction, reconciles dependency graph |
 | `validate --scope slices` | Slice gate | Slice structural integrity | Index, phase resolution, status, dependencies, single-active, review freshness |
-| `bulk-seed-specs` | Create spec stubs | Define atomic behaviors from slices | Slice-driven. Authority trace, behavior path completeness, ADR/KI impact. Overlap handling |
+| `seed specs` | Create spec stubs | Define atomic behaviors from slices | Slice-driven. Authority trace, behavior path completeness, ADR/KI impact. Overlap handling |
 | `new-spec` | Create one spec | Individual behavior spec | Reads system designs and ADRs for testable behavior |
 | `fix-spec` | Mechanical cleanup | Normalize specs | Auto-fixes vague ACs, missing sections, terminology, system misalignment |
 | `iterate-spec` | Adversarial review | Stress-test specs | 6 topics (behavior, systems, slices, contracts, ACs, edge cases) |
 | `triage-specs` | Human decisions | Resolve spec issues | Walks through merge/split/reassign/defer decisions. Writes decision log |
 | `approve-specs` | Lifecycle gate | Approve for task seeding | Marks Draft specs as Approved after stabilization converges |
 | `validate --scope specs` | Spec gate | Spec structural integrity | Index, slice membership, system resolution, status sync, triage targets |
-| `bulk-seed-tasks` | Create task stubs | Define implementation steps | Seeds from specs + engine/architecture/reference context |
+| `seed tasks` | Create task stubs | Define implementation steps | Seeds from specs + engine/architecture/reference context |
 | `new-task` | Create one task | Individual implementation task | Reads engine docs and ADRs for concrete steps |
 | `fix-task` | Mechanical cleanup | Normalize tasks | Auto-fixes vague objectives, missing files, terminology |
 | `iterate-task` | Adversarial review | Stress-test tasks | 5 topics (spec coverage, architecture, integration, executability, edge cases) |

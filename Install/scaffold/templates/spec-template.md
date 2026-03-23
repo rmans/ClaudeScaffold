@@ -5,7 +5,7 @@
 > **Conforms to:** [design/](../design/_index.md)
 > **System:** SYS-### (link to parent system)
 > **Secondary Systems:** — (SYS-### IDs if cross-system, or "—")
-> **Triggered by:** <!-- What created this spec? Examples: bulk-seed-specs SLICE-###, triage-specs split from SPEC-###, manual creation for gap identified in iterate-slice, ADR-### new behavior required. -->
+> **Triggered by:** <!-- What created this spec? Examples: seed specs SLICE-###, triage-specs split from SPEC-###, manual creation for gap identified in iterate-slice, ADR-### new behavior required. -->
 > **Created:** YYYY-MM-DD
 > **Last Updated:** YYYY-MM-DD
 > **Status:** Draft

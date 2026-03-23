@@ -1,6 +1,6 @@
 ---
 name: scaffold-seed
-description: "Dependency-aware document generation. Reads upstream docs + project state, proposes candidates one at a time, discovers dependencies, verifies coverage, creates files in order. Replaces all bulk-seed skills."
+description: "Dependency-aware document generation. Reads upstream docs + project state, proposes candidates one at a time, discovers dependencies, verifies coverage, creates files in order. Replaces all seed skill."
 argument-hint: "<layer> [--target scope]"
 allowed-tools: Read, Write, Grep, Glob, Bash
 user-invocable: true
@@ -12,7 +12,7 @@ Generate scaffold documents from upstream context: **$ARGUMENTS**
 
 This skill replaces all 9 `bulk-seed-*` skills with a single dispatcher that generates documents **one upstream requirement at a time**, discovers dependencies as it goes, verifies coverage after creation, and fills gaps.
 
-The key difference from the old bulk-seed skills: Claude only thinks about one thing at a time. seed.py holds the full inventory (what exists, what's been created, the dependency graph) in session state — Python doesn't forget.
+The key difference from the old seed skill: Claude only thinks about one thing at a time. seed.py holds the full inventory (what exists, what's been created, the dependency graph) in session state — Python doesn't forget.
 
 | Sub-skill | What it does |
 |-----------|-------------|

@@ -94,7 +94,7 @@ The design doc is a singleton living document — the highest authority for play
 **Systems** (Step 2) follow the same two-loop pattern:
 
 ```
-Loop 1 (initial):     bulk-seed-systems → fix-systems → iterate-systems → validate --scope systems
+Loop 1 (initial):     seed systems → fix-systems → iterate-systems → validate --scope systems
 Loop 2 (after each):  revise-systems → fix-systems → iterate-systems → validate --scope systems
 ```
 
@@ -103,7 +103,7 @@ System designs define per-system ownership, behavior, and interaction boundaries
 **References + Architecture** (Step 3) follow the same two-loop pattern across all 9 docs:
 
 ```
-Loop 1 (initial):     bulk-seed-references → fix-references → iterate-references → validate --scope refs
+Loop 1 (initial):     seed references → fix-references → iterate-references → validate --scope refs
 Loop 2 (after each):  revise-references → fix-references → iterate-references → validate --scope refs
 ```
 

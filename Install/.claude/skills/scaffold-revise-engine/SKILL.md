@@ -14,7 +14,7 @@ Engine docs (Rank 9) describe HOW to implement the game in the chosen engine. Bu
 This is distinct from:
 - **`fix-engine`** — repairs mechanical structure (this skill identifies *convention-level* drift, not formatting)
 - **`iterate-engine`** — adversarial design review (this skill processes *implementation signals*, not reviewer critique)
-- **`bulk-seed-engine`** — creates docs from scratch (this skill updates existing docs from feedback)
+- **`seed engine`** — creates docs from scratch (this skill updates existing docs from feedback)
 
 ## Arguments
 
@@ -37,7 +37,7 @@ This is distinct from:
 
 ## Preconditions
 
-1. **Engine docs exist** — verify at least 5 engine docs exist in `scaffold/engine/`. If fewer, stop: "Engine docs not ready. Run `/scaffold-bulk-seed-engine` first."
+1. **Engine docs exist** — verify at least 5 engine docs exist in `scaffold/engine/`. If fewer, stop: "Engine docs not ready. Run `/scaffold-seed engine` first."
 2. **Engine docs have been through pipeline** — verify at least one fix-engine or iterate-engine log exists in `scaffold/decisions/review/`. If none, stop: "Engine docs haven't been stabilized yet. Run the Step 4 pipeline first."
 3. **Implementation feedback exists** — if `--signals` is provided, at least one signal must resolve. If not provided, at least one feedback source must exist (ADRs, KIs, code review findings, Step 3 doc changes, task completions). If none exist, report: "No implementation feedback found. Nothing to revise."
 

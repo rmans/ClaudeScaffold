@@ -9,7 +9,7 @@ allowed-tools: Read, Edit, Write, Grep, Glob
 
 Create a new system design for: **$ARGUMENTS**
 
-This skill creates a single system design document — unlike `/scaffold-bulk-seed-systems` which proposes and creates an entire simulation layer at once. Use this when:
+This skill creates a single system design document — unlike `/scaffold-seed systems` which proposes and creates an entire simulation layer at once. Use this when:
 
 - `/scaffold-revise-systems` escalates an emergent subsystem, ownership shift, or identity drift that requires a new system
 - `/scaffold-validate` detects a design-to-systems coverage gap
@@ -52,7 +52,7 @@ Present relevant ADRs before defining the system.
 
 ## Step 3 — Overlap and Authority Audit
 
-Before defining the system, verify it has a valid reason to exist. This is a subset of the audit from `/scaffold-bulk-seed-systems`, adapted for a single system.
+Before defining the system, verify it has a valid reason to exist. This is a subset of the audit from `/scaffold-seed systems`, adapted for a single system.
 
 ### 3a. Overlap detection
 
@@ -131,7 +131,7 @@ Wait for user confirmation before proceeding. If overlap, authority conflicts, o
 
 1. If `--split-from` is provided, infer the gameplay domain from the parent system.
 2. Otherwise, infer from the argument and the design doc's Major System Domains.
-3. Classify against the system categories from `/scaffold-bulk-seed-systems`:
+3. Classify against the system categories from `/scaffold-seed systems`:
    - Actors, World State, Resources & Economy, Tasks & Coordination, Construction & Transformation, Conflict & Consequences, Progression & Meta, Events & Pressure, Player Oversight
 4. Present inferred classification for user confirmation.
 
@@ -201,7 +201,7 @@ If the system defines any Owned State entries, `design/authority.md` MUST be upd
 
 1. **Check** — does the new system's Owned State table have entries?
 2. **If yes** — update `design/authority.md` to register each owned state entry under this system's SYS-### ID using the Edit tool. Add rows to the authority table with the system as the single writer.
-3. **If authority.md doesn't exist yet** — skip this gate (it will be created by `/scaffold-bulk-seed-references`).
+3. **If authority.md doesn't exist yet** — skip this gate (it will be created by `/scaffold-seed references`).
 4. **If the owned state conflicts with an existing authority entry** — this should have been caught in Step 3b. If it wasn't, STOP and escalate to the user before writing the file.
 
 This is not a suggestion — it is a gate. Do not proceed to Step 7 with unregistered owned state when `authority.md` exists.

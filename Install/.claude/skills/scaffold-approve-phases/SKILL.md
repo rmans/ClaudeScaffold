@@ -109,7 +109,7 @@ This is a **hard stop with explicit override**.
 
 ### 9. Slice seeding readiness
 
-Verify that In Scope items are specific enough to generate slice candidates without introducing new systems or inventing undefined behaviors. This is the final gate before slice generation — approval unlocks `/scaffold-bulk-seed-slices`.
+Verify that In Scope items are specific enough to generate slice candidates without introducing new systems or inventing undefined behaviors. This is the final gate before slice generation — approval unlocks `/scaffold-seed slices`.
 
 If In Scope items are too abstract (system names instead of behaviors), **stop**: "In Scope items are not sliceable. Run `/scaffold-fix phase` or `/scaffold-iterate phase` to tighten scope."
 
@@ -154,7 +154,7 @@ If any content readiness or slice readiness check fails, **stop** and suggest ru
 | ... | ... | ... |
 
 ### Next Steps
-- Run `/scaffold-bulk-seed-slices` to generate vertical slices for this phase
+- Run `/scaffold-seed slices` to generate vertical slices for this phase
 - Or run `/scaffold-new-slice [slice-name]` to create slices one at a time
 - After implementing this phase, run `/scaffold-revise-phases P#-###` to update remaining phases
 ```

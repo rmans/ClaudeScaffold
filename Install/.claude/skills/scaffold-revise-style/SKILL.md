@@ -14,7 +14,7 @@ Step 5 docs are the visual identity and UX layer — they define aesthetic direc
 This is distinct from:
 - **`fix-style`** — repairs mechanical structure (this skill identifies *design-level* drift, not formatting)
 - **`iterate-style`** — adversarial design review (this skill processes *implementation signals*, not reviewer critique)
-- **`bulk-seed-style`** — creates docs from scratch (this skill updates existing docs from feedback)
+- **`seed style`** — creates docs from scratch (this skill updates existing docs from feedback)
 
 ## Arguments
 
@@ -50,7 +50,7 @@ This is distinct from:
 
 ## Preconditions
 
-1. **Step 5 docs exist** — if `--target` is set, verify the targeted doc exists. If not set, verify at least 1 Step 5 doc exists. If none exist, stop: "No style docs to revise. Run `/scaffold-bulk-seed-style` first." Cross-doc checks that require a missing peer doc are downgraded to partial coverage warnings (e.g., "color-system not found — skipping token resolution checks").
+1. **Step 5 docs exist** — if `--target` is set, verify the targeted doc exists. If not set, verify at least 1 Step 5 doc exists. If none exist, stop: "No style docs to revise. Run `/scaffold-seed style` first." Cross-doc checks that require a missing peer doc are downgraded to partial coverage warnings (e.g., "color-system not found — skipping token resolution checks").
 2. **Step 5 docs have been through pipeline** — verify at least one fix-style or iterate-style log exists in `scaffold/decisions/review/`. If none, stop: "Style docs haven't been stabilized yet. Run the Step 5 pipeline first."
 3. **Implementation feedback exists** — if `--signals` is provided, at least one signal must resolve. If not provided, at least one feedback source must exist (ADRs, KIs, system doc changes, Step 3 doc changes, playtest feedback, task completions). If none exist, report: "No implementation feedback found. Nothing to revise."
 

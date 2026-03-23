@@ -131,23 +131,23 @@ This table defines what each document reads (influenced by) and what reads it (i
 
 | Doc | What | Why | Who reads | Who writes | When created | How it's used |
 |-----|------|-----|-----------|------------|-------------|---------------|
-| **style-guide.md** | Visual identity, rendering style, lighting model, animation style, iconography | Defines what the game LOOKS like | Art skills, UI skills, engine UI doc | bulk-seed-style, revise-style | Step 5 | Visual decisions that all presentation must follow. |
-| **color-system.md** | Color palette, semantic colors, accessibility rules | Defines the color LANGUAGE | Art skills, UI skills | bulk-seed-style, revise-style | Step 5 | Every color choice traces back here. |
-| **ui-kit.md** | UI component definitions, panel patterns, layout rules, theme conventions | Defines how UI is STRUCTURED | Engine UI doc, task implementations | bulk-seed-style, revise-style | Step 5 | Governs all UI implementation. |
-| **glossary.md** | Canonical terminology, NOT-column forbidden synonyms | Defines what things are CALLED | Every skill (terminology compliance) | bulk-seed-systems | Step 2 | All docs must use canonical terms. validate checks compliance. |
-| **interaction-model.md** | Selection model, command model, drag behaviors, input feedback, layer navigation, camera interaction | Defines how the player INTERACTS with the game — input→intent mapping | Input docs, engine input doc, UI skills, specs | bulk-seed-style, revise-style | Step 5 | Governs what inputs implement and what UI presents. Scoped to player input, not system response. |
-| **feedback-system.md** | Feedback types, timing rules, priority/stacking, cross-modal coordination, event-response table | Defines how the SYSTEM RESPONDS to events and player actions — coordinated visual + audio + UI | All presentation docs, engine docs, specs, tasks | bulk-seed-style, revise-style | Step 5 | Governs the "feel" layer. Bridges interaction-model (what player does) and presentation docs (what player sees/hears). |
-| **audio-direction.md** | Audio philosophy, sound categories, music direction, silence rules, asset style rules | Defines what the game SOUNDS like | Audio skills, engine docs, feedback-system | bulk-seed-style, revise-style | Step 5 | Governs all audio implementation. Sound priority coordination is in feedback-system.md. |
+| **style-guide.md** | Visual identity, rendering style, lighting model, animation style, iconography | Defines what the game LOOKS like | Art skills, UI skills, engine UI doc | seed style, revise-style | Step 5 | Visual decisions that all presentation must follow. |
+| **color-system.md** | Color palette, semantic colors, accessibility rules | Defines the color LANGUAGE | Art skills, UI skills | seed style, revise-style | Step 5 | Every color choice traces back here. |
+| **ui-kit.md** | UI component definitions, panel patterns, layout rules, theme conventions | Defines how UI is STRUCTURED | Engine UI doc, task implementations | seed style, revise-style | Step 5 | Governs all UI implementation. |
+| **glossary.md** | Canonical terminology, NOT-column forbidden synonyms | Defines what things are CALLED | Every skill (terminology compliance) | seed systems | Step 2 | All docs must use canonical terms. validate checks compliance. |
+| **interaction-model.md** | Selection model, command model, drag behaviors, input feedback, layer navigation, camera interaction | Defines how the player INTERACTS with the game — input→intent mapping | Input docs, engine input doc, UI skills, specs | seed style, revise-style | Step 5 | Governs what inputs implement and what UI presents. Scoped to player input, not system response. |
+| **feedback-system.md** | Feedback types, timing rules, priority/stacking, cross-modal coordination, event-response table | Defines how the SYSTEM RESPONDS to events and player actions — coordinated visual + audio + UI | All presentation docs, engine docs, specs, tasks | seed style, revise-style | Step 5 | Governs the "feel" layer. Bridges interaction-model (what player does) and presentation docs (what player sees/hears). |
+| **audio-direction.md** | Audio philosophy, sound categories, music direction, silence rules, asset style rules | Defines what the game SOUNDS like | Audio skills, engine docs, feedback-system | seed style, revise-style | Step 5 | Governs all audio implementation. Sound priority coordination is in feedback-system.md. |
 
 ### Rank 3 — Input Bindings
 
 | Doc | What | Why | Who reads | Who writes | When created | How it's used |
 |-----|------|-----|-----------|------------|-------------|---------------|
-| **action-map.md** | Canonical action IDs and their purposes | Maps player VERBS to action names | Engine input doc, binding docs | bulk-seed-input | Step 6 | Source of truth for what actions exist. |
-| **default-bindings-kbm.md** | Keyboard/mouse binding assignments | Concrete KEY → ACTION mapping | Engine input doc, tasks | bulk-seed-input | Step 6 | Implementation reads this to wire InputMap. |
-| **default-bindings-gamepad.md** | Gamepad binding assignments | Concrete BUTTON → ACTION mapping | Engine input doc, tasks | bulk-seed-input | Step 6 | Same as KBM for gamepad. |
-| **ui-navigation.md** | Focus flow, tab order, navigation rules | How the player NAVIGATES UI without mouse | Engine UI doc, tasks | bulk-seed-input | Step 6 | Governs focus/navigation implementation. |
-| **input-philosophy.md** | Input design principles, accessibility goals | WHY inputs are designed the way they are | All input docs, specs | bulk-seed-input | Step 6 | Advisory within the input layer — principles that govern binding choices. |
+| **action-map.md** | Canonical action IDs and their purposes | Maps player VERBS to action names | Engine input doc, binding docs | seed input | Step 6 | Source of truth for what actions exist. |
+| **default-bindings-kbm.md** | Keyboard/mouse binding assignments | Concrete KEY → ACTION mapping | Engine input doc, tasks | seed input | Step 6 | Implementation reads this to wire InputMap. |
+| **default-bindings-gamepad.md** | Gamepad binding assignments | Concrete BUTTON → ACTION mapping | Engine input doc, tasks | seed input | Step 6 | Same as KBM for gamepad. |
+| **ui-navigation.md** | Focus flow, tab order, navigation rules | How the player NAVIGATES UI without mouse | Engine UI doc, tasks | seed input | Step 6 | Governs focus/navigation implementation. |
+| **input-philosophy.md** | Input design principles, accessibility goals | WHY inputs are designed the way they are | All input docs, specs | seed input | Step 6 | Advisory within the input layer — principles that govern binding choices. |
 
 ### Rank 4 — Technical Enforcement
 
@@ -155,71 +155,71 @@ Architecture, interfaces, and authority are all the same category: technical enf
 
 | Doc | What | Why | Who reads | Who writes | When created | How it's used |
 |-----|------|-----|-----------|------------|-------------|---------------|
-| **architecture.md** | Scene tree, dependency graph, tick order, simulation update semantics, data flow rules, forbidden patterns, identity model, boot order, failure/recovery patterns, code patterns | Defines HOW systems connect — the structural constraints that implementation must follow | Every technical skill, all system/reference/engine docs | bulk-seed-references, fix-references, revise-references | Step 3 | Constrains implementation of design. If architecture says "no cross-system mutation," implementation must comply. If design requires behavior that conflicts, file an ADR to update architecture — not the other way. |
-| **interfaces.md** | Cross-system contracts: source, target, data, direction, realization path, timing, failure guarantees | Defines WHAT flows between systems and under what guarantees | System designs, signal-registry, engine docs, specs | bulk-seed-references, revise-references | Step 3 | Canonical for contracts. signal-registry conforms to this. |
-| **authority.md** | Single-writer ownership table: variable, owning system, write mode, authority type, persistence owner, readers, cadence | Defines WHO WRITES each piece of game data | Entity-components, system designs, engine docs, specs | bulk-seed-references, revise-references | Step 3 | Canonical for ownership. entity-components derives from this. |
+| **architecture.md** | Scene tree, dependency graph, tick order, simulation update semantics, data flow rules, forbidden patterns, identity model, boot order, failure/recovery patterns, code patterns | Defines HOW systems connect — the structural constraints that implementation must follow | Every technical skill, all system/reference/engine docs | seed references, fix-references, revise-references | Step 3 | Constrains implementation of design. If architecture says "no cross-system mutation," implementation must comply. If design requires behavior that conflicts, file an ADR to update architecture — not the other way. |
+| **interfaces.md** | Cross-system contracts: source, target, data, direction, realization path, timing, failure guarantees | Defines WHAT flows between systems and under what guarantees | System designs, signal-registry, engine docs, specs | seed references, revise-references | Step 3 | Canonical for contracts. signal-registry conforms to this. |
+| **authority.md** | Single-writer ownership table: variable, owning system, write mode, authority type, persistence owner, readers, cadence | Defines WHO WRITES each piece of game data | Entity-components, system designs, engine docs, specs | seed references, revise-references | Step 3 | Canonical for ownership. entity-components derives from this. |
 
 ### Rank 5 — System Behavior
 
 | Doc | What | Why | Who reads | Who writes | When created | How it's used |
 |-----|------|-----|-----------|------------|-------------|---------------|
-| **systems/SYS-###** | Per-system: purpose, simulation responsibility, player actions, system resolution, owned state, dependencies, consequences, state lifecycle, edge cases | Defines WHAT each system owns and does — player-visible behavior only | Authority, interfaces, references, specs, tasks | bulk-seed-systems, revise-systems | Step 2 | Source of truth for individual system behavior. Specs derive from these. |
-| **state-transitions.md** | State machines: states, transitions, triggers, timing, authorities, invariants, illegal transitions | Defines VALID STATES and how entities move between them | Entity-components, enums, system designs, specs | bulk-seed-references, revise-references | Step 3 | Canonical for state names. enums-and-statuses conforms to this. |
+| **systems/SYS-###** | Per-system: purpose, simulation responsibility, player actions, system resolution, owned state, dependencies, consequences, state lifecycle, edge cases | Defines WHAT each system owns and does — player-visible behavior only | Authority, interfaces, references, specs, tasks | seed systems, revise-systems | Step 2 | Source of truth for individual system behavior. Specs derive from these. |
+| **state-transitions.md** | State machines: states, transitions, triggers, timing, authorities, invariants, illegal transitions | Defines VALID STATES and how entities move between them | Entity-components, enums, system designs, specs | seed references, revise-references | Step 3 | Canonical for state names. enums-and-statuses conforms to this. |
 
 ### Rank 6 — Reference Data
 
 | Doc | What | Why | Who reads | Who writes | When created | How it's used |
 |-----|------|-----|-----------|------------|-------------|---------------|
-| **entity-components.md** | Entity data shapes: fields, types, components, authority, cadence, persistence | Defines the DATA SHAPE of every entity | Engine docs, specs, tasks | bulk-seed-references, revise-references | Step 3 | Implementation reads this for struct/class definitions. Authority column derived from authority.md. |
-| **resource-definitions.md** | Resources: tiers, categories, production chains, stations, fungibility, storage types | Defines WHAT RESOURCES exist and how they transform | System designs, specs, tasks | bulk-seed-references, revise-references | Step 3 | Implementation reads this for resource handling. |
-| **signal-registry.md** | Signals and intents: names, levels, payloads, emitters, consumers, delivery expectations | Defines EVERY cross-system notification and request | Engine docs, architecture signal wiring, specs, tasks | bulk-seed-references, revise-references | Step 3 | Implementation reads this for signal wiring. Conforms to interfaces.md. |
-| **balance-params.md** | Tunable numbers: parameter, type, value, unit, range, system, dependencies | Defines EVERY gameplay-affecting number | Specs, tasks, playtesting | bulk-seed-references, revise-references | Step 3 | Implementation reads this for constants. Playtesting tunes values. |
-| **enums-and-statuses.md** | Shared cross-system vocabulary: states, meanings, used by, owning authority, source of truth | Defines SHARED STATE TERMS used across multiple systems | System designs, entity-components, state-transitions | bulk-seed-references, revise-references | Step 3 | Prevents vocabulary drift. Conforms to state-transitions.md. |
+| **entity-components.md** | Entity data shapes: fields, types, components, authority, cadence, persistence | Defines the DATA SHAPE of every entity | Engine docs, specs, tasks | seed references, revise-references | Step 3 | Implementation reads this for struct/class definitions. Authority column derived from authority.md. |
+| **resource-definitions.md** | Resources: tiers, categories, production chains, stations, fungibility, storage types | Defines WHAT RESOURCES exist and how they transform | System designs, specs, tasks | seed references, revise-references | Step 3 | Implementation reads this for resource handling. |
+| **signal-registry.md** | Signals and intents: names, levels, payloads, emitters, consumers, delivery expectations | Defines EVERY cross-system notification and request | Engine docs, architecture signal wiring, specs, tasks | seed references, revise-references | Step 3 | Implementation reads this for signal wiring. Conforms to interfaces.md. |
+| **balance-params.md** | Tunable numbers: parameter, type, value, unit, range, system, dependencies | Defines EVERY gameplay-affecting number | Specs, tasks, playtesting | seed references, revise-references | Step 3 | Implementation reads this for constants. Playtesting tunes values. |
+| **enums-and-statuses.md** | Shared cross-system vocabulary: states, meanings, used by, owning authority, source of truth | Defines SHARED STATE TERMS used across multiple systems | System designs, entity-components, state-transitions | seed references, revise-references | Step 3 | Prevents vocabulary drift. Conforms to state-transitions.md. |
 
 ### Rank 7 — Scope
 
 | Doc | What | Why | Who reads | Who writes | When created | How it's used |
 |-----|------|-----|-----------|------------|-------------|---------------|
 | **phases/roadmap.md** | Vision checkpoint, phase overview, capability ladder, system coverage, phase boundaries, transition protocol | Defines the PROJECT PLAN from start to ship | Phases, revise-roadmap, revise-phases | new-roadmap, revise-roadmap | Step 8 | Controls phase sequencing. Updated after each phase completes. |
-| **phases/P#-###** | Phase scope gates: goal, capability unlocked, in/out scope, entry/exit criteria, systems covered | Defines WHEN behavior gets built and what milestone it proves | Slices, roadmap | bulk-seed-phases, revise-phases | Step 9 (planning) | Controls implementation order. Only one phase is Approved at a time. |
+| **phases/P#-###** | Phase scope gates: goal, capability unlocked, in/out scope, entry/exit criteria, systems covered | Defines WHEN behavior gets built and what milestone it proves | Slices, roadmap | seed phases, revise-phases | Step 9 (planning) | Controls implementation order. Only one phase is Approved at a time. |
 
 ### Rank 8 — Integration
 
 | Doc | What | Why | Who reads | Who writes | When created | How it's used |
 |-----|------|-----|-----------|------------|-------------|---------------|
-| **slices/SLICE-###** | Vertical slice contracts: goal, proof value, integration points, done criteria, specs included, tasks table | Defines WHAT end-to-end chunk to build and what it proves | Specs, tasks, revise-slices | bulk-seed-slices, revise-slices | Step 10 (planning) | Organizes implementation into provable vertical chunks. Only one slice is Approved at a time per phase. |
+| **slices/SLICE-###** | Vertical slice contracts: goal, proof value, integration points, done criteria, specs included, tasks table | Defines WHAT end-to-end chunk to build and what it proves | Specs, tasks, revise-slices | seed slices, revise-slices | Step 10 (planning) | Organizes implementation into provable vertical chunks. Only one slice is Approved at a time per phase. |
 
 ### Rank 9 — Behavior Specs
 
 | Doc | What | Why | Who reads | Who writes | When created | How it's used |
 |-----|------|-----|-----------|------------|-------------|---------------|
-| **specs/SPEC-###** | Atomic behavior descriptions: acceptance criteria, preconditions, postconditions, systems involved | Defines WHAT the system must DO — testable behavior | Tasks, engine docs | bulk-seed-specs, triage-specs | Step 11 (planning) | Tasks are derived from these. Describes final product behavior. |
+| **specs/SPEC-###** | Atomic behavior descriptions: acceptance criteria, preconditions, postconditions, systems involved | Defines WHAT the system must DO — testable behavior | Tasks, engine docs | seed specs, triage-specs | Step 11 (planning) | Tasks are derived from these. Describes final product behavior. |
 
 ### Rank 10 — Engine Constraints
 
 | Doc | What | Why | Who reads | Who writes | When created | How it's used |
 |-----|------|-----|-----------|------------|-------------|---------------|
-| **engine/[prefix]-coding-best-practices.md** | C++/scripting boundary, naming, signals, lifetime, serialization, testing, allowed/forbidden patterns | Defines HOW to write code correctly in this engine | Tasks, code review | bulk-seed-engine, revise-engine | Step 4 | Every code change must follow these conventions. Convention source for all engine docs. |
-| **engine/[prefix]-ui-best-practices.md** | UI rendering approach, themes, layout, focus, scaling, performance | Defines HOW to build UI correctly | Tasks, code review | bulk-seed-engine | Step 4 | Every UI implementation follows these rules. |
-| **engine/[prefix]-input-system.md** | Input routing, device handling, remapping, pause behavior | Defines HOW input is handled at the engine level | Tasks | bulk-seed-engine | Step 4 | Input implementation follows these patterns. |
-| **engine/[prefix]-scene-architecture.md** | Scene tree patterns, lifecycle, pooling, singleton policy, communication paths | Defines HOW scenes and nodes are structured | Tasks, code review | bulk-seed-engine | Step 4 | Every scene/node decision follows these rules. |
-| **engine/[prefix]-performance-budget.md** | Frame/memory/render budgets, profiling, escalation criteria | Defines PERFORMANCE LIMITS code must respect | Tasks, code review | bulk-seed-engine | Step 4 | Budget violations are bugs. |
-| **engine/[prefix]-simulation-runtime.md** | Tick orchestration, fixed/variable step, queued work, pause/speed | Defines HOW the simulation loop executes | Tasks, code review | bulk-seed-engine | Step 4 | Translates architecture.md timing rules into engine implementation. |
-| **engine/[prefix]-save-load-architecture.md** | Serialization boundaries, entity restoration, handle rebind, versioning | Defines HOW live simulation state is persisted and restored | Tasks, code review | bulk-seed-engine | Step 4 | Every save/load decision follows these patterns. |
-| **engine/[prefix]-ai-task-execution.md** | Task reservation lifecycle, interruption, stale-handle cleanup, arbitration | Defines HOW AI task selection and execution work at the engine level | Tasks, code review | bulk-seed-engine | Step 4 | Task/reservation implementation follows these patterns. |
-| **engine/[prefix]-data-and-content-pipeline.md** | Content vs runtime boundary, definition loading, ID mapping, validation | Defines HOW authored content flows into runtime | Tasks, code review | bulk-seed-engine | Step 4 | Content loading and validation follows these rules. |
-| **engine/[prefix]-localization.md** | Translation keys, tr() usage, CSV pipeline, formatting, fallback | Defines HOW player-visible text is translated | Tasks, code review | bulk-seed-engine | Step 4 | Every string follows these conventions. |
-| **engine/[prefix]-post-processing.md** | Effects, cost limits, readability safeguards, overlay interaction | Defines HOW visual effects are applied | Tasks, code review | bulk-seed-engine | Step 4 | Post-processing implementation follows these rules. |
-| **engine/[prefix]-asset-import-pipeline.md** | Import presets, source vs runtime boundary, data table import | Defines HOW assets flow from source to engine | Tasks | bulk-seed-engine | Step 4 | Asset import follows these rules. |
-| **engine/[prefix]-debugging-and-observability.md** | Overlays, event tracing, state inspection, [DIAG] warnings | Defines HOW to debug the simulation | Tasks, code review | bulk-seed-engine | Step 4 | Debugging and diagnostics follow these patterns. |
-| **engine/[prefix]-build-and-test-workflow.md** | Build configurations, test framework, CI/headless testing | Defines HOW to build and test the project | Tasks, CI | bulk-seed-engine | Step 4 | Build and test pipeline follows these rules. |
+| **engine/[prefix]-coding-best-practices.md** | C++/scripting boundary, naming, signals, lifetime, serialization, testing, allowed/forbidden patterns | Defines HOW to write code correctly in this engine | Tasks, code review | seed engine, revise-engine | Step 4 | Every code change must follow these conventions. Convention source for all engine docs. |
+| **engine/[prefix]-ui-best-practices.md** | UI rendering approach, themes, layout, focus, scaling, performance | Defines HOW to build UI correctly | Tasks, code review | seed engine | Step 4 | Every UI implementation follows these rules. |
+| **engine/[prefix]-input-system.md** | Input routing, device handling, remapping, pause behavior | Defines HOW input is handled at the engine level | Tasks | seed engine | Step 4 | Input implementation follows these patterns. |
+| **engine/[prefix]-scene-architecture.md** | Scene tree patterns, lifecycle, pooling, singleton policy, communication paths | Defines HOW scenes and nodes are structured | Tasks, code review | seed engine | Step 4 | Every scene/node decision follows these rules. |
+| **engine/[prefix]-performance-budget.md** | Frame/memory/render budgets, profiling, escalation criteria | Defines PERFORMANCE LIMITS code must respect | Tasks, code review | seed engine | Step 4 | Budget violations are bugs. |
+| **engine/[prefix]-simulation-runtime.md** | Tick orchestration, fixed/variable step, queued work, pause/speed | Defines HOW the simulation loop executes | Tasks, code review | seed engine | Step 4 | Translates architecture.md timing rules into engine implementation. |
+| **engine/[prefix]-save-load-architecture.md** | Serialization boundaries, entity restoration, handle rebind, versioning | Defines HOW live simulation state is persisted and restored | Tasks, code review | seed engine | Step 4 | Every save/load decision follows these patterns. |
+| **engine/[prefix]-ai-task-execution.md** | Task reservation lifecycle, interruption, stale-handle cleanup, arbitration | Defines HOW AI task selection and execution work at the engine level | Tasks, code review | seed engine | Step 4 | Task/reservation implementation follows these patterns. |
+| **engine/[prefix]-data-and-content-pipeline.md** | Content vs runtime boundary, definition loading, ID mapping, validation | Defines HOW authored content flows into runtime | Tasks, code review | seed engine | Step 4 | Content loading and validation follows these rules. |
+| **engine/[prefix]-localization.md** | Translation keys, tr() usage, CSV pipeline, formatting, fallback | Defines HOW player-visible text is translated | Tasks, code review | seed engine | Step 4 | Every string follows these conventions. |
+| **engine/[prefix]-post-processing.md** | Effects, cost limits, readability safeguards, overlay interaction | Defines HOW visual effects are applied | Tasks, code review | seed engine | Step 4 | Post-processing implementation follows these rules. |
+| **engine/[prefix]-asset-import-pipeline.md** | Import presets, source vs runtime boundary, data table import | Defines HOW assets flow from source to engine | Tasks | seed engine | Step 4 | Asset import follows these rules. |
+| **engine/[prefix]-debugging-and-observability.md** | Overlays, event tracing, state inspection, [DIAG] warnings | Defines HOW to debug the simulation | Tasks, code review | seed engine | Step 4 | Debugging and diagnostics follow these patterns. |
+| **engine/[prefix]-build-and-test-workflow.md** | Build configurations, test framework, CI/headless testing | Defines HOW to build and test the project | Tasks, CI | seed engine | Step 4 | Build and test pipeline follows these rules. |
 | **engine/implementation-patterns.md** | Project-specific patterns: problem, when to use, structure, anti-pattern | Records HOW specific implementation challenges were solved | Tasks, code review | Grows during implementation | Implementation | Prevents repeating solved problems. Not pre-filled — grows from experience. |
 
 ### Rank 11 — Implementation Steps
 
 | Doc | What | Why | Who reads | Who writes | When created | How it's used |
 |-----|------|-----|-----------|------------|-------------|---------------|
-| **tasks/TASK-###** | Implementation steps: objective, files touched, acceptance criteria, dependencies | Defines HOW to build a specific piece of behavior | Developers, code review | bulk-seed-tasks, triage-tasks | Step 12 (planning) | Must follow engine constraints (Rank 10), specs (Rank 9), and everything above. |
+| **tasks/TASK-###** | Implementation steps: objective, files touched, acceptance criteria, dependencies | Defines HOW to build a specific piece of behavior | Developers, code review | seed tasks, triage-tasks | Step 12 (planning) | Must follow engine constraints (Rank 10), specs (Rank 9), and everything above. |
 
 ### Unranked — Advisory, Decisions & History
 

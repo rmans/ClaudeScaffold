@@ -9,7 +9,7 @@ allowed-tools: Read, Edit, Grep, Glob
 
 Scan scaffold docs for domain terms that should be in the glossary but aren't: **$ARGUMENTS**
 
-The glossary gets its initial population in Step 2 (`bulk-seed-systems`), but every subsequent step introduces new domain terms — entity names, resource types, state labels, signal names, interaction patterns. Without periodic syncing, the glossary falls behind the project's actual vocabulary, and terminology drift goes undetected.
+The glossary gets its initial population in Step 2 (`seed systems`), but every subsequent step introduces new domain terms — entity names, resource types, state labels, signal names, interaction patterns. Without periodic syncing, the glossary falls behind the project's actual vocabulary, and terminology drift goes undetected.
 
 This skill extracts candidate terms, filters for glossary-worthiness, checks for ambiguity with existing terms, and presents a batch with per-term decision options (canonical, alias, NOT-entry, or reject). It also detects stale glossary terms that may no longer be in use. It never auto-writes — every change is user-confirmed.
 
@@ -24,7 +24,7 @@ This skill extracts candidate terms, filters for glossary-worthiness, checks for
 
 1. **Read** `scaffold/design/glossary.md`.
 2. **Build the known-terms set** — all terms in the Terms table (canonical terms AND NOT-column entries). Both are "known" — canonical terms are registered, NOT-column terms are explicitly rejected. Neither should be proposed again.
-3. If the glossary doesn't exist, stop: "No glossary found. Run `/scaffold-bulk-seed-systems` first to create and populate the glossary."
+3. If the glossary doesn't exist, stop: "No glossary found. Run `/scaffold-seed systems` first to create and populate the glossary."
 
 ## Step 2 — Extract Candidates by Source
 

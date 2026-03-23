@@ -14,7 +14,7 @@ System designs are the simulation layer's source of truth — they define what e
 This is distinct from:
 - **`fix-systems`** — repairs mechanical structure (this skill identifies *design-level* drift, not formatting)
 - **`iterate-systems`** — adversarial design review (this skill processes *implementation signals*, not reviewer critique)
-- **`bulk-seed-systems`** — creates system docs from scratch (this skill updates existing docs from feedback)
+- **`seed systems`** — creates system docs from scratch (this skill updates existing docs from feedback)
 
 ## Arguments
 
@@ -25,7 +25,7 @@ This is distinct from:
 
 ## Preconditions
 
-1. **System docs exist** — verify at least one `design/systems/SYS-###-*.md` exists and is not at template defaults. If none exist, stop: "No system docs to revise. Run `/scaffold-bulk-seed-systems` first."
+1. **System docs exist** — verify at least one `design/systems/SYS-###-*.md` exists and is not at template defaults. If none exist, stop: "No system docs to revise. Run `/scaffold-seed systems` first."
 2. **System docs have been through Step 2 pipeline** — verify at least one fix or iterate log exists in `scaffold/decisions/review/`. If no logs exist, stop: "System docs haven't been stabilized yet. Run the Step 2 pipeline (seed → fix → iterate → validate) first."
 3. **Implementation feedback exists** — if `--signals` is provided, at least one signal must resolve to a real source document (see signal resolution rules). If `--signals` is not provided, at least one of: accepted ADRs, known issues entries, triage logs, code review findings, or spec/task friction signals must exist. If none exist, report: "No implementation feedback found. Nothing to revise."
 

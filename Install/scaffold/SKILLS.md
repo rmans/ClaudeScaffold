@@ -1,6 +1,6 @@
 # Skills Reference
 
-> Man-page reference for all 56 scaffold slash commands. Each entry shows synopsis, description, arguments, examples, and related skills.
+> Man-page reference for all 48 scaffold slash commands. Each entry shows synopsis, description, arguments, examples, and related skills.
 >
 > **When to use each skill** — see [WORKFLOW.md](WORKFLOW.md) for the step-by-step pipeline order.
 
@@ -19,16 +19,8 @@
 | `/scaffold-new-system` | `[system-name] [--split-from SYS-###] [--trigger ADR-###\|KI:keyword]` | Create a single system design with overlap/authority audit |
 | `/scaffold-new-spec` | `[spec-name]` | Create a behavior spec with auto SPEC-### ID |
 | `/scaffold-new-task` | `[task-name]` | Create an implementation task with auto TASK-### ID |
-| **Bulk Seed** | | |
-| `/scaffold-bulk-seed-style` | — | Seed all 6 Step 5 visual/UX docs from upstream context |
-| `/scaffold-bulk-seed-systems` | — | Seed glossary + system stubs from design doc |
-| `/scaffold-bulk-seed-references` | — | Seed all 9 reference/architecture docs from systems |
-| `/scaffold-bulk-seed-engine` | `[--engine godot4\|unity\|unreal5\|other]` | Select engine, then seed all engine docs |
-| `/scaffold-bulk-seed-input` | — | Seed all 5 input docs from design doc |
-| `/scaffold-bulk-seed-phases` | — | Seed phase stubs from roadmap |
-| `/scaffold-bulk-seed-slices` | — | Seed slice stubs from phases + systems + interfaces |
-| `/scaffold-bulk-seed-specs` | — | Seed spec stubs from slices + systems + states |
-| `/scaffold-bulk-seed-tasks` | — | Seed task stubs from specs + engine docs + signals |
+| **Seed** | | |
+| `/scaffold-seed` | `<layer> [--target scope]` | Dependency-aware document generation for any layer (systems, references, engine, style, input, phases, slices, specs, tasks). Processes one requirement at a time, discovers dependencies, verifies coverage. Orchestrated by seed.py with per-layer YAML configs. |
 | **Fix** | | |
 | `/scaffold-fix` | `<layer> [target] [--sections "..."] [--iterations N]` | Mechanical cleanup for any layer (design, systems, spec, task, slice, phase, roadmap, references, style, input, engine, cross-cutting). Orchestrated by local-review.py with per-layer YAML configs. |
 | **Iterate** | | |
@@ -170,7 +162,7 @@ Creates a vertical slice at `slices/SLICE-###-<name>.md` with automatic sequenti
 
 **See Also**
 
-`/scaffold-bulk-seed-slices`, `/scaffold-new-spec`
+`/scaffold-seed slices`, `/scaffold-new-spec`
 
 ---
 
@@ -203,7 +195,7 @@ Creates a single system design at `design/systems/SYS-###-<name>_draft.md` with 
 
 **See Also**
 
-`/scaffold-bulk-seed-systems`, `/scaffold-fix systems`, `/scaffold-iterate systems`
+`/scaffold-seed systems`, `/scaffold-fix systems`, `/scaffold-iterate systems`
 
 ---
 
@@ -233,7 +225,7 @@ Creates a behavior spec at `specs/SPEC-###-<name>.md` with automatic sequential 
 
 **See Also**
 
-`/scaffold-bulk-seed-specs`, `/scaffold-new-task`
+`/scaffold-seed specs`, `/scaffold-new-task`
 
 ---
 
@@ -263,7 +255,7 @@ Creates an implementation task at `tasks/TASK-###-<name>.md` with automatic sequ
 
 **See Also**
 
-`/scaffold-bulk-seed-tasks`, `/scaffold-complete`
+`/scaffold-seed tasks`, `/scaffold-complete`
 
 ---
 
@@ -273,13 +265,13 @@ Skills for bulk-populating multiple documents from source documents. All bulk se
 
 ---
 
-### /scaffold-bulk-seed-style
+### /scaffold-seed style
 
 Seed all 6 Step 5 visual/UX docs from upstream context.
 
 **Synopsis**
 
-    /scaffold-bulk-seed-style
+    /scaffold-seed style
 
 **Description**
 
@@ -287,7 +279,7 @@ Reads the design doc, system designs, and supporting docs to seed `style-guide.m
 
 **Examples**
 
-    /scaffold-bulk-seed-style
+    /scaffold-seed style
 
 ---
 
@@ -318,7 +310,7 @@ Formatter and linter for Step 5 docs: style-guide, color-system, ui-kit, interac
 
 **See Also**
 
-`/scaffold-bulk-seed-style`, `/scaffold-iterate style`
+`/scaffold-seed style`, `/scaffold-iterate style`
 
 ---
 
@@ -353,17 +345,17 @@ Each of the 6 Step 5 docs gets its own specialized review lens targeting its uni
 
 **See Also**
 
-`/scaffold-fix style`, `/scaffold-bulk-seed-style`
+`/scaffold-fix style`, `/scaffold-seed style`
 
 ---
 
-### /scaffold-bulk-seed-systems
+### /scaffold-seed systems
 
 Seed glossary and system stubs from the design doc.
 
 **Synopsis**
 
-    /scaffold-bulk-seed-systems
+    /scaffold-seed systems
 
 **Description**
 
@@ -371,7 +363,7 @@ Reads the completed design doc and bulk-seeds the glossary and system design stu
 
 **Examples**
 
-    /scaffold-bulk-seed-systems
+    /scaffold-seed systems
 
 **See Also**
 
@@ -379,13 +371,13 @@ Reads the completed design doc and bulk-seeds the glossary and system design stu
 
 ---
 
-### /scaffold-bulk-seed-references
+### /scaffold-seed references
 
 Seed all 7 reference docs from system designs.
 
 **Synopsis**
 
-    /scaffold-bulk-seed-references
+    /scaffold-seed references
 
 **Description**
 
@@ -393,7 +385,7 @@ Reads all completed system designs and bulk-populates 7 companion docs in order:
 
 **Examples**
 
-    /scaffold-bulk-seed-references
+    /scaffold-seed references
 
 **See Also**
 
@@ -401,13 +393,13 @@ Reads all completed system designs and bulk-populates 7 companion docs in order:
 
 ---
 
-### /scaffold-bulk-seed-engine
+### /scaffold-seed engine
 
 Select engine, then seed all 5 engine docs.
 
 **Synopsis**
 
-    /scaffold-bulk-seed-engine
+    /scaffold-seed engine
 
 **Description**
 
@@ -415,7 +407,7 @@ Asks which engine the project uses (Godot 4, Unity, Unreal 5, or custom), then c
 
 **Examples**
 
-    /scaffold-bulk-seed-engine
+    /scaffold-seed engine
 
 **See Also**
 
@@ -423,13 +415,13 @@ Asks which engine the project uses (Godot 4, Unity, Unreal 5, or custom), then c
 
 ---
 
-### /scaffold-bulk-seed-input
+### /scaffold-seed input
 
 Seed all 5 input docs from the design doc.
 
 **Synopsis**
 
-    /scaffold-bulk-seed-input
+    /scaffold-seed input
 
 **Description**
 
@@ -437,21 +429,21 @@ Reads the completed design doc and bulk-seeds all 5 input documents in 5 sequent
 
 **Examples**
 
-    /scaffold-bulk-seed-input
+    /scaffold-seed input
 
 **See Also**
 
-`/scaffold-fix style`, `/scaffold-bulk-seed-input`
+`/scaffold-fix style`, `/scaffold-seed input`
 
 ---
 
-### /scaffold-bulk-seed-slices
+### /scaffold-seed slices
 
 Seed slice stubs from phases, systems, and interfaces.
 
 **Synopsis**
 
-    /scaffold-bulk-seed-slices
+    /scaffold-seed slices
 
 **Description**
 
@@ -459,7 +451,7 @@ Reads all phases, system designs, and interface contracts to bulk-create vertica
 
 **Examples**
 
-    /scaffold-bulk-seed-slices
+    /scaffold-seed slices
 
 **See Also**
 
@@ -467,13 +459,13 @@ Reads all phases, system designs, and interface contracts to bulk-create vertica
 
 ---
 
-### /scaffold-bulk-seed-specs
+### /scaffold-seed specs
 
 Seed spec stubs from slices, systems, and state transitions.
 
 **Synopsis**
 
-    /scaffold-bulk-seed-specs
+    /scaffold-seed specs
 
 **Description**
 
@@ -481,7 +473,7 @@ Reads all slices, system designs, and state transitions to bulk-create behavior 
 
 **Examples**
 
-    /scaffold-bulk-seed-specs
+    /scaffold-seed specs
 
 **See Also**
 
@@ -489,13 +481,13 @@ Reads all slices, system designs, and state transitions to bulk-create behavior 
 
 ---
 
-### /scaffold-bulk-seed-tasks
+### /scaffold-seed tasks
 
 Seed task stubs from specs, engine docs, and signal registry.
 
 **Synopsis**
 
-    /scaffold-bulk-seed-tasks
+    /scaffold-seed tasks
 
 **Description**
 
@@ -503,7 +495,7 @@ Reads all specs, engine docs, and signal registry to bulk-create implementation 
 
 **Examples**
 
-    /scaffold-bulk-seed-tasks
+    /scaffold-seed tasks
 
 **See Also**
 
@@ -612,7 +604,7 @@ Scans scaffold docs for domain terms that should be in the glossary but aren't. 
 
 **See Also**
 
-`/scaffold-bulk-seed-systems` (initial glossary seeding), `/scaffold-validate` (glossary coverage check), `/scaffold-update-doc glossary` (manual edits)
+`/scaffold-seed systems` (initial glossary seeding), `/scaffold-validate` (glossary coverage check), `/scaffold-update-doc glossary` (manual edits)
 
 ---
 

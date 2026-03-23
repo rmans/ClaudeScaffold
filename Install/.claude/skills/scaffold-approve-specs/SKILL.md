@@ -104,7 +104,7 @@ Note: The slice's Specs table stores status, not filenames. Filename references 
 [List specs that were skipped with reason. If none, write "None."]
 
 ### Next Steps
-- Run `/scaffold-bulk-seed-tasks SLICE-###` to generate implementation tasks from the approved specs
+- Run `/scaffold-seed tasks SLICE-###` to generate implementation tasks from the approved specs
 - If blocked specs need resolving, address their blockers then re-run `/scaffold-approve-specs`
 ```
 

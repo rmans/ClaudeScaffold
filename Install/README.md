@@ -90,11 +90,11 @@ Follow the pipeline in order. Each step builds on the last.
 Then seed the rest of the pipeline:
 
 ```
-/scaffold-bulk-seed-systems          ← glossary + system stubs from design doc
-/scaffold-bulk-seed-references       ← extract signals, entities, resources, balance params
-/scaffold-bulk-seed-engine           ← select your engine, seed engine docs
-/scaffold-bulk-seed-style            ← seed style-guide, color-system, ui-kit, interaction-model, feedback-system, audio-direction
-/scaffold-bulk-seed-input            ← seed input docs
+/scaffold-seed systems          ← glossary + system stubs from design doc
+/scaffold-seed references       ← extract signals, entities, resources, balance params
+/scaffold-seed engine           ← select your engine, seed engine docs
+/scaffold-seed style            ← seed style-guide, color-system, ui-kit, interaction-model, feedback-system, audio-direction
+/scaffold-seed input            ← seed input docs
 ```
 
 Each seeded layer follows the same stabilization loop: `fix → iterate → validate`.
@@ -111,17 +111,17 @@ Each seeded layer follows the same stabilization loop: `fix → iterate → vali
 
 ```
 /scaffold-new-roadmap                ← define phases from start to ship
-/scaffold-bulk-seed-phases           ← seed phase scope gates from roadmap
+/scaffold-seed phases           ← seed phase scope gates from roadmap
 /scaffold-approve-phases             ← lifecycle gate for the first phase
 ```
 
 For each approved phase:
 
 ```
-/scaffold-bulk-seed-slices           ← seed vertical slices from phase
+/scaffold-seed slices           ← seed vertical slices from phase
 /scaffold-approve-slices             ← lifecycle gate for the first slice
-/scaffold-bulk-seed-specs            ← seed behavior specs from slice
-/scaffold-bulk-seed-tasks            ← seed implementation tasks from specs
+/scaffold-seed specs            ← seed behavior specs from slice
+/scaffold-seed tasks            ← seed implementation tasks from specs
 /scaffold-approve-specs              ← lifecycle gate
 /scaffold-approve-tasks              ← lifecycle gate
 /scaffold-implement-task             ← code, test, review, complete
@@ -134,7 +134,7 @@ See `scaffold/WORKFLOW.md` for the full 24-step recipe.
 | Category | Skills |
 |----------|--------|
 | **Init** | `init-design` |
-| **Bulk seed** | `bulk-seed-style`, `bulk-seed-systems`, `bulk-seed-references`, `bulk-seed-engine`, `bulk-seed-input`, `bulk-seed-phases`, `bulk-seed-slices`, `bulk-seed-specs`, `bulk-seed-tasks` |
+| **Bulk seed** | `seed style`, `seed systems`, `seed references`, `seed engine`, `seed input`, `seed phases`, `seed slices`, `seed specs`, `seed tasks` |
 | **Create** | `new-roadmap`, `new-phase`, `new-slice`, `new-spec`, `new-task`, `new-system` |
 | **Fix** | `fix-design`, `fix-style`, `fix-systems`, `fix-references`, `fix-engine`, `fix-input`, `fix-roadmap`, `fix-phase`, `fix-slice`, `fix-spec`, `fix-task`, `fix-cross-cutting` |
 | **Iterate** | `iterate-design`, `iterate-style`, `iterate-systems`, `iterate-references`, `iterate-engine`, `iterate-input`, `iterate-roadmap`, `iterate-phase`, `iterate-slice`, `iterate-spec`, `iterate-task` |

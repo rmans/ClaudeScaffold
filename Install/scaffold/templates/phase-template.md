@@ -50,7 +50,7 @@
 
 ### Slice Strategy
 
-<!-- How slices should look in this phase. Guides bulk-seed-slices and review-slice. -->
+<!-- How slices should look in this phase. Guides seed slices and review-slice. -->
 <!--
 - Slice verticality expectations (single-system proof vs cross-system loop)
 - Typical slice size (small vertical, medium feature, system proof)

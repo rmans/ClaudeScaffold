@@ -17,7 +17,7 @@ Instead of purely conversational phase-by-phase questioning, this skill proposes
 3. **Read `scaffold/design/systems/_index.md`** and skim system files for maturity.
 4. **Read `scaffold/design/architecture.md`** for foundation decisions.
 5. **Read `scaffold/decisions/known-issues.md`**, **`scaffold/decisions/design-debt.md`**, and **`scaffold/decisions/playtest-feedback.md`** for open issues and patterns.
-6. **If the design doc is empty or systems aren't designed**, stop: "Design doc and systems must be complete before roadmap planning. Run `/scaffold-new-design` and `/scaffold-bulk-seed-systems` first."
+6. **If the design doc is empty or systems aren't designed**, stop: "Design doc and systems must be complete before roadmap planning. Run `/scaffold-new-design` and `/scaffold-seed systems` first."
 
 ### Systems readiness signal
 
@@ -184,7 +184,7 @@ Write `scaffold/phases/roadmap.md` with these sections:
 - Run `/scaffold-fix roadmap` to clean up any mechanical issues
 - Run `/scaffold-iterate roadmap` for adversarial review
 - Run `/scaffold-validate --scope roadmap` to check structural integrity
-- Run `/scaffold-bulk-seed-phases` to create phase scope gate documents
+- Run `/scaffold-seed phases` to create phase scope gate documents
 ```
 
 ## Rules

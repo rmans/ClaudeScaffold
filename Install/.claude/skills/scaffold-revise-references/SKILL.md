@@ -14,7 +14,7 @@ Step 3 docs are the reference layer — they define architecture, authority, con
 This is distinct from:
 - **`fix-references`** — repairs mechanical structure (this skill identifies *design-level* drift, not formatting)
 - **`iterate-references`** — adversarial design review (this skill processes *implementation signals*, not reviewer critique)
-- **`bulk-seed-references`** — creates docs from scratch (this skill updates existing docs from feedback)
+- **`seed references`** — creates docs from scratch (this skill updates existing docs from feedback)
 
 ## Arguments
 
@@ -26,7 +26,7 @@ This is distinct from:
 
 ## Preconditions
 
-1. **Step 3 docs exist** — verify at least architecture.md and authority.md exist and are not at template defaults. If neither exists, stop: "No reference docs to revise. Run `/scaffold-bulk-seed-references` first."
+1. **Step 3 docs exist** — verify at least architecture.md and authority.md exist and are not at template defaults. If neither exists, stop: "No reference docs to revise. Run `/scaffold-seed references` first."
 2. **Step 3 docs have been through pipeline** — verify at least one fix-references or iterate-references log exists. If no logs exist, stop: "Reference docs haven't been stabilized yet. Run the Step 3 pipeline first."
 3. **Implementation feedback exists** — if `--signals` is provided, at least one signal must resolve. If not provided, at least one feedback source must exist (ADRs, KIs, triage logs, code review findings, system doc changes). If none exist, report: "No implementation feedback found. Nothing to revise."
 
@@ -171,7 +171,7 @@ For each **Stale reference**, **Missing registration**, **Column/field update**,
 - **Never change state machine structure.** Adding a cross-system reader is safe. Adding/removing states or transitions is not.
 - **Never change authority ownership.** Adding a new Readers entry is safe. Changing Owning System is not.
 - **Missing registrations must have explicit evidence.** Only add entries when backed by a system doc change, ADR, or completed spec. Never add entries based on inference from code alone.
-- **No duplicate entries.** Before adding any entry, check equivalence keys (same rules as bulk-seed-references and fix-references).
+- **No duplicate entries.** Before adding any entry, check equivalence keys (same rules as seed references and fix-references).
 
 ## Step 4 — Escalate Design-Level Changes
 

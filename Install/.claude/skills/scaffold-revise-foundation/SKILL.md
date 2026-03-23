@@ -36,11 +36,11 @@ For each Step 1–6 doc layer, check the expected stabilization pipeline complet
 | Step | Doc Layer | Expected Pipeline | Validation Gate |
 |------|-----------|-------------------|-----------------|
 | 1 | Design | init-design → fix-design → iterate-design → validate --scope design | `validate --scope design` passes |
-| 2 | Systems | bulk-seed-systems → fix-systems → iterate-systems → validate --scope systems | `validate --scope systems` passes |
-| 3 | References | bulk-seed-references → fix-references → iterate-references → validate --scope refs | `validate --scope refs` passes |
-| 4 | Engine | bulk-seed-engine → fix-engine → iterate-engine | fix + iterate passes |
-| 5 | Visual/UX | bulk-seed-style → fix-style → iterate-style | fix + iterate passes |
-| 6 | Inputs | bulk-seed-input → fix-input → iterate-input → validate --scope input | `validate --scope input` passes |
+| 2 | Systems | seed systems → fix-systems → iterate-systems → validate --scope systems | `validate --scope systems` passes |
+| 3 | References | seed references → fix-references → iterate-references → validate --scope refs | `validate --scope refs` passes |
+| 4 | Engine | seed engine → fix-engine → iterate-engine | fix + iterate passes |
+| 5 | Visual/UX | seed style → fix-style → iterate-style | fix + iterate passes |
+| 6 | Inputs | seed input → fix-input → iterate-input → validate --scope input | `validate --scope input` passes |
 
 For each layer, verify:
 - Do the documents exist and have non-placeholder content? (not stubs or template defaults)

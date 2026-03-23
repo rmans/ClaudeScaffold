@@ -16,7 +16,7 @@ This skill reads implementation feedback, classifies what changed, applies safe 
 This is distinct from:
 - **`fix-input`** — repairs mechanical structure (this skill identifies *design-level* drift, not formatting)
 - **`iterate-input`** — adversarial design review (this skill processes *implementation signals*, not reviewer critique)
-- **`bulk-seed-input`** — creates input docs from scratch (this skill updates existing docs from feedback)
+- **`seed input`** — creates input docs from scratch (this skill updates existing docs from feedback)
 
 ## Arguments
 
@@ -44,7 +44,7 @@ This is distinct from:
 
 ## Preconditions
 
-1. **Input docs exist** — verify at least `inputs/action-map.md` exists and is not at template defaults. If no input docs exist, stop: "No input docs to revise. Run `/scaffold-bulk-seed-input` first."
+1. **Input docs exist** — verify at least `inputs/action-map.md` exists and is not at template defaults. If no input docs exist, stop: "No input docs to revise. Run `/scaffold-seed input` first."
 2. **Input docs have been through Step 6 pipeline** — verify at least one fix or iterate log exists in `scaffold/decisions/review/` matching `FIX-input-*` or `ITERATE-input-*`. If no logs exist, stop: "Input docs haven't been stabilized yet. Run the Step 6 pipeline (seed → fix → iterate) first."
 3. **Implementation feedback exists** — if `--signals` is provided, at least one signal must resolve to a real source document. If `--signals` is not provided, at least one of: accepted ADRs, known issues entries, triage logs, code review findings, spec/task friction signals, or upstream doc changes must exist. If none exist, report: "No implementation feedback found. Nothing to revise."
 
