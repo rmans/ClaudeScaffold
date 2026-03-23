@@ -79,7 +79,7 @@ Every scaffold document carries a `> **Status:**` field in its blockquote header
 - **Draft** — set automatically when a document is created (via templates and create/seed skills).
 - **Review** — set manually by the user when the document is ready for adversarial review.
 - **Approved** — set automatically by `/scaffold-iterate` after a successful adversarial review (consensus reached, no unresolved HIGH issues).
-- **Complete** — set by `/scaffold-complete` when implementation is done and verified. Applies to planning-layer docs only (phases, slices, specs, tasks). Ripples upward: when all tasks for a spec are Complete, the spec becomes Complete, and so on through slices and phases.
+- **Complete** — set by `utils.py complete` when implementation is done and verified. Applies to planning-layer docs only (phases, slices, specs, tasks). Ripples upward: when all tasks for a spec are Complete, the spec becomes Complete, and so on through slices and phases.
 - **Deprecated** — set via ADR (filed with `/scaffold-file-decision --type adr`) when a document is no longer active. The document remains in its directory (IDs are permanent) but reviews flag references to it.
 
 ADRs use their own status lifecycle (`Proposed | Accepted | Deprecated | Superseded`) and are not part of this system.
@@ -135,8 +135,8 @@ The project version is tracked in `VERSION.md` in the project root. Format: `MAJ
 | Segment | When to bump | Examples |
 |---------|-------------|----------|
 | **MAJOR** | Full release / ship | 1.0.0.0 — v1 release |
-| **PHASE** | Phase completion (`/scaffold-complete` on a phase) | 0.1.0.0 — Phase 1 complete |
-| **SLICE** | Slice completion (`/scaffold-complete` on a slice) | 0.1.1.0 — first slice of Phase 1 complete |
+| **PHASE** | Phase completion (`utils.py complete` on a phase) | 0.1.0.0 — Phase 1 complete |
+| **SLICE** | Slice completion (`utils.py complete` on a slice) | 0.1.1.0 — first slice of Phase 1 complete |
 | **PATCH** | Task completion, bug fixes, doc creation, any other incremental work | 0.1.1.1 — first patch after slice |
 
 **Rules:**

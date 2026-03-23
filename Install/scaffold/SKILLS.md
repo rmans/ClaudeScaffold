@@ -1,6 +1,6 @@
 # Skills Reference
 
-> Man-page reference for all 48 scaffold slash commands. Each entry shows synopsis, description, arguments, examples, and related skills.
+> Man-page reference for all 44 scaffold slash commands. Each entry shows synopsis, description, arguments, examples, and related skills.
 >
 > **When to use each skill** — see [WORKFLOW.md](WORKFLOW.md) for the step-by-step pipeline order.
 
@@ -44,14 +44,10 @@
 | **Triage** | | |
 | `/scaffold-triage-specs` | `[SLICE-###]` | Resolve spec-level issues from iterate-spec |
 | `/scaffold-triage-tasks` | `[SLICE-###]` | Resolve task-level issues from iterate-task |
-| `/scaffold-reorder-tasks` | `[SLICE-###]` | Reorder tasks by dependency and implementation sequence |
 | **Implement** | | |
-| `/scaffold-implement` | `<TASK-###> [--max-retries N] [--cri N]` | Implement task end-to-end: plan, code (one step at a time), test, build, review, sync, complete. Orchestrated by implement.py with file manifest tracking. |
-| `/scaffold-build-and-test` | `[--files file...] [--skip-unit] [--skip-lint]` | Pure verification gate: build, lint, tests |
-| `/scaffold-code-review` | `[file or system scope]` | Adversarial code review via external LLM (7 topics) |
+| `/scaffold-implement` | `<TASK-###> [--max-retries N] [--cri N]` | Implement task end-to-end: plan, code (one step at a time), test, build, review, sync, complete. Orchestrated by implement.py. Build/test/complete/reorder handled in Python (utils.py). Code review via iterate.py --reviewer code. |
 | `/scaffold-add-regression-tests` | `[TASK-###]` | Add regression tests using 6-layer model |
 | **Complete** | | |
-| `/scaffold-complete` | `[document-path\|ID]` | Mark a planning doc as Complete; ripples up through parents |
 | **Edit** | | |
 | `/scaffold-update-doc` | `[doc-name\|path]` | Add, remove, or modify entries in any scaffold doc |
 | `/scaffold-sync-glossary` | `[--scope all\|design\|systems\|references\|style\|input] [--dry-run]` | Scan docs for glossary-worthy terms with worthiness gate and ambiguity detection |
@@ -255,7 +251,7 @@ Creates an implementation task at `tasks/TASK-###-<name>.md` with automatic sequ
 
 **See Also**
 
-`/scaffold-seed tasks`, `/scaffold-complete`
+`/scaffold-seed tasks`, `utils.py complete`
 
 ---
 
@@ -514,7 +510,7 @@ Mark a planning doc as Complete; ripple status upward through parents.
 
 **Synopsis**
 
-    /scaffold-complete [document-path|ID]
+    utils.py complete [document-path|ID]
 
 **Description**
 
@@ -530,14 +526,14 @@ For tasks: direct Complete (leaf nodes, no children check). For specs, slices, a
 
 **Examples**
 
-    /scaffold-complete TASK-001
-    /scaffold-complete SPEC-003
-    /scaffold-complete phases/P1-001-foundation.md
+    utils.py complete TASK-001
+    utils.py complete SPEC-003
+    utils.py complete phases/P1-001-foundation.md
     /scaffold-complete
 
 **See Also**
 
-`/scaffold-iterate task`, `/scaffold-complete`
+`/scaffold-iterate task`, `utils.py complete`
 
 ---
 

@@ -462,18 +462,51 @@ def _advance(session):
         })
 
     elif phase == "build":
+        # Run build directly via utils — no sub-skill needed
+        from utils import build_and_test
         attempts = session.get("build_attempts", 0)
         max_attempts = session.get("max_build_attempts", 3)
-        _write_action({
-            "action": "build",
-            "session_id": sid,
-            "task_id": session["task_id"],
-            "file_manifest": session["file_manifest"],
-            "attempt": attempts + 1,
-            "max_attempts": max_attempts,
-            "previous_error": session.get("last_build_error", ""),
-            "message": f"Build and test (attempt {attempts + 1}/{max_attempts}).",
-        })
+        build_result = build_and_test(session["file_manifest"])
+
+        session["build_attempts"] = attempts + 1
+        if build_result.get("passed"):
+            session["results"]["build_status"] = "PASS"
+            session["phase"] = "review"
+            session["build_attempts"] = 0
+        elif session["build_attempts"] >= max_attempts:
+            session["results"]["build_status"] = "FAIL (max retries)"
+            session["phase"] = "stuck"
+            _save_session(sid, session)
+            _write_action({
+                "action": "stuck",
+                "session_id": sid,
+                "task_id": session["task_id"],
+                "phase": "build",
+                "attempts": session["build_attempts"],
+                "last_error": build_result.get("error", ""),
+                "message": f"Build failed after {session['build_attempts']} attempts.",
+            })
+            return
+        else:
+            # Build failed but retries remain — write a build_failed action
+            # so Claude can see the error and fix the code
+            session["last_build_error"] = build_result.get("error", "")
+            _save_session(sid, session)
+            _write_action({
+                "action": "build_failed",
+                "session_id": sid,
+                "task_id": session["task_id"],
+                "attempt": attempts + 1,
+                "max_attempts": max_attempts,
+                "error": build_result.get("error", ""),
+                "steps": build_result.get("steps", []),
+                "file_manifest": session["file_manifest"],
+                "message": f"Build failed (attempt {attempts + 1}/{max_attempts}). Fix the error and resolve.",
+            })
+            return
+
+        _save_session(sid, session)
+        _advance(session)
 
     elif phase == "review":
         _write_action({
@@ -488,19 +521,49 @@ def _advance(session):
         })
 
     elif phase == "rebuild":
+        # Run rebuild directly via utils — same as build
+        from utils import build_and_test
         attempts = session.get("build_attempts", 0)
         max_attempts = session.get("max_build_attempts", 3)
-        _write_action({
-            "action": "build",
-            "session_id": sid,
-            "task_id": session["task_id"],
-            "file_manifest": session["file_manifest"],
-            "attempt": attempts + 1,
-            "max_attempts": max_attempts,
-            "is_post_review": True,
-            "previous_error": session.get("last_build_error", ""),
-            "message": f"Rebuild after code review changes (attempt {attempts + 1}/{max_attempts}).",
-        })
+        build_result = build_and_test(session["file_manifest"])
+
+        session["build_attempts"] = attempts + 1
+        if build_result.get("passed"):
+            session["results"]["build_status"] = "PASS"
+            session["phase"] = "sync"
+            session["build_attempts"] = 0
+        elif session["build_attempts"] >= max_attempts:
+            session["results"]["build_status"] = "FAIL (max retries)"
+            session["phase"] = "stuck"
+            _save_session(sid, session)
+            _write_action({
+                "action": "stuck",
+                "session_id": sid,
+                "task_id": session["task_id"],
+                "phase": "rebuild",
+                "attempts": session["build_attempts"],
+                "last_error": build_result.get("error", ""),
+                "message": f"Post-review build failed after {session['build_attempts']} attempts.",
+            })
+            return
+        else:
+            session["last_build_error"] = build_result.get("error", "")
+            _save_session(sid, session)
+            _write_action({
+                "action": "build_failed",
+                "session_id": sid,
+                "task_id": session["task_id"],
+                "attempt": attempts + 1,
+                "max_attempts": max_attempts,
+                "error": build_result.get("error", ""),
+                "file_manifest": session["file_manifest"],
+                "is_post_review": True,
+                "message": f"Post-review build failed (attempt {attempts + 1}/{max_attempts}). Fix and resolve.",
+            })
+            return
+
+        _save_session(sid, session)
+        _advance(session)
 
     elif phase == "sync":
         _write_action({
@@ -512,13 +575,19 @@ def _advance(session):
         })
 
     elif phase == "complete":
+        # Run complete directly via utils — no sub-skill needed
+        from utils import complete_doc
+        complete_result = complete_doc(session["task_file"])
+        session["results"]["complete_status"] = complete_result.get("status", "error")
+        session["phase"] = "done"
+        _save_session(sid, session)
         _write_action({
-            "action": "complete",
+            "action": "done",
             "session_id": sid,
             "task_id": session["task_id"],
-            "file_manifest": session["file_manifest"],
             "results": session["results"],
-            "message": f"Mark {session['task_id']} as Complete and generate report.",
+            "file_manifest": session["file_manifest"],
+            "complete_result": complete_result,
         })
 
     else:
@@ -579,36 +648,15 @@ def cmd_resolve(args):
         _advance(session)
 
     elif phase in ("build", "rebuild"):
-        build_passed = result.get("passed", False)
-        session["build_attempts"] = session.get("build_attempts", 0) + 1
-
-        if build_passed:
-            session["results"]["build_status"] = "PASS"
-            if phase == "build":
-                session["phase"] = "review"
-            else:
-                session["phase"] = "sync"
-            session["build_attempts"] = 0
-            _save_session(sid, session)
-            _advance(session)
-        else:
-            session["last_build_error"] = result.get("error", "")
-            if session["build_attempts"] >= session.get("max_build_attempts", 3):
-                session["results"]["build_status"] = "FAIL (max retries)"
-                session["phase"] = "stuck"
-                _save_session(sid, session)
-                _write_action({
-                    "action": "stuck",
-                    "session_id": sid,
-                    "task_id": session["task_id"],
-                    "phase": phase,
-                    "attempts": session["build_attempts"],
-                    "last_error": session.get("last_build_error", ""),
-                    "message": f"Build failed after {session['build_attempts']} attempts. Manual intervention needed.",
-                })
-            else:
-                _save_session(sid, session)
-                _advance(session)
+        # After build_failed, Claude fixed code and called resolve.
+        # Update file manifest with any new/modified files from the fix.
+        fixed_files = result.get("files_modified", [])
+        for f in fixed_files:
+            if f not in session["file_manifest"]:
+                session["file_manifest"].append(f)
+        # Re-run build (advance will call build_and_test again)
+        _save_session(sid, session)
+        _advance(session)
 
     elif phase == "review":
         session["results"]["review_stats"] = result.get("stats", {})

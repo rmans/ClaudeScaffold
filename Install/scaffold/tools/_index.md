@@ -23,6 +23,7 @@
 | `configs/validate/*.yaml` | Per-scope validation configs for validate.py (checks, thresholds, activation rules) |
 | `configs/seed/*.yaml` | Per-layer seed configs for seed.py (upstream sources, dependency checks, coverage rules) |
 | `implement.py` | Implement orchestrator — step-by-step task implementation with file manifest tracking (used by `/scaffold-implement`) |
+| `utils.py` | Shared utilities — complete (mark doc Complete), build-test (run build/lint/tests), reorder (topological sort tasks). Callable standalone or imported by orchestrators. |
 
 ## image-gen.py
 
@@ -256,7 +257,7 @@ None — uses Python standard library only (`urllib`, `json`, `argparse`).
 
 ## code-review.py
 
-Adversarial code reviewer that sends source code to an external LLM for review across 7 sequential topics, with multi-turn conversation until consensus. Used by `/scaffold-code-review`.
+Adversarial code reviewer that sends source code to an external LLM for review across 7 sequential topics, with multi-turn conversation until consensus. Used by `iterate.py --reviewer code`.
 
 ### Topics
 

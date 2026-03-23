@@ -868,11 +868,11 @@ Runs the full implementation pipeline for a single task or a range (`TASK-###-TA
 2. **Plan** — output a brief implementation plan for review
 3. **Implement** — write the code following the task's Steps section
 4. **Add tests** — regression tests via `/scaffold-add-regression-tests`
-5. **Build and test** — verification gate via `/scaffold-build-and-test`
-6. **Code review** — adversarial review via `/scaffold-code-review` (file-scope per changed file, optional system-scope coherence pass). `--CRI N` sets max review iterations (default: 10, stops early when stable).
+5. **Build and test** — verification gate via `utils.py build-test`
+6. **Code review** — adversarial review via `iterate.py --reviewer code` (file-scope per changed file, optional system-scope coherence pass). `--CRI N` sets max review iterations (default: 10, stops early when stable).
 7. **Rebuild and retest** — if code review applied changes, re-verify
 8. **Sync docs** — update reference and architecture docs via `/scaffold-sync-reference-docs`
-9. **Complete** — mark task done and ripple upward via `/scaffold-complete`
+9. **Complete** — mark task done and ripple upward via `utils.py complete`
 
 The pipeline stops on failure — build errors, test failures, or unresolvable review issues must be fixed before proceeding. For ranges, later tasks are skipped if an earlier task fails (they may depend on it).
 

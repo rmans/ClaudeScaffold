@@ -1,6 +1,6 @@
 ---
 name: scaffold-implement
-description: "Implement tasks end-to-end. Orchestrated by implement.py — smart context loading, step-by-step code generation, file manifest tracking, retry loops with limits. Replaces scaffold-implement-task."
+description: "Implement tasks end-to-end. Orchestrated by implement.py — smart context loading, step-by-step code generation, file manifest tracking, build/test/complete handled in Python. Replaces scaffold-implement-task."
 argument-hint: "<TASK-###> [--max-retries N] [--cri N]"
 allowed-tools: Read, Write, Edit, Grep, Glob, Bash
 user-invocable: true
@@ -10,17 +10,17 @@ user-invocable: true
 
 Implement a task end-to-end: **$ARGUMENTS**
 
-This skill is a **thin dispatcher** backed by `implement.py`. Claude only does one thing at a time — plan one task, write one step, review one file. Python tracks the file manifest, manages retry loops, and sequences the phases.
+This skill is a **thin dispatcher** backed by `implement.py`. Claude only does one thing at a time — plan one task, write one step, fix one build error. Python tracks the file manifest, runs builds, handles completion.
 
-| Sub-skill | What it does |
-|-----------|-------------|
+| Sub-skill / Tool | What it does |
+|------------------|-------------|
 | `/scaffold-implement-plan` | Read context, produce implementation outline |
 | `/scaffold-implement-code` | Write code for one task step |
-| `/scaffold-add-regression-tests` | Add test coverage (existing skill) |
-| `/scaffold-build-and-test` | Build and run tests (existing skill) |
-| `/scaffold-code-review` | Adversarial code review (existing skill) |
-| `/scaffold-sync-reference-docs` | Sync scaffold docs with code changes (existing skill) |
-| `/scaffold-complete` | Mark task Complete (existing skill) |
+| `/scaffold-add-regression-tests` | Add test coverage |
+| `utils.py build-test` | Build and run tests (Python — no skill needed) |
+| `iterate.py --reviewer code` | Code review via external LLM (same pattern as doc review) |
+| `/scaffold-sync-reference-docs` | Sync scaffold docs with code changes |
+| `utils.py complete` | Mark task Complete (Python — no skill needed) |
 
 ## Arguments
 
@@ -36,35 +36,30 @@ This skill is a **thin dispatcher** backed by `implement.py`. Claude only does o
 implement.py orchestrator
 │
 ├── Phase 1: Plan
-│   ├── Smart context loading (only reads what this task needs)
 │   └── /scaffold-implement-plan → 5-10 line outline
 │
 ├── Phase 2: Code (one step at a time)
-│   ├── For each task step:
-│   │   └── /scaffold-implement-code → writes code, reports files
-│   └── File manifest accumulates automatically
+│   └── /scaffold-implement-code → writes code, reports files
 │
 ├── Phase 3: Test
 │   └── /scaffold-add-regression-tests → adds test coverage
 │
-├── Phase 4: Build
-│   ├── /scaffold-build-and-test
-│   ├── If FAIL → retry (up to --max-retries)
-│   └── If stuck → report, stop
+├── Phase 4: Build (Python — runs directly, no skill)
+│   ├── utils.py build-test → scons, lint, tests
+│   ├── If FAIL → build_failed action → Claude fixes → retry
+│   └── If stuck (3 attempts) → report, stop
 │
 ├── Phase 5: Review
-│   ├── /scaffold-code-review for each changed file
-│   └── If review changed files → Phase 6 (rebuild)
+│   └── iterate.py --reviewer code → adversarial code review
 │
-├── Phase 6: Rebuild (conditional)
-│   ├── /scaffold-build-and-test with updated manifest
-│   └── Same retry logic as Phase 4
+├── Phase 6: Rebuild (conditional, Python)
+│   └── utils.py build-test → if review changed code
 │
 ├── Phase 7: Sync
 │   └── /scaffold-sync-reference-docs → update scaffold docs
 │
-└── Phase 8: Complete
-    └── /scaffold-complete → mark task Complete, report
+└── Phase 8: Complete (Python — runs directly, no skill)
+    └── utils.py complete → status update, rename, index
 ```
 
 ## Execution
@@ -102,31 +97,28 @@ loop:
     "test":
       call /scaffold-add-regression-tests
       python implement.py resolve --session <id>
-
-    "build":
-      call /scaffold-build-and-test
-      python implement.py resolve --session <id>
-      # if fail → retry or stuck
+      # build runs automatically in Python after this
 
     "review":
-      run iterate.py --reviewer code --layer code --target <file>
-      # uses same iterate pattern as doc review, but with code-review.py as LLM backend
-      # routes through /scaffold-review-adjudicate for each issue
+      iterate.py --reviewer code handles the review loop
       python implement.py resolve --session <id>
+      # rebuild runs automatically in Python if files changed
 
     "sync":
       call /scaffold-sync-reference-docs
       python implement.py resolve --session <id>
+      # complete runs automatically in Python after this
 
-    "complete":
-      call /scaffold-complete
+    "build_failed":
+      Claude reads the error, fixes the code
       python implement.py resolve --session <id>
+      # build retries automatically
 
     "stuck":
       report error to user, break
 
     "done":
-      break
+      display results, break
 ```
 
 ### Step 3 — Summary
@@ -135,16 +127,29 @@ Display: files created/modified, tests added, build status, review stats, comple
 
 ## What implement.py Manages
 
-- **File manifest** — accumulates files across all phases (code, test, review). Never lost.
-- **Smart context** — reads task type, only loads relevant docs (no loading signals for a UI task)
-- **Step sequencing** — one task step per code action. Claude only thinks about one step.
-- **Retry limits** — build fails 3 times → reports stuck, doesn't loop forever
-- **Review file tracking** — if code review modifies files, manifest updates and rebuild triggers
+- **File manifest** — accumulates files across all phases. Never lost.
+- **Smart context** — reads task type, only loads relevant docs.
+- **Step sequencing** — one task step per code action.
+- **Build/test** — runs directly via utils.py. No skill overhead.
+- **Retry limits** — 3 build failures → stuck report.
+- **Completion** — runs directly via utils.py. Status update, rename, index.
+
+## What the Dispatcher Handles
+
+Only actions that need Claude's judgment come to the dispatcher:
+- **plan** — Claude reads context and plans
+- **code** — Claude writes code for one step
+- **test** — Claude adds regression tests
+- **review** — Claude adjudicates code review issues
+- **sync** — Claude updates scaffold docs
+- **build_failed** — Claude reads error and fixes code
+
+Mechanical operations (build, complete, reorder) run in Python.
 
 ## Rules
 
 - **One step at a time.** Claude writes code for one numbered step per exchange.
 - **File manifest is authoritative.** Every file created or modified goes in the manifest.
-- **Retry has limits.** 3 build failures → stuck report. No infinite loops.
-- **Code review changes trigger rebuild.** If review modifies code, build runs again.
+- **Retry has limits.** 3 build failures → stuck report.
+- **Build and complete are Python.** No skill overhead for mechanical operations.
 - **Dependencies must be Complete.** implement.py checks before starting.

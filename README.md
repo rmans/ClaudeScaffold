@@ -21,10 +21,10 @@ Every design decision, visual style rule, system behavior, interface contract, a
 - **Genre-agnostic design, engine-specific implementation.** The design layer works for any game. The engine layer adapts to Godot, Unity, Unreal, or anything else.
 - **ADR feedback loop.** When implementation reality conflicts with the plan, Architecture Decision Records capture why and feed back into upcoming phases, specs, and tasks.
 - **Two-loop stabilization.** Every document type follows the same pattern: create → fix → iterate → validate (initial), then revise → fix → iterate → validate (after implementation feedback). Foundation architecture is gated before planning begins.
-- **Draft → Review → Approved → Complete lifecycle.** Documents start as `Draft`, move through adversarial review via `/scaffold-iterate`, are set to `Approved` by approval gates, and marked `Complete` by `/scaffold-complete` when implementation is done. Completion ripples up from tasks through specs, slices, and phases.
+- **Draft → Review → Approved → Complete lifecycle.** Documents start as `Draft`, move through adversarial review via `/scaffold-iterate`, are set to `Approved` by approval gates, and marked `Complete` by `utils.py complete` when implementation is done. Completion ripples up from tasks through specs, slices, and phases.
 - **Token-efficient retrieval.** Index files in every directory let Claude find what it needs without loading entire folders.
 - **Asset requirements in specs.** Specs identify what art and audio the behavior needs, scan for reusable assets, and track production status. Tasks wire the ready assets.
-- **50 skills automate the pipeline.** Create, seed, fix, iterate, revise, approve, implement, file decisions, generate art/audio, and edit documents with slash commands — no manual file wrangling.
+- **46 skills automate the pipeline.** Create, seed, fix, iterate, revise, approve, implement, file decisions, generate art/audio, and edit documents with slash commands — no manual file wrangling.
 
 ## How It Works
 
@@ -161,9 +161,8 @@ See [Install/README.md](Install/README.md) for full installation details.
 | **Iterate (1)** | `iterate` — unified adversarial review for all layers (design, systems, spec, task, slice, phase, roadmap, references, style, input, engine). Orchestrated by `iterate.py` with per-layer YAML configs. |
 | **Revise (10)** | `revise-design`, `revise-systems`, `revise-references`, `revise-engine`, `revise-style`, `revise-input`, `revise-foundation`, `revise-roadmap`, `revise-phases`, `revise-slices` |
 | **Approve (4)** | `approve-phases`, `approve-slices`, `approve-specs`, `approve-tasks` |
-| **Triage (3)** | `triage-specs`, `triage-tasks`, `reorder-tasks` |
-| **Implement (4)** | `implement` (step-by-step via implement.py), `build-and-test`, `code-review`, `add-regression-tests` |
-| **Complete (1)** | `complete` |
+| **Triage (2)** | `triage-specs`, `triage-tasks` |
+| **Implement (2)** | `implement` (step-by-step via implement.py — build/test/complete/reorder in Python), `add-regression-tests` |
 | **Edit (3)** | `update-doc`, `sync-reference-docs`, `sync-glossary` |
 | **Validate (1)** | `validate` |
 | **Decisions (1)** | `file-decision` |
