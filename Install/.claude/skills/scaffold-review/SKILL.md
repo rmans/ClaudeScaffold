@@ -86,9 +86,9 @@ loop:
       python review.py resolve --session <id>
 
     "phase_complete":
-      log "Fix complete. Starting adversarial review..."
-      python review.py resolve --session <id>
-      # review.py transitions to iterate phase, writes next action
+      log action.message
+      python review.py next-action --layer <layer> --target <target> [args]
+      # review.py sees phase=iterate, starts iterate phase, writes next action
 
     "done":
       break
@@ -105,9 +105,9 @@ Display the combined report (fix summary + iterate summary).
 
 ## Phase Transition
 
-When fix completes, review.py writes `{action: "phase_complete"}`. The dispatcher logs the transition message and calls `resolve`, which triggers review.py to start the iterate phase. The next `action.json` will be from iterate.py (the first L3 subsection adjudication).
+When fix completes, review.py writes `{action: "phase_complete", message: "Fix complete. Starting adversarial review..."}`. The dispatcher logs the message and calls `review.py next-action` again (not `resolve` — there's no sub-skill result to process). review.py sees `phase == "iterate"`, starts iterate.py, and the next `action.json` comes from iterate (the first L3 subsection adjudication).
 
-The transition is seamless — the dispatcher loop never breaks. It just keeps routing actions.
+The transition is seamless — the dispatcher loop never breaks. It just keeps routing actions. The only difference is `phase_complete` calls `next-action` instead of `resolve`.
 
 ## Rules
 
