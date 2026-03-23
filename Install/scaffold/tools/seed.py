@@ -271,6 +271,85 @@ def _build_inventory(config):
         for sub in ["data/balance", "data/content", "data/display", "translations", "tests"]:
             inventory["file_system"][f"game/{sub}"] = (game_dir / sub).exists()
 
+    # Testing tools detection
+    testing_tools = {}
+
+    # Test frameworks
+    test_framework_indicators = {
+        "gut": ["addons/gut", "game/addons/gut", "addons/GUT"],
+        "gdunit4": ["addons/gdUnit4"],
+        "pytest": ["pytest.ini", "pyproject.toml", "conftest.py"],
+        "jest": ["jest.config.js", "jest.config.ts"],
+        "vitest": ["vitest.config.ts", "vitest.config.js"],
+        "cargo_test": ["Cargo.toml"],
+        "dotnet_test": ["*.csproj"],
+        "catch2": ["**/catch2/**", "**/Catch2/**"],
+        "gtest": ["**/gtest/**", "**/googletest/**"],
+        "doctest": ["**/doctest.h"],
+    }
+
+    for framework, patterns in test_framework_indicators.items():
+        for pattern in patterns:
+            if list(project_root.glob(pattern)):
+                testing_tools[framework] = True
+                break
+        if framework not in testing_tools:
+            testing_tools[framework] = False
+
+    # Lint tools
+    lint_indicators = {
+        "gdlint": [".gdlintrc", "game/.gdlintrc"],
+        "eslint": [".eslintrc", ".eslintrc.js", ".eslintrc.json", ".eslintrc.yml"],
+        "prettier": [".prettierrc", ".prettierrc.js", ".prettierrc.json"],
+        "clippy": ["Cargo.toml"],  # clippy comes with rust
+        "ruff": ["ruff.toml", "pyproject.toml"],
+        "mypy": ["mypy.ini", "pyproject.toml"],
+        "cppcheck": [".cppcheck"],
+        "clang_tidy": [".clang-tidy"],
+    }
+
+    for tool, patterns in lint_indicators.items():
+        for pattern in patterns:
+            if list(project_root.glob(pattern)):
+                testing_tools[f"lint.{tool}"] = True
+                break
+        if f"lint.{tool}" not in testing_tools:
+            testing_tools[f"lint.{tool}"] = False
+
+    # CI detection
+    ci_indicators = {
+        "github_actions": [".github/workflows/*.yml", ".github/workflows/*.yaml"],
+        "gitlab_ci": [".gitlab-ci.yml"],
+        "jenkins": ["Jenkinsfile"],
+        "circleci": [".circleci/config.yml"],
+    }
+
+    for ci, patterns in ci_indicators.items():
+        for pattern in patterns:
+            if list(project_root.glob(pattern)):
+                testing_tools[f"ci.{ci}"] = True
+                break
+        if f"ci.{ci}" not in testing_tools:
+            testing_tools[f"ci.{ci}"] = False
+
+    # Test file locations
+    test_dir_indicators = {
+        "game/tests": game_dir / "tests" if game_dir.exists() else None,
+        "game/scripts/test": game_dir / "scripts" / "test" if game_dir.exists() else None,
+        "tests": project_root / "tests",
+        "test": project_root / "test",
+        "spec": project_root / "spec",
+        "__tests__": project_root / "__tests__",
+    }
+
+    for name, path in test_dir_indicators.items():
+        if path and path.exists():
+            testing_tools[f"test_dir.{name}"] = True
+        else:
+            testing_tools[f"test_dir.{name}"] = False
+
+    inventory["testing_tools"] = testing_tools
+
     return inventory
 
 
@@ -390,7 +469,7 @@ def cmd_next_action(args):
             "session_id": session_id,
             "layer": args.layer,
             "target": args.target or "",
-            "phase": "propose",
+            "phase": "confirm_inventory",
             "inventory": inventory,
             "requirements": requirements,
             "requirement_index": 0,
@@ -411,6 +490,27 @@ def cmd_next_action(args):
 def _advance(session, config):
     """Determine and write the next action based on session phase."""
     phase = session.get("phase", "propose")
+
+    if phase == "confirm_inventory":
+        # Present detected project state for user confirmation
+        inventory = session.get("inventory", {})
+        testing = inventory.get("testing_tools", {})
+
+        # Build a human-readable summary of detected tools
+        detected = {k: v for k, v in testing.items() if v is True}
+        not_found = {k: v for k, v in testing.items() if v is False}
+
+        _write_action({
+            "action": "confirm_inventory",
+            "session_id": session["session_id"],
+            "layer": session["layer"],
+            "detected": detected,
+            "not_found": list(not_found.keys()),
+            "engine_config": inventory.get("engine_config", {}),
+            "file_system": inventory.get("file_system", {}),
+            "message": "Review detected project state. Confirm, correct, or add missing tools before seeding.",
+        })
+        return
 
     if phase == "propose":
         # Send one upstream requirement at a time for candidate proposal
@@ -601,7 +701,31 @@ def cmd_resolve(args):
 
     phase = session.get("phase", "propose")
 
-    if phase == "propose" or (phase == "fill_gaps"):
+    if phase == "confirm_inventory":
+        # User confirmed/corrected the inventory
+        corrections = result.get("corrections", {})
+        additions = result.get("additions", {})
+
+        # Apply corrections to inventory
+        if corrections:
+            for key, value in corrections.items():
+                # Update testing_tools, engine_config, or file_system
+                for section in ["testing_tools", "engine_config", "file_system"]:
+                    if key in session["inventory"].get(section, {}):
+                        session["inventory"][section][key] = value
+                        break
+                else:
+                    # New key — add to testing_tools
+                    session["inventory"].setdefault("testing_tools", {})[key] = value
+
+        if additions:
+            session["inventory"].setdefault("testing_tools", {}).update(additions)
+
+        session["phase"] = "propose"
+        _save_session(args.session, session)
+        _advance(session, config)
+
+    elif phase == "propose" or (phase == "fill_gaps"):
         # Proposal result — add candidates
         new_candidates = result.get("candidates", [])
         new_assumptions = result.get("assumptions", [])

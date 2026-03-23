@@ -38,7 +38,9 @@ seed.py orchestrator
 ├── Phase 1: Context Gathering (Python)
 │   ├── Read upstream docs (design doc, systems, specs, engine...)
 │   ├── Read project state (file system, engine config, existing docs)
-│   └── Build "what exists" inventory
+│   ├── Detect testing tools (test frameworks, lint tools, CI setup)
+│   ├── Build "what exists" inventory
+│   └── Present inventory for user confirmation/correction
 │
 ├── Phase 2: Candidate Proposal (one at a time)
 │   ├── For each upstream requirement:
@@ -88,6 +90,12 @@ seed.py builds the inventory, extracts upstream requirements, writes the first `
 loop:
   read action.json
   switch action.type:
+
+    "confirm_inventory":
+      present detected project state (test frameworks, lint tools, CI, directories)
+      user confirms, corrects, or adds missing tools
+      python seed.py resolve --session <id>
+      # inventory is now authoritative for task generation
 
     "propose":
       call /scaffold-seed-propose
