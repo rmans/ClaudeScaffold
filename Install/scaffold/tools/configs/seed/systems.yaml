@@ -6,6 +6,7 @@ template: "scaffold/templates/system-template.md"
 index_file: "design/systems/_index.md"
 id_pattern: "SYS-###"
 id_prefix: "SYS"
+output_pattern: "design/systems/SYS-*-*.md"
 
 preflight:
   required_files:

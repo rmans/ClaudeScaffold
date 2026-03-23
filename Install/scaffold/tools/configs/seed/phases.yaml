@@ -6,6 +6,7 @@ template: "scaffold/templates/phase-template.md"
 index_file: "phases/_index.md"
 id_pattern: "P#-###"
 id_prefix: "P"
+output_pattern: "phases/P*-*.md"
 
 preflight:
   required_files:

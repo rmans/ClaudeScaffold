@@ -4,6 +4,12 @@ layer: input
 display_name: "Input System"
 template: null
 index_file: null
+output_files:
+  - inputs/action-map.md
+  - inputs/input-philosophy.md
+  - inputs/default-bindings-kbm.md
+  - inputs/default-bindings-gamepad.md
+  - inputs/ui-navigation.md
 
 preflight:
   required_files:

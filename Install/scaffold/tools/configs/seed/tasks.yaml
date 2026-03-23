@@ -6,6 +6,7 @@ template: "scaffold/templates/task-template.md"
 index_file: "tasks/_index.md"
 id_pattern: "TASK-###"
 id_prefix: "TASK"
+output_pattern: "tasks/TASK-*-*.md"
 
 preflight:
   required_files:

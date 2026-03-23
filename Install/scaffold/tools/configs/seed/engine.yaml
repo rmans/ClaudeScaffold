@@ -4,6 +4,7 @@ layer: engine
 display_name: "Engine Conventions"
 template: null
 index_file: "engine/_index.md"
+output_pattern: "engine/*.md"
 
 preflight:
   required_files:

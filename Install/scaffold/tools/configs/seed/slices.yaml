@@ -6,6 +6,7 @@ template: "scaffold/templates/slice-template.md"
 index_file: "slices/_index.md"
 id_pattern: "SLICE-###"
 id_prefix: "SLICE"
+output_pattern: "slices/SLICE-*-*.md"
 
 preflight:
   required_files:

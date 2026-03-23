@@ -4,6 +4,16 @@ layer: references
 display_name: "References & Architecture"
 template: null
 index_file: null
+output_files:
+  - design/architecture.md
+  - design/authority.md
+  - design/interfaces.md
+  - design/state-transitions.md
+  - reference/entity-components.md
+  - reference/resource-definitions.md
+  - reference/signal-registry.md
+  - reference/balance-params.md
+  - reference/enums-and-statuses.md
 
 preflight:
   required_files:

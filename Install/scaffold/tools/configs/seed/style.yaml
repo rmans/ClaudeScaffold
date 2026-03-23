@@ -4,6 +4,13 @@ layer: style
 display_name: "Style & UX"
 template: null
 index_file: null
+output_files:
+  - design/style-guide.md
+  - design/color-system.md
+  - design/ui-kit.md
+  - design/interaction-model.md
+  - design/feedback-system.md
+  - design/audio-direction.md
 
 preflight:
   required_files:

@@ -6,6 +6,7 @@ template: "scaffold/templates/spec-template.md"
 index_file: "specs/_index.md"
 id_pattern: "SPEC-###"
 id_prefix: "SPEC"
+output_pattern: "specs/SPEC-*-*.md"
 
 preflight:
   required_files:

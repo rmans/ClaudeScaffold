@@ -401,69 +401,76 @@ def _analyze_existing(config, inventory, requirements):
         "missing_sections": [],
     }
 
-    # Find existing docs for this layer
-    glob_pattern = config.get("glob_pattern", "")
+    # Find existing docs for this layer using output_pattern, output_files, or target
+    output_pattern = config.get("output_pattern", "")
+    output_files = config.get("output_files", [])
     target = config.get("target", "")
+
+    existing_paths = []
 
     if target:
         # Fixed target (design doc, roadmap)
         target_path = SCAFFOLD_DIR / target
         if target_path.exists():
-            content = target_path.read_text(encoding="utf-8")
-            analysis["has_existing"] = True
-            analysis["existing_count"] = 1
-            analysis["existing_files"] = [target]
+            existing_paths = [target]
 
-            # Check section fill status
-            headings = [line.strip() for line in content.splitlines() if line.strip().startswith("#")]
-            filled = 0
-            empty = 0
-            for heading in headings:
-                heading_text = re.sub(r"^#+\s+", "", heading)
-                section_content = _extract_section_content(content, heading)
-                if section_content:
-                    cleaned = re.sub(r"<!--.*?-->", "", section_content, flags=re.DOTALL).strip()
-                    if len(cleaned) > 20:
-                        filled += 1
-                    else:
-                        empty += 1
-                        analysis["missing_sections"].append(heading_text)
+    elif output_files:
+        # Explicit file list (references, style, input)
+        for f in output_files:
+            if (SCAFFOLD_DIR / f).exists():
+                existing_paths.append(f)
 
-            analysis["existing_summaries"].append({
-                "file": target,
-                "total_sections": filled + empty,
-                "filled_sections": filled,
-                "empty_sections": empty,
-            })
+    elif output_pattern:
+        # Glob pattern (systems, specs, tasks, slices, phases, engine)
+        matches = sorted(SCAFFOLD_DIR.glob(output_pattern))
+        existing_paths = [str(m.relative_to(SCAFFOLD_DIR)) for m in matches]
 
-    elif glob_pattern:
-        # Multiple docs (systems, specs, tasks, etc.)
-        doc_key = layer
-        existing = inventory.get("scaffold_docs", {}).get(doc_key, [])
-        if existing:
-            analysis["has_existing"] = True
-            analysis["existing_count"] = len(existing)
-            analysis["existing_files"] = existing
+    if existing_paths:
+        analysis["has_existing"] = True
+        analysis["existing_count"] = len(existing_paths)
+        analysis["existing_files"] = existing_paths
 
-            # Sample first few for summary
-            for f in existing[:5]:
-                abs_path = SCAFFOLD_DIR / f
-                if abs_path.exists():
-                    content = abs_path.read_text(encoding="utf-8")
-                    # Check for staleness — is there a Status field?
-                    status_match = re.search(r">\s*\*\*Status:\*\*\s*(\w+)", content)
-                    status = status_match.group(1) if status_match else "Unknown"
+        for f in existing_paths:
+            abs_path = SCAFFOLD_DIR / f
+            if not abs_path.exists():
+                continue
+            content = abs_path.read_text(encoding="utf-8")
 
-                    # Check Implements/System references for traceability
-                    implements = re.search(r">\s*\*\*Implements:\*\*\s*(\S+)", content)
-                    system = re.search(r">\s*\*\*System:\*\*\s*(\S+)", content)
+            # Check status
+            status_match = re.search(r">\s*\*\*Status:\*\*\s*(\w+)", content)
+            status = status_match.group(1) if status_match else "Unknown"
 
-                    analysis["existing_summaries"].append({
-                        "file": f,
-                        "status": status,
-                        "implements": implements.group(1) if implements else None,
-                        "system": system.group(1) if system else None,
-                    })
+            # Check traceability references
+            implements = re.search(r">\s*\*\*Implements:\*\*\s*(\S+)", content)
+            system = re.search(r">\s*\*\*System:\*\*\s*(\S+)", content)
+
+            # Check section fill for fixed-target docs
+            summary = {
+                "file": f,
+                "status": status,
+                "implements": implements.group(1) if implements else None,
+                "system": system.group(1) if system else None,
+            }
+
+            # For fixed-target or small file sets, check section completeness
+            if target or len(existing_paths) <= 10:
+                headings = [line.strip() for line in content.splitlines() if line.strip().startswith("#")]
+                filled = 0
+                empty = 0
+                for heading in headings:
+                    heading_text = re.sub(r"^#+\s+", "", heading)
+                    section_content = _extract_section_content(content, heading)
+                    if section_content:
+                        cleaned = re.sub(r"<!--.*?-->", "", section_content, flags=re.DOTALL).strip()
+                        if len(cleaned) > 20:
+                            filled += 1
+                        else:
+                            empty += 1
+                            analysis["missing_sections"].append(f"{f}: {heading_text}")
+                summary["filled_sections"] = filled
+                summary["empty_sections"] = empty
+
+            analysis["existing_summaries"].append(summary)
 
     # Check for stale references (docs that reference things that no longer exist)
     for f in analysis.get("existing_files", []):
