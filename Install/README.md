@@ -110,20 +110,20 @@ Each seeded layer follows the same stabilization loop: `fix → iterate → vali
 ### Phase 3 — Plan and build
 
 ```
-/scaffold-new-roadmap                ← define phases from start to ship
+/scaffold-seed roadmap                ← define phases from start to ship
 /scaffold-seed phases           ← seed phase scope gates from roadmap
-/scaffold-approve-phases             ← lifecycle gate for the first phase
+/scaffold-approve phases             ← lifecycle gate for the first phase
 ```
 
 For each approved phase:
 
 ```
 /scaffold-seed slices           ← seed vertical slices from phase
-/scaffold-approve-slices             ← lifecycle gate for the first slice
+/scaffold-approve slices             ← lifecycle gate for the first slice
 /scaffold-seed specs            ← seed behavior specs from slice
 /scaffold-seed tasks            ← seed implementation tasks from specs
-/scaffold-approve-specs              ← lifecycle gate
-/scaffold-approve-tasks              ← lifecycle gate
+/scaffold-approve specs              ← lifecycle gate
+/scaffold-approve tasks              ← lifecycle gate
 /scaffold-implement             ← code, test, review, complete
 ```
 

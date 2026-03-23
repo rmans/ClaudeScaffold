@@ -1,6 +1,6 @@
 # Skills Reference
 
-> Man-page reference for all 30 scaffold slash commands. Each entry shows synopsis, description, arguments, examples, and related skills.
+> Man-page reference for all 21 scaffold slash commands. Each entry shows synopsis, description, arguments, examples, and related skills.
 >
 > **When to use each skill** — see [WORKFLOW.md](WORKFLOW.md) for the step-by-step pipeline order.
 
@@ -10,29 +10,16 @@
 
 | Skill | Arguments | What it does |
 |-------|-----------|-------------|
-| **Create** | | |
-| `/scaffold-new-roadmap` | — | Create the project roadmap |
-| `/scaffold-new-phase` | `[phase-name]` | Create a phase scope gate with auto PHASE-### ID |
-| `/scaffold-new-slice` | `[slice-name]` | Create a vertical slice with auto SLICE-### ID |
-| `/scaffold-new-system` | `[system-name] [--split-from SYS-###] [--trigger ADR-###\|KI:keyword]` | Create a single system design with overlap/authority audit |
-| `/scaffold-new-spec` | `[spec-name]` | Create a behavior spec with auto SPEC-### ID |
-| `/scaffold-new-task` | `[task-name]` | Create an implementation task with auto TASK-### ID |
 | **Seed** | | |
-| `/scaffold-seed` | `<layer> [--target scope]` | Dependency-aware document generation for any layer (systems, references, engine, style, input, phases, slices, specs, tasks). Processes one requirement at a time, discovers dependencies, verifies coverage. Orchestrated by seed.py with per-layer YAML configs. |
+| `/scaffold-seed` | `<layer> [--target scope] [--single "name"]` | Dependency-aware document generation for any layer (design, systems, references, engine, style, input, phases, slices, specs, tasks, roadmap). Bulk or single doc creation. Orchestrated by seed.py. |
 | **Fix** | | |
 | `/scaffold-fix` | `<layer> [target] [--sections "..."] [--iterations N]` | Mechanical cleanup for any layer (design, systems, spec, task, slice, phase, roadmap, references, style, input, engine, cross-cutting). Orchestrated by local-review.py with per-layer YAML configs. |
 | **Iterate** | | |
 | `/scaffold-iterate` | `<layer> [target] [--topics "1,3"] [--focus "..."] [--iterations N]` | Adversarial per-topic review for any layer (design, systems, spec, task, slice, phase, roadmap, references, style, input, engine). Orchestrated by iterate.py with per-layer YAML configs. |
 | **Revise** | | |
 | `/scaffold-revise` | `<layer> [--source PHASE-###\|SLICE-###] [--signals ADR-###,KI:keyword]` | Detect drift and revise any layer from implementation feedback. Classifies signals, auto-applies safe changes, escalates dangerous changes, dispatches restabilization. Orchestrated by revise.py with per-layer YAML configs. |
-| **Approve** | | |
-| `/scaffold-approve-phases` | — | Lifecycle gate: approve Draft phases for slice seeding |
-| `/scaffold-approve-slices` | — | Lifecycle gate: approve Draft slices for spec seeding |
-| `/scaffold-approve-specs` | — | Lifecycle gate: approve Draft specs in a slice |
-| `/scaffold-approve-tasks` | — | Lifecycle gate: approve Draft tasks in a slice |
 | **Triage** | | |
-| `/scaffold-triage-specs` | `[SLICE-###]` | Resolve spec-level issues from iterate-spec |
-| `/scaffold-triage-tasks` | `[SLICE-###]` | Resolve task-level issues from iterate-task |
+| `/scaffold-triage` | `<layer> <SLICE-###>` | Resolve human-required issues from review passes. Decision checklists for splits, merges, reassignments. |
 | **Implement** | | |
 | `/scaffold-implement` | `<TASK-###> [--max-retries N] [--cri N]` | Implement task end-to-end: plan, code (one step at a time, including tests), build, review, sync, complete. All mechanical ops in Python (utils.py). Code review via iterate.py --reviewer code. |
 | **Validate** | | |
@@ -40,8 +27,7 @@
 | **Decisions** | | |
 | `/scaffold-file-decision` | `--type adr\|ki\|dd "title"` | File an ADR, Known Issue, or Design Debt entry with cross-references |
 | **Playtest** | | |
-| `/scaffold-playtest-log` | `[session-type]` | Log playtester observations into the feedback tracker |
-| `/scaffold-playtest-review` | — | Analyze playtest feedback patterns with priority grid |
+| `/scaffold-playtest` | `<log\|review> [session-date]` | Log playtest sessions and review feedback patterns |
 | **Art** | | |
 | `/scaffold-art-concept` | `[prompt or document-path]` | Generate concept art using DALL-E |
 | `/scaffold-art-ui-mockup` | `[prompt or document-path]` | Generate UI mockup art using DALL-E |
@@ -63,13 +49,13 @@
 Skills for initializing individual documents from templates. All create skills ask one section at a time, write answers immediately, and set Status to Draft.
 
 
-### /scaffold-new-roadmap
+### /scaffold-seed roadmap
 
 Create the project roadmap.
 
 **Synopsis**
 
-    /scaffold-new-roadmap
+    /scaffold-seed roadmap
 
 **Description**
 
@@ -77,21 +63,21 @@ Creates the project roadmap by copying Core Fantasy from the design doc as the V
 
 **Examples**
 
-    /scaffold-new-roadmap
+    /scaffold-seed roadmap
 
 **See Also**
 
-`/scaffold-new-phase`
+`/scaffold-seed phases --single`
 
 ---
 
-### /scaffold-new-phase
+### /scaffold-seed phases --single
 
 Create a phase scope gate with automatic ID assignment.
 
 **Synopsis**
 
-    /scaffold-new-phase [phase-name]
+    /scaffold-seed phases --single [phase-name]
 
 **Description**
 
@@ -105,23 +91,23 @@ Creates a phase scope gate at `phases/PHASE-###-<name>.md` with automatic sequen
 
 **Examples**
 
-    /scaffold-new-phase foundation
-    /scaffold-new-phase content-pipeline
-    /scaffold-new-phase
+    /scaffold-seed phases --single foundation
+    /scaffold-seed phases --single content-pipeline
+    /scaffold-seed phases --single
 
 **See Also**
 
-`/scaffold-new-slice`
+`/scaffold-seed slices --single`
 
 ---
 
-### /scaffold-new-slice
+### /scaffold-seed slices --single
 
 Create a vertical slice with automatic ID assignment.
 
 **Synopsis**
 
-    /scaffold-new-slice [slice-name]
+    /scaffold-seed slices --single [slice-name]
 
 **Description**
 
@@ -135,23 +121,23 @@ Creates a vertical slice at `slices/SLICE-###-<name>.md` with automatic sequenti
 
 **Examples**
 
-    /scaffold-new-slice core-combat-loop
-    /scaffold-new-slice inventory-ui
-    /scaffold-new-slice
+    /scaffold-seed slices --single core-combat-loop
+    /scaffold-seed slices --single inventory-ui
+    /scaffold-seed slices --single
 
 **See Also**
 
-`/scaffold-seed slices`, `/scaffold-new-spec`
+`/scaffold-seed slices`, `/scaffold-seed specs --single`
 
 ---
 
-### /scaffold-new-system
+### /scaffold-seed systems --single
 
 Create a single system design document with automatic ID assignment.
 
 **Synopsis**
 
-    /scaffold-new-system [system-name] [--split-from SYS-###] [--trigger ADR-###|KI:keyword]
+    /scaffold-seed systems --single [system-name] [--split-from SYS-###] [--trigger ADR-###|KI:keyword]
 
 **Description**
 
@@ -167,10 +153,10 @@ Creates a single system design at `design/systems/SYS-###-<name>_draft.md` with 
 
 **Examples**
 
-    /scaffold-new-system mood-resolution
-    /scaffold-new-system task-scheduling --split-from SYS-005
-    /scaffold-new-system zone-management --trigger ADR-018
-    /scaffold-new-system
+    /scaffold-seed systems --single mood-resolution
+    /scaffold-seed systems --single task-scheduling --split-from SYS-005
+    /scaffold-seed systems --single zone-management --trigger ADR-018
+    /scaffold-seed systems --single
 
 **See Also**
 
@@ -178,13 +164,13 @@ Creates a single system design at `design/systems/SYS-###-<name>_draft.md` with 
 
 ---
 
-### /scaffold-new-spec
+### /scaffold-seed specs --single
 
 Create a behavior spec with automatic ID assignment.
 
 **Synopsis**
 
-    /scaffold-new-spec [spec-name]
+    /scaffold-seed specs --single [spec-name]
 
 **Description**
 
@@ -198,23 +184,23 @@ Creates a behavior spec at `specs/SPEC-###-<name>.md` with automatic sequential 
 
 **Examples**
 
-    /scaffold-new-spec player-attack
-    /scaffold-new-spec item-pickup
-    /scaffold-new-spec
+    /scaffold-seed specs --single player-attack
+    /scaffold-seed specs --single item-pickup
+    /scaffold-seed specs --single
 
 **See Also**
 
-`/scaffold-seed specs`, `/scaffold-new-task`
+`/scaffold-seed specs`, `/scaffold-seed tasks --single`
 
 ---
 
-### /scaffold-new-task
+### /scaffold-seed tasks --single
 
 Create an implementation task with automatic ID assignment.
 
 **Synopsis**
 
-    /scaffold-new-task [task-name]
+    /scaffold-seed tasks --single [task-name]
 
 **Description**
 
@@ -228,9 +214,9 @@ Creates an implementation task at `tasks/TASK-###-<name>.md` with automatic sequ
 
 **Examples**
 
-    /scaffold-new-task implement-attack-resolution
-    /scaffold-new-task wire-inventory-ui
-    /scaffold-new-task
+    /scaffold-seed tasks --single implement-attack-resolution
+    /scaffold-seed tasks --single wire-inventory-ui
+    /scaffold-seed tasks --single
 
 **See Also**
 
@@ -434,7 +420,7 @@ Reads all phases, system designs, and interface contracts to bulk-create vertica
 
 **See Also**
 
-`/scaffold-new-slice`
+`/scaffold-seed slices --single`
 
 ---
 
@@ -456,7 +442,7 @@ Reads all slices, system designs, and state transitions to bulk-create behavior 
 
 **See Also**
 
-`/scaffold-new-spec`
+`/scaffold-seed specs --single`
 
 ---
 
@@ -478,7 +464,7 @@ Reads all specs, engine docs, and signal registry to bulk-create implementation 
 
 **See Also**
 
-`/scaffold-new-task`
+`/scaffold-seed tasks --single`
 
 
 ## Complete
@@ -619,17 +605,17 @@ direct file editing
 
 ## Playtest
 
-Skills for capturing and analyzing playtester feedback. Observations are logged with `/scaffold-playtest-log` and analyzed with `/scaffold-playtest-review`.
+Skills for capturing and analyzing playtester feedback. Observations are logged with `/scaffold-playtest log` and analyzed with `/scaffold-playtest review`.
 
 ---
 
-### /scaffold-playtest-log
+### /scaffold-playtest log
 
 Log playtester observations into the feedback tracker.
 
 **Synopsis**
 
-    /scaffold-playtest-log [session-type]
+    /scaffold-playtest log [session-type]
 
 **Description**
 
@@ -643,23 +629,23 @@ Captures playtester observations into `decisions/playtest-feedback.md`. Creates 
 
 **Examples**
 
-    /scaffold-playtest-log in-person
-    /scaffold-playtest-log remote
-    /scaffold-playtest-log
+    /scaffold-playtest log in-person
+    /scaffold-playtest log remote
+    /scaffold-playtest log
 
 **See Also**
 
-`/scaffold-playtest-review`, direct file editing
+`/scaffold-playtest review`, direct file editing
 
 ---
 
-### /scaffold-playtest-review
+### /scaffold-playtest review
 
 Analyze playtest feedback patterns with severity x frequency grid.
 
 **Synopsis**
 
-    /scaffold-playtest-review
+    /scaffold-playtest review
 
 **Description**
 
@@ -667,11 +653,11 @@ Read-only analysis of `decisions/playtest-feedback.md`. Groups feedback by syste
 
 **Examples**
 
-    /scaffold-playtest-review
+    /scaffold-playtest review
 
 **See Also**
 
-`/scaffold-playtest-log`, `/scaffold-new-phase`
+`/scaffold-playtest log`, `/scaffold-seed phases --single`
 
 ---
 

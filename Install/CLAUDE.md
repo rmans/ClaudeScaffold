@@ -58,14 +58,14 @@ Never load entire directories. Follow this protocol:
 
 ## When Creating or Modifying Systems
 
-- **Use `/scaffold-seed systems` to create systems from the design doc.** For individual systems, use `/scaffold-new-system`. Both use the template, assign IDs, and register in indexes automatically.
+- **Use `/scaffold-seed systems` to create systems from the design doc.** For individual systems, use `/scaffold-seed systems --single`. Both use the template, assign IDs, and register in indexes automatically.
 - If creating manually: use the template at `scaffold/templates/system-template.md`, assign sequential SYS-### IDs (never skip or reuse), and register in both `scaffold/design/systems/_index.md` AND the System Design Index in `scaffold/design/design-doc.md`.
 - Write in player-visible behavior only. Technical contracts belong in `scaffold/design/interfaces.md` and `scaffold/reference/signal-registry.md`.
 
 ## When Planning (Phases, Slices, Specs, Tasks)
 
 - Follow the order: Roadmap → Phases → Slices → Specs → Tasks.
-- **Use seed skill to create planning docs:** `/scaffold-seed phases`, `/scaffold-seed slices`, `/scaffold-seed specs`, `/scaffold-seed tasks`. For individual docs, use `/scaffold-new-phase`, `/scaffold-new-slice`, `/scaffold-new-spec`, `/scaffold-new-task`.
+- **Use seed skill to create planning docs:** `/scaffold-seed phases`, `/scaffold-seed slices`, `/scaffold-seed specs`, `/scaffold-seed tasks`. For individual docs, use `/scaffold-seed phases --single`, `/scaffold-seed slices --single`, `/scaffold-seed specs --single`, `/scaffold-seed tasks --single`.
 - Before creating a phase, spec, or task, read all ADRs filed during prior work. ADRs may change scope.
 - Before creating a phase, read `scaffold/decisions/playtest-feedback/` for Pattern-status entries. Playtest patterns may affect phase scope alongside ADRs.
 - Slices define vertical end-to-end chunks within a phase. Specs define behavior within a slice. Tasks implement specs.

@@ -93,7 +93,7 @@ When a skill requires human input (triage, seed confirmation, revision proposals
 7. **Record decisions persistently** — triage decisions go in triage logs. Revision decisions go in revision logs. Seed decisions are implicit in the confirmed candidate set.
 
 This pattern applies to:
-- `/scaffold-triage-tasks` and `/scaffold-triage-specs` (the original triage skills)
+- `/scaffold-triage tasks` and `/scaffold-triage specs` (the original triage skills)
 - `/scaffold-seed slices` and `/scaffold-seed phases` (candidate confirmation)
 - `/scaffold-revise slices` and `/scaffold-revise phases` (revision proposals)
 - Any skill with a "user must confirm" or "override" path
@@ -180,7 +180,7 @@ Proposes systems from simulation responsibilities and owned player-facing concer
 To add a single system after initial seeding (e.g., when `revise-systems` detects emergent subsystem pressure, `validate` finds a design-to-systems gap, or a split is needed), use:
 
 ```
-/scaffold-new-system [name] [--split-from SYS-###] [--trigger ADR-###|KI:keyword]
+/scaffold-seed systems --single [name] [--split-from SYS-###] [--trigger ADR-###|KI:keyword]
 ```
 
 Performs the same overlap/authority/invariant audit as bulk-seed but for one system. When `--split-from` is provided, also updates the parent system's Non-Responsibilities and dependency tables.
@@ -521,7 +521,7 @@ The roadmap follows the same stabilization pattern as phases. **Loop 1** runs on
 #### 8a — Create the roadmap
 
 ```
-/scaffold-new-roadmap
+/scaffold-seed roadmap
 ```
 
 Proposes a phase skeleton from design context, maps systems to phases, validates ordering and coverage, then writes `phases/roadmap.md` with 20 sections: vision checkpoint, design pillars, ship definition, capability ladder, phase overview, phase boundaries, system coverage map, phase ordering rationale, and more. Includes demo scenarios, success metrics, and sliceability checks per phase.
@@ -580,7 +580,7 @@ Phases follow the same pipeline pattern as slices. **Loop 1** runs once when the
 
 Generates phase scope gate stubs from the roadmap, design doc, system designs, and ADR/KI history. Roadmap goals drive phase selection. Uses temporary labels during confirmation; assigns permanent IDs only after the user confirms. Additive-aware — won't re-generate existing phases.
 
-> To create a single phase interactively: `/scaffold-new-phase [phase-name]`
+> To create a single phase interactively: `/scaffold-seed phases --single [phase-name]`
 
 #### 9b — Review phases
 
@@ -601,7 +601,7 @@ Checks phase structural integrity: index sync, roadmap sync, order integrity, st
 #### 9e — Approve first phase
 
 ```
-/scaffold-approve-phases PHASE-###
+/scaffold-approve phases PHASE-###
 ```
 
 Lifecycle gate that approves exactly one phase — the next in roadmap order. Enforces 9 preconditions: validation passes, no other active phase, correct roadmap order, all entry criteria satisfied, review freshness, no unresolved iterate escalations, no pending ADRs/KIs, content readiness, and slice seeding readiness. The gate never rewrites content — it only reads and judges. Later phases stay Draft.
@@ -628,7 +628,7 @@ Full review pipeline on the revised phase (fix → iterate → validate).
 #### 9j — Approve next phase
 
 ```
-/scaffold-approve-phases PHASE-###
+/scaffold-approve phases PHASE-###
 ```
 
 Approves the next phase in roadmap order. Repeat Loop 2 (9f–9j) for each remaining phase.
@@ -651,7 +651,7 @@ Slices have two loops depending on where you are in the phase. **Loop 1** runs o
 
 Generates slice stubs for the phase from phase goals, system designs, and interface contracts. Phase goals drive slice selection. Lifecycle-aware — behaves differently for fresh phases vs phases with existing slices. Filters weak candidates (progress theater, fake verticality, duplicate proof) before presentation. Uses temporary labels during confirmation; assigns permanent IDs only after the user confirms the full candidate set, order, and dependencies. Defines implementation order and `Depends on` declarations — only the first slice will be approved initially.
 
-> To create a single slice interactively: `/scaffold-new-slice [slice-name]`
+> To create a single slice interactively: `/scaffold-seed slices --single [slice-name]`
 
 #### 10b — Review the first slice
 
@@ -672,7 +672,7 @@ Checks slice structural integrity: index sync, phase resolution, status-filename
 #### 10e — Approve first slice
 
 ```
-/scaffold-approve-slices SLICE-###
+/scaffold-approve slices SLICE-###
 ```
 
 Lifecycle gate that approves exactly one slice — the first in implementation order. Enforces 8 preconditions: validation passes, no other active slice, correct implementation order, all declared dependencies Complete, review and iterate logs fresh, no pending upstream actions, phase-scope alignment, and no spec pipeline drift. Later slices stay Draft because implementation feedback may change them.
@@ -701,7 +701,7 @@ Structural integrity check after revision — includes dependency resolution, de
 #### 10j — Approve next slice
 
 ```
-/scaffold-approve-slices SLICE-###
+/scaffold-approve slices SLICE-###
 ```
 
 Approves the next slice in implementation order. Repeat Loop 2 (10f–10j) for each remaining slice in the phase.
@@ -720,7 +720,7 @@ This step uses a multi-pass planning loop to produce behavior-ready specs. The l
 
 Generates spec stubs for all slices from system designs and state transitions. Each spec describes BEHAVIOR, not implementation — no engine constructs.
 
-> To create a single spec interactively: `/scaffold-new-spec [spec-name]`
+> To create a single spec interactively: `/scaffold-seed specs --single [spec-name]`
 
 #### 11b — Review specs
 
@@ -733,7 +733,7 @@ Full review pipeline. Fix phase: vague ACs, missing sections, implementation lea
 #### 11d — Triage human-required issues
 
 ```
-/scaffold-triage-specs SLICE-###
+/scaffold-triage specs SLICE-###
 ```
 
 Collects all unresolved human-required issues from fix-spec and iterate runs: coverage gaps, spec overlaps, system scope mismatches, authority violations, state machine conflicts. Presents them as a decision checklist: splits, merges, scope changes, new specs, reassignments, deferrals. Applies the user's decisions.
@@ -764,7 +764,7 @@ Runs spec-pipeline validation to catch synchronization drift before approving: s
 #### 11g — Approve specs
 
 ```
-/scaffold-approve-specs SLICE-###
+/scaffold-approve specs SLICE-###
 ```
 
 Marks all Draft specs as Approved. Renames files (`_draft` → `_approved`), updates `specs/_index.md`, and syncs the slice's Specs table. Blocked/deferred specs stay Draft.
@@ -786,7 +786,7 @@ This step uses a multi-pass planning loop to produce implementation-ready tasks.
 
 Creates initial task stubs from the slice's specs, engine docs, and architecture context. Tasks describe HOW to implement spec behavior in the target engine.
 
-> To create a single task interactively: `/scaffold-new-task [task-name]`
+> To create a single task interactively: `/scaffold-seed tasks --single [task-name]`
 
 #### 12b — Review tasks
 
@@ -799,12 +799,12 @@ Full review pipeline. Fix phase: vague objectives, weak verification, missing fi
 #### 12d — Triage human-required issues
 
 ```
-/scaffold-triage-tasks SLICE-###
+/scaffold-triage tasks SLICE-###
 ```
 
 Collects all unresolved human-required issues from fix-task and iterate runs, plus cross-cutting checks: integration gaps, execution path validation, data ownership violations, state transition coverage, persistence gaps, weak verification, and file overlap conflicts. Presents them as a decision checklist: splits, merges, scope changes, new tasks, spec conflicts, blockers, deferrals, ownership. Applies the user's decisions to task files.
 
-Writes a persistent decision log to `decisions/triage-logs/TRIAGE-SLICE-###.md` with two sections: **Decisions** (task-level changes applied) and **Upstream Actions Required** (non-task doc changes that triage identified but did NOT apply — these must be handled via direct file editing or ADRs). The triage decision log becomes the authoritative record of planning decisions and upstream changes required before implementation. Both `/scaffold-reorder-tasks` and `/scaffold-approve-tasks` read this log downstream.
+Writes a persistent decision log to `decisions/triage-logs/TRIAGE-SLICE-###.md` with two sections: **Decisions** (task-level changes applied) and **Upstream Actions Required** (non-task doc changes that triage identified but did NOT apply — these must be handled via direct file editing or ADRs). The triage decision log becomes the authoritative record of planning decisions and upstream changes required before implementation. Both `/scaffold-reorder-tasks` and `/scaffold-approve tasks` read this log downstream.
 
 #### 12e — Repeat until stable
 
@@ -842,7 +842,7 @@ Run this only after the task graph has stabilized and validation is clean — re
 #### 12h — Approve tasks
 
 ```
-/scaffold-approve-tasks SLICE-###
+/scaffold-approve tasks SLICE-###
 ```
 
 Marks all Draft tasks as Approved after reorder confirms the task graph is clean. Renames files (`_draft` → `_approved`), updates `tasks/_index.md`, and syncs the slice's Tasks table status column. Blocked/deferred tasks stay Draft.

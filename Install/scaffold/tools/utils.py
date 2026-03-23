@@ -545,6 +545,75 @@ def sync_glossary(scope="all", scaffold_dir=None):
 
 
 # ---------------------------------------------------------------------------
+# Approve — Lifecycle gate for planning docs
+# ---------------------------------------------------------------------------
+
+def approve_doc(doc_path, scaffold_dir=None):
+    """Approve a scaffold document. Checks preconditions, updates status, renames file."""
+    sd = Path(scaffold_dir) if scaffold_dir else SCAFFOLD_DIR
+    abs_path = sd / doc_path if not Path(doc_path).is_absolute() else Path(doc_path)
+
+    if not abs_path.exists():
+        return {"status": "error", "message": f"File not found: {doc_path}"}
+
+    content = abs_path.read_text(encoding="utf-8")
+
+    # Check current status
+    status_match = re.search(r">\s*\*\*Status:\*\*\s*(\w+)", content)
+    current_status = status_match.group(1) if status_match else "Unknown"
+
+    if current_status == "Approved":
+        return {"status": "skip", "message": f"Already Approved: {doc_path}"}
+    if current_status == "Complete":
+        return {"status": "skip", "message": f"Already Complete: {doc_path}"}
+    if current_status not in ("Draft", "Review"):
+        return {"status": "error", "message": f"Cannot approve — status is '{current_status}'"}
+
+    # Check for review freshness (iterate log exists and is newer than file)
+    doc_mtime = abs_path.stat().st_mtime
+    review_dir = sd / "decisions" / "review"
+    doc_stem = abs_path.stem.split("_")[0]
+    reviews = sorted(review_dir.glob(f"ITERATE-*{doc_stem}*")) if review_dir.exists() else []
+
+    if not reviews:
+        return {"status": "blocked", "message": f"No review log found for {doc_path}. Run /scaffold-review first."}
+
+    latest_review = reviews[-1]
+    if doc_mtime > latest_review.stat().st_mtime:
+        return {"status": "blocked", "message": f"File modified after last review. Run /scaffold-review again."}
+
+    # Update status
+    content = re.sub(r"(>\s*\*\*Status:\*\*)\s*\w+", r"\1 Approved", content)
+
+    today = datetime.now().strftime("%Y-%m-%d")
+    content = re.sub(r"(>\s*\*\*Last Updated:\*\*)\s*[\d-]+", rf"\1 {today}", content)
+
+    changelog_match = re.search(r"(>\s*\*\*Changelog:\*\*)", content)
+    if changelog_match:
+        insert_pos = content.find("\n", changelog_match.end())
+        if insert_pos != -1:
+            content = content[:insert_pos] + f"\n> - {today}: Status → Approved." + content[insert_pos:]
+
+    abs_path.write_text(content, encoding="utf-8")
+
+    # Rename
+    old_name = abs_path.name
+    new_name = re.sub(r"_(draft|review)", "_approved", old_name)
+    if new_name != old_name:
+        new_path = abs_path.parent / new_name
+        abs_path.rename(new_path)
+
+    # Update index
+    index_files = list(abs_path.parent.glob("_index.md"))
+    if index_files:
+        idx_content = index_files[0].read_text(encoding="utf-8")
+        idx_content = idx_content.replace(old_name, new_name)
+        index_files[0].write_text(idx_content, encoding="utf-8")
+
+    return {"status": "ok", "file": new_name, "old_status": current_status}
+
+
+# ---------------------------------------------------------------------------
 # CLI
 # ---------------------------------------------------------------------------
 
@@ -572,7 +641,11 @@ def main():
 
     # sync-glossary
     p_gloss = subparsers.add_parser("sync-glossary", help="Scan for unglosseried terms")
-    p_gloss.add_argument("--scope", default="all", help="Scope: all, design, systems, references, style, input")
+    p_gloss.add_argument("--scope", default="all")
+
+    # approve
+    p_approve = subparsers.add_parser("approve", help="Approve a scaffold doc")
+    p_approve.add_argument("doc", help="Document path relative to scaffold/")
 
     args = parser.parse_args()
     if not args.command:
@@ -593,6 +666,9 @@ def main():
         print(json.dumps(result, indent=2))
     elif args.command == "sync-glossary":
         result = sync_glossary(args.scope)
+        print(json.dumps(result, indent=2))
+    elif args.command == "approve":
+        result = approve_doc(args.doc)
         print(json.dumps(result, indent=2))
 
 
