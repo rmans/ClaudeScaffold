@@ -199,12 +199,12 @@ PYTHON → action.json: { action: "interview", group: "Shape", ... group_index: 
 CLAUDE: interviews user, writes answers
 ... repeats for Control, World, Presentation (incl Entity Presentation), Content,
   System Domains, Philosophy, Scope (Technical Stack pre-filled from scan) ...
-8 groups total
+9 groups total
 ```
 
 **Verify + Report:**
 ```
-PYTHON: all 8 groups interviewed → phase: verify
+PYTHON: all 9 groups interviewed → phase: verify
 PYTHON → action.json: { action: "verify" }
 CLAUDE: /scaffold-seed-verify → checks all sections filled, governance populated
 CLAUDE ← result.json: { gaps: [] }
