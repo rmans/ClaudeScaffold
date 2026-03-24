@@ -1043,14 +1043,17 @@ USER: /scaffold-fix cross-cutting
 ```
 
 **Step 14b — Revise roadmap:**
+
+PHASE-001 is already Complete (rippled up from the last task → spec → slice → phase by `utils.py complete`). The revise step updates the **roadmap document** to reflect this:
+
 ```
 USER: /scaffold-revise roadmap --source PHASE-001
 ```
 
 ```
 PYTHON: revise.py →
-  → moves PHASE-001 to Completed Phases with delivery notes
-  → updates Current Phase to PHASE-002
+  → updates roadmap.md: moves PHASE-001 entry to Completed Phases section with delivery notes, completion date, friction rating (LOW/MEDIUM/HIGH)
+  → updates Current Phase pointer to PHASE-002 (earliest Approved phase)
   → logs ADR feedback with dedupe
   → adds Revision History entry
   → surfaces roadmap-level observations (confidence: Stable/Decreased/Improved)
