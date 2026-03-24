@@ -254,8 +254,11 @@ def _load_glossary():
 
 def _load_template_headings(config):
     """Load expected headings from the template file."""
-    template_path = SCAFFOLD_DIR / (config.get("template", "") or "")
-    if not template_path.exists():
+    template_rel = config.get("template", "") or ""
+    if not template_rel:
+        return []
+    template_path = SCAFFOLD_DIR / template_rel
+    if not template_path.is_file():
         return []
     content = template_path.read_text(encoding="utf-8")
     headings = []
@@ -496,6 +499,86 @@ def _extract_section(doc_content, heading):
     return "\n".join(lines[start:end]).strip()
 
 
+def _resolve_fix_context(config, target, section_heading=""):
+    """Resolve context from the config's context block for judgment checks.
+    No artificial cap — context goes to Claude which has a large context window."""
+    # Try the hierarchical context system first
+    if "context" in config:
+        try:
+            from context import resolve_as_text
+            text = resolve_as_text(config, target, section_heading)
+            if text:
+                return text
+        except ImportError:
+            pass
+
+    # Fallback: load base context files directly
+    ctx_parts = []
+    context_block = config.get("context", {})
+    base_entries = context_block.get("base", [])
+    if not isinstance(base_entries, list):
+        base_entries = []
+
+    for entry in base_entries:
+        if not isinstance(entry, dict):
+            continue
+        rel_path = entry.get("file", "")
+        if not rel_path:
+            continue
+        # Skip loading the target itself as context
+        if rel_path == target:
+            continue
+        abs_path = SCAFFOLD_DIR / rel_path
+        if not abs_path.is_file():
+            continue
+        try:
+            content = abs_path.read_text(encoding="utf-8")
+            sections = entry.get("sections", [])
+            if sections:
+                extracted = []
+                for sec in sections:
+                    sec_content = _extract_section(content, sec)
+                    if sec_content:
+                        extracted.append(sec_content)
+                if extracted:
+                    ctx_parts.append(f"--- {rel_path} ---\n" + "\n\n".join(extracted))
+            else:
+                ctx_parts.append(f"--- {rel_path} ---\n{content[:3000]}")
+        except (OSError, UnicodeDecodeError):
+            continue
+
+    # Also load on_demand entries
+    on_demand = context_block.get("on_demand", [])
+    if isinstance(on_demand, list):
+        for entry in on_demand:
+            if not isinstance(entry, dict):
+                continue
+            rel_path = entry.get("file", "")
+            if not rel_path:
+                continue
+            abs_path = SCAFFOLD_DIR / rel_path
+            if not abs_path.is_file():
+                continue
+            try:
+                content = abs_path.read_text(encoding="utf-8")
+                sections = entry.get("sections", [])
+                if sections:
+                    extracted = []
+                    for sec in sections:
+                        sec_content = _extract_section(content, sec)
+                        if sec_content:
+                            extracted.append(sec_content)
+                    if extracted:
+                        ctx_parts.append(f"--- {rel_path} ---\n" + "\n\n".join(extracted))
+                else:
+                    ctx_parts.append(f"--- {rel_path} ---\n{content[:2000]}")
+            except (OSError, UnicodeDecodeError):
+                continue
+
+    result = "\n\n".join(ctx_parts)
+    return result if result else ""
+
+
 # ---------------------------------------------------------------------------
 # Signal Detection
 # ---------------------------------------------------------------------------
@@ -685,7 +768,10 @@ def _advance_and_write_action(session, config):
         target_abs = SCAFFOLD_DIR / target
         doc_content = target_abs.read_text(encoding="utf-8") if target_abs.exists() else ""
         section_heading = check.get("section", "")
-        section_content = _extract_section(doc_content, section_heading) if section_heading else doc_content[:3000]
+        section_content = _extract_section(doc_content, section_heading) if section_heading else doc_content
+
+        # Resolve context from config
+        context_summary = _resolve_fix_context(config, target, section_heading)
 
         _write_action({
             "action": "adjudicate",
@@ -699,10 +785,11 @@ def _advance_and_write_action(session, config):
                 "suggestion": "",
                 "check_question": check.get("question", ""),
             },
-            "section_content": section_content[:5000] if section_content else "",
+            "section_content": section_content or "",
             "target_file": target,
             "layer": session["layer"],
             "rules": config.get("rules", []),
+            "context_summary": context_summary,
             "resolved_root_causes": [],
             "exchange_count": 0,
             "max_exchanges": 3,

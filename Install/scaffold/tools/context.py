@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Context resolver — hierarchical, budget-aware context loading for scaffold skills.
+Context resolver — hierarchical context loading for scaffold skills.
 
 Resolves context at four levels:
   1. base      — minimal context every review needs (e.g., the target doc)
@@ -12,19 +12,12 @@ Each context entry can specify:
   - file:      path relative to scaffold/
   - class:     canonical | constraint | adjacent | upstream | evidence
   - sections:  list of headings to extract (omit = whole file)
-  - priority:  1-5 (1 = essential, 5 = nice-to-have). Used for budget trimming.
+  - priority:  1-5 (1 = essential, 5 = nice-to-have). Used for sort order.
   - condition: optional gate (exists, task_type:X, has_section:X)
-
-Budget enforcement:
-  - max_total_chars: hard cap on total context characters
-  - When over budget, drop entries by priority (5 first), then by class
-    (evidence > adjacent > constraint > upstream > canonical)
 
 YAML config format:
 
     context:
-      budget: 30000                    # max chars total (default 50000)
-
       base:                            # always loaded
         - file: design/glossary.md
           class: constraint
@@ -64,7 +57,6 @@ from pathlib import Path
 
 
 SCAFFOLD_DIR = Path(__file__).parent.parent
-DEFAULT_BUDGET = 50000  # chars
 
 
 # ---------------------------------------------------------------------------
@@ -284,15 +276,15 @@ def _resolve_per_target(entries, meta):
 # Context Loading
 # ---------------------------------------------------------------------------
 
-def _load_entry(entry, budget_remaining):
-    """Load a context entry, applying section extraction. Returns (text, chars_used)."""
+def _load_entry(entry):
+    """Load a context entry, applying section extraction. Returns text or None."""
     file_path = entry.get("file", "")
     if not file_path:
-        return None, 0
+        return None
 
     abs_path = SCAFFOLD_DIR / file_path
     if not abs_path.exists():
-        return None, 0
+        return None
 
     content = abs_path.read_text(encoding="utf-8")
     sections = entry.get("sections", [])
@@ -300,19 +292,11 @@ def _load_entry(entry, budget_remaining):
     if sections:
         extracted = extract_sections(content, sections)
         if extracted:
-            # Add file header for clarity
-            text = f"--- {file_path} (sections: {', '.join(sections)}) ---\n{extracted}"
+            return f"--- {file_path} (sections: {', '.join(sections)}) ---\n{extracted}"
         else:
-            # Sections not found — fall back to truncated whole file
-            text = f"--- {file_path} (requested sections not found, truncated) ---\n{content[:3000]}"
+            return f"--- {file_path} (requested sections not found) ---\n{content}"
     else:
-        text = f"--- {file_path} ---\n{content}"
-
-    # Enforce budget
-    if len(text) > budget_remaining:
-        text = text[:budget_remaining] + "\n[...truncated by budget]"
-
-    return text, len(text)
+        return f"--- {file_path} ---\n{content}"
 
 
 # ---------------------------------------------------------------------------
@@ -336,7 +320,6 @@ def resolve(config, target_path, section_heading=None, extra_meta=None):
         list of {"file": path, "text": content, "class": class, "priority": N}
     """
     ctx_config = config.get("context", {})
-    budget = ctx_config.get("budget", DEFAULT_BUDGET)
 
     # Extract target metadata
     meta = _extract_metadata(target_path)
@@ -364,14 +347,12 @@ def resolve(config, target_path, section_heading=None, extra_meta=None):
             if isinstance(entry, dict) and _eval_condition(entry.get("condition"), meta):
                 candidates.append({**entry, "_level": "section"})
 
-    # Sort: priority dominant (1 first), class as tiebreaker within same priority,
-    # then level. This ensures high-priority items load first regardless of class,
-    # and when budget runs out, low-priority items are the ones that get dropped.
-    class_order = {c: i for i, c in enumerate(_CLASS_DROP_ORDER)}  # canonical=4 (loads first), evidence=0 (loads last)
+    # Sort by priority (1 first), then class, then level
+    class_order = {c: i for i, c in enumerate(_CLASS_DROP_ORDER)}
     level_order = {"base": 0, "target": 1, "section": 2}
     candidates.sort(key=lambda e: (
         e.get("priority", 3),
-        -class_order.get(e.get("class", ""), 2),  # higher class value = more important = loads earlier
+        -class_order.get(e.get("class", ""), 2),
         level_order.get(e.get("_level"), 3),
     ))
 
@@ -384,16 +365,10 @@ def resolve(config, target_path, section_heading=None, extra_meta=None):
             seen.add(key)
             deduped.append(entry)
 
-    # Load entries within budget
+    # Load all entries
     results = []
-    chars_used = 0
-
     for entry in deduped:
-        remaining = budget - chars_used
-        if remaining <= 0:
-            break
-
-        text, used = _load_entry(entry, remaining)
+        text = _load_entry(entry)
         if text:
             results.append({
                 "file": entry.get("file", ""),
@@ -401,7 +376,6 @@ def resolve(config, target_path, section_heading=None, extra_meta=None):
                 "class": entry.get("class", ""),
                 "priority": entry.get("priority", 3),
             })
-            chars_used += used
 
     return results
 

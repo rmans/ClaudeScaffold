@@ -314,6 +314,32 @@ def resolve_context_files(config, target_path, section_heading=None):
     return files
 
 
+def _resolve_adjudicate_context(config, target_path, section_heading=""):
+    """Resolve context as text for adjudicate/self_review actions."""
+    # Try the hierarchical context system first
+    if "context" in config:
+        try:
+            from context import resolve_as_text
+            text = resolve_as_text(config, target_path, section_heading)
+            if text:
+                return text
+        except ImportError:
+            pass
+
+    # Fallback: read context files and concatenate
+    context_files = resolve_context_files(config, target_path, section_heading)
+    parts = []
+    for cf in context_files:
+        cf_path = Path(cf)
+        if cf_path.is_file():
+            try:
+                content = cf_path.read_text(encoding="utf-8")
+                parts.append(f"--- {cf_path.name} ---\n{content}")
+            except (OSError, UnicodeDecodeError):
+                continue
+    return "\n\n".join(parts)
+
+
 # ---------------------------------------------------------------------------
 # Section Extraction
 # ---------------------------------------------------------------------------
@@ -435,6 +461,24 @@ def cmd_preflight(args):
         result["target"] = args.target
     if skip_sections:
         result["skip_sections"] = list(set(skip_sections))
+
+    # Check if external reviewer is available
+    try:
+        check_result = subprocess.run(
+            [sys.executable, str(DOC_REVIEW_SCRIPT), "check-config"],
+            capture_output=True, text=True, timeout=10, cwd=str(SCAFFOLD_DIR)
+        )
+        if check_result.stdout.strip():
+            check_data = json.loads(check_result.stdout.strip())
+            if not check_data.get("api_key_found", True):
+                result["warning"] = (
+                    "No external reviewer API key found. "
+                    "Will fall back to self-review (Claude reviews directly — weaker but functional). "
+                    f"Set {check_data.get('api_key_env', 'API key')} in environment or scaffold/.env for external review."
+                )
+    except (subprocess.TimeoutExpired, json.JSONDecodeError, FileNotFoundError):
+        pass  # Can't check — will discover at review time
+
     _output(result)
 
 
@@ -664,7 +708,7 @@ def _advance_and_write_action(session, config):
         return
 
     if item["pass"] == "report":
-        _write_action({
+        report_data = {
             "action": "report",
             "session_id": session["session_id"],
             "layer": session["layer"],
@@ -681,7 +725,10 @@ def _advance_and_write_action(session, config):
             "rating": config.get("report", {}).get("rating", {}),
             "log_name": _build_log_name(config, session),
             "log_path": f"scaffold/decisions/review/{_build_log_name(config, session)}",
-        })
+        }
+        if session.get("fallback_self_review"):
+            report_data["fallback_self_review"] = True
+        _write_action(report_data)
         return
 
     # Review action — need to call adversarial-review.py and get issues
@@ -742,6 +789,30 @@ def _advance_and_write_action(session, config):
     section_heading = item.get("section", "")
     context_files = resolve_context_files(config, target, section_heading)
     issues = _call_reviewer(session, config, section_content, questions, context_files)
+
+    if issues is None:
+        # Reviewer failed (API key missing, timeout, etc.) — fall back to self-review
+        session["fallback_self_review"] = True
+        _save_session(session["session_id"], session)
+        section_name = item.get("section", f"queue item {idx}")
+
+        # Resolve context for self-review
+        context_summary = _resolve_adjudicate_context(config, session["target"], section_name)
+
+        _write_action({
+            "action": "self_review",
+            "session_id": session["session_id"],
+            "pass": item.get("pass", ""),
+            "section": section_name,
+            "section_content": section_content,
+            "questions": questions,
+            "target_file": session["target"],
+            "layer": session["layer"],
+            "rules": config.get("rules", []),
+            "context_summary": context_summary[:5000],
+            "message": f"External reviewer unavailable — self-reviewing {section_name}",
+        })
+        return
 
     if not issues:
         # No issues — write no_issues action so dispatcher sees progress
@@ -813,17 +884,20 @@ def _advance_and_write_action(session, config):
 
 def _write_adjudicate_action(session, config, issue, section_content, queue_item):
     """Write an adjudicate action for one issue."""
+    section_heading = queue_item.get("section", "")
+    context_summary = _resolve_adjudicate_context(config, session["target"], section_heading)
+
     _write_action({
         "action": "adjudicate",
         "session_id": session["session_id"],
         "pass": queue_item["pass"],
-        "section": queue_item["section"] if "section" in queue_item else "",
+        "section": section_heading,
         "issue": issue,
-        "section_content": section_content[:5000],  # Truncate for sanity
+        "section_content": section_content,  # Truncate for sanity
         "target_file": session["target"],
         "layer": session["layer"],
         "rules": config.get("rules", []),
-        "context_summary": "",  # Could summarize context files here
+        "context_summary": context_summary,
         "resolved_root_causes": session.get("resolved_root_causes", []),
         "exchange_count": 0,
         "max_exchanges": session.get("max_exchanges", 5),
@@ -852,6 +926,79 @@ def cmd_resolve(args):
     # Just advance to the next queue item
     if not result:
         _advance_and_write_action(session, config)
+        return
+
+    # Self-review result — Claude reviewed the section directly
+    if result.get("_self_review"):
+        issues = result.get("issues", [])
+        queue = session.get("queue", [])
+        idx = session.get("queue_index", 0)
+        item = queue[idx] if idx < len(queue) else {}
+
+        if not issues:
+            # Self-review found no issues
+            session["queue_index"] = idx + 1
+            _save_session(args.session, session)
+            section_name = item.get("section", f"queue item {idx}")
+            _write_action({
+                "action": "no_issues",
+                "session_id": session["session_id"],
+                "pass": item.get("pass", ""),
+                "section": section_name,
+                "message": f"No issues found in {section_name} (self-review)",
+            })
+            return
+
+        # Filter through review lock
+        filtered = []
+        for issue in issues:
+            root_cause = _extract_root_cause(issue)
+            if root_cause and root_cause in session.get("resolved_root_causes", []):
+                continue
+            filtered.append(issue)
+
+        if not filtered:
+            session["queue_index"] = idx + 1
+            _save_session(args.session, session)
+            section_name = item.get("section", f"queue item {idx}")
+            _write_action({
+                "action": "no_issues",
+                "session_id": session["session_id"],
+                "pass": item.get("pass", ""),
+                "section": section_name,
+                "message": f"No new issues in {section_name} (all filtered by review lock)",
+            })
+            return
+
+        # Categorize — same logic as external reviewer results
+        auto_accept = []
+        needs_adjudication = []
+        for issue in filtered:
+            severity = issue.get("severity", "MEDIUM").upper()
+            suggestion = issue.get("suggestion", "")
+            if issue.get("category") == "mechanical" or (severity == "LOW" and suggestion):
+                auto_accept.append(issue)
+            else:
+                needs_adjudication.append(issue)
+
+        if auto_accept:
+            session.setdefault("auto_accepted_issues", []).extend(auto_accept)
+
+        if not needs_adjudication:
+            session["queue_index"] = idx + 1
+            _save_session(args.session, session)
+            _advance_and_write_action(session, config)
+            return
+
+        # Route to adjudicate
+        session["current_issues"] = needs_adjudication
+        session["current_issue_index"] = 0
+        _save_session(args.session, session)
+
+        target_abs = SCAFFOLD_DIR / session["target"]
+        doc_content = target_abs.read_text(encoding="utf-8") if target_abs.exists() else ""
+        section_content = _extract_section(doc_content, item.get("section", "")) or ""
+        _write_adjudicate_action(session, config, needs_adjudication[0], section_content, item)
         return
 
     # Determine what to do based on the last action type
@@ -1085,7 +1232,7 @@ def cmd_resolve(args):
                 "pass": item.get("pass", ""),
                 "section": item.get("section", ""),
                 "issue": issue,
-                "section_content": section_content[:5000],
+                "section_content": section_content,
                 "target_file": session["target"],
                 "layer": session["layer"],
                 "rules": config.get("rules", []),
@@ -1159,7 +1306,7 @@ def _call_reviewer(session, config, section_content, questions, context_files):
         prompt_file.unlink()
 
     if "error" in result:
-        return []
+        return None  # Sentinel: reviewer failed (distinct from [] = no issues)
 
     return result.get("issues", [])
 

@@ -69,16 +69,10 @@ Each entry has a `class` that describes its role:
 | `adjacent` | Directly interacting docs (peer systems) | 2nd |
 | `evidence` | Specific extracted sections, indexes | First dropped |
 
-### Budget Enforcement
-
-Each config sets a `budget` (default 50000 chars). When total context exceeds the budget, entries are dropped by priority (5 first), then by class (evidence first, canonical last).
-
 ### YAML Config Format
 
 ```yaml
 context:
-  budget: 30000
-
   base:
     - file: design/design-doc.md
       class: canonical

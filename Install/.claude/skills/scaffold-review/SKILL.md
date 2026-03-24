@@ -89,6 +89,15 @@ loop:
       call /scaffold-review-report
       python review.py resolve --session <id>
 
+    "self_review":
+      Review the section yourself using action.section_content and action.questions.
+      Apply the layer's action.rules. Use action.context_summary for reference.
+      Write result.json: {"_self_review": true, "issues": [...]}
+      Each issue: {"severity": "HIGH|MEDIUM|LOW", "section": "...", "description": "...", "suggestion": "..."}
+      Be adversarial — find real problems, don't rubber-stamp.
+      If no issues found, write: {"_self_review": true, "issues": []}
+      python review.py resolve --session <id>
+
     "no_issues":
       log action.message
       python review.py resolve --session <id>
