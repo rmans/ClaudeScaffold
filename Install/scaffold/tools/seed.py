@@ -783,6 +783,18 @@ def cmd_next_action(args):
         interview_sections = config.get("project_context", {}).get("interview_sections", [])
         has_interview = bool(interview_sections) and not requirements
 
+        # Flatten interview groups into individual questions for one-at-a-time presentation
+        interview_questions = []
+        for group in interview_sections:
+            group_name = group.get("group", "")
+            subsections = group.get("subsections", [])
+            for q in group.get("questions", []):
+                interview_questions.append({
+                    "group": group_name,
+                    "subsections": subsections,
+                    "question": q,
+                })
+
         session = {
             "session_id": session_id,
             "layer": args.layer,
@@ -792,7 +804,7 @@ def cmd_next_action(args):
             "requirements": requirements,
             "existing_analysis": existing_analysis,
             "requirement_index": 0,
-            "interview_sections": interview_sections,
+            "interview_questions": interview_questions,
             "interview_index": 0,
             "has_interview": has_interview,
             "candidates": list(asset_candidates),  # pre-seed with synthetic asset candidates
@@ -853,31 +865,31 @@ def _advance(session, config):
         return
 
     elif phase == "interview":
-        # Design-layer interview — send one section group at a time
+        # Design-layer interview — send ONE question at a time
         idx = session.get("interview_index", 0)
-        sections = session.get("interview_sections", [])
+        questions = session.get("interview_questions", [])
 
-        if idx >= len(sections):
-            # All groups interviewed — move to verify (no confirm needed for interview)
+        if idx >= len(questions):
+            # All questions answered — move to verify
             session["phase"] = "verify"
             _save_session(session["session_id"], session)
             _advance(session, config)
             return
 
-        group = sections[idx]
+        q = questions[idx]
         _write_action({
             "action": "interview",
             "session_id": session["session_id"],
             "layer": session["layer"],
-            "group": group.get("group", f"Group {idx + 1}"),
-            "subsections": group.get("subsections", []),
-            "questions": group.get("questions", []),
-            "group_index": idx,
-            "total_groups": len(sections),
+            "group": q.get("group", ""),
+            "subsections": q.get("subsections", []),
+            "question": q.get("question", ""),
+            "question_index": idx + 1,
+            "total_questions": len(questions),
             "inventory": session["inventory"],
             "template": config.get("template", ""),
             "target": config.get("target", ""),
-            "message": f"Interview group {idx + 1}/{len(sections)}: {group.get('group', '')}",
+            "message": f"Question {idx + 1}/{len(questions)} ({q.get('group', '')}): {q.get('question', '')}",
         })
 
     elif phase == "propose":

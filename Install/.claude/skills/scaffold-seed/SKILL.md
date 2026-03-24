@@ -103,11 +103,20 @@ loop:
       # only gaps and reseeded docs go through the proposal phase
 
     "interview":                        ← design layer only
-      present the section group + questions to the user
-      interview the user for that group's subsections
-      write answers to the design doc
-      python seed.py resolve --session <id>
-      # next interview group, or verify when all groups done
+      action contains ONE question:
+        action.question = "What is the one-sentence fantasy this game delivers?"
+        action.group = "Identity"
+        action.subsections = ["Core Fantasy", "Design Invariants", ...]
+        action.question_index = 1
+        action.total_questions = N
+
+      1. Present the question to the user
+      2. Get the user's answer
+      3. Write the answer to the appropriate subsection(s) in the design doc
+         (use action.group + action.subsections to find the right ## / ### section)
+      4. Write result.json: { "answered": true }
+      5. python seed.py resolve --session <id>
+      # next question, or verify when all questions done
 
     "propose":
       call /scaffold-seed-propose
