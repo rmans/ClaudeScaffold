@@ -23,6 +23,7 @@
 | `revise.py` | Revise orchestrator — detect drift, classify signals, auto-apply safe changes, escalate dangerous changes (used by `/scaffold-revise`) |
 | `configs/revise/*.yaml` | Per-layer revise configs (feedback sources, safe/escalation patterns) |
 | `context.py` | Hierarchical context resolver — budget-aware, section-extracting context loading for all orchestrators |
+| `meta-validate.py` | Config drift checker — verifies YAML config heading references match actual template headings. Run at install/upgrade. |
 
 ## context.py
 

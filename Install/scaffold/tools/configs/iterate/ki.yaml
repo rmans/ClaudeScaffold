@@ -60,10 +60,11 @@ l2_sections:
       - "Are there options that weren't considered?"
       - "Are tradeoffs honest — what does each option cost?"
 
-  "## Blocking":
+  "## Resolution":
     questions:
-      - "Is the blocking assessment accurate — does this actually block what it claims?"
+      - "Is the blocking assessment in the header accurate — does this actually block what it claims?"
       - "If non-blocking, could it become blocking later? Is that risk noted?"
+      - "Is the resolution path clear and actionable?"
 
 # ---------------------------------------------------------------------------
 # L1 — Document Review (# level)
