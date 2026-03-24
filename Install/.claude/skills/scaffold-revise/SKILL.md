@@ -88,7 +88,10 @@ loop:
       python revise.py resolve --session <id>
 
     "restabilize":
-      call /scaffold-review <layer>
+      action.reviews contains per-file targets with changed sections:
+        [{ target: "SYS-003", sections: "Owned State,Dependencies" }, ...]
+      for each entry in action.reviews:
+        /scaffold-review <layer> <target> --sections "<sections>"
       python revise.py resolve --session <id>
 
     "report":
