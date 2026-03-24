@@ -61,7 +61,7 @@ python scaffold/tools/local-review.py next-action --layer <layer> --target <rela
 
 local-review.py runs all mechanical checks, builds a queue (auto-apply → judgment checks → judgment-apply → convergence → report), and writes the first `action.json`.
 
-Then loop:
+Then loop **continuously without pausing for user input** — the entire loop runs in one turn:
 
 ```
 loop:
@@ -69,15 +69,15 @@ loop:
   switch action.type:
 
     "apply":
-      call /scaffold-review-apply
+      call /scaffold-review-apply         ← follow the sub-skill instructions inline
       python local-review.py resolve --session <id>
 
     "adjudicate":
-      call /scaffold-review-adjudicate
+      call /scaffold-review-adjudicate    ← follow the sub-skill instructions inline
       python local-review.py resolve --session <id>
 
     "report":
-      call /scaffold-review-report
+      call /scaffold-review-report        ← follow the sub-skill instructions inline
       python local-review.py resolve --session <id>
 
     "done":
@@ -86,6 +86,8 @@ loop:
     "blocked":
       report message to user, break
 ```
+
+**IMPORTANT:** Do NOT pause or wait for user input between loop iterations. Each sub-skill call means "follow that skill's instructions inline" — read action.json, do the work, write result.json, then immediately call resolve and continue the loop. The only time to stop is on "done" or "blocked".
 
 ### Step 4 — Summary
 

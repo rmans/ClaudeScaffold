@@ -76,7 +76,7 @@ python scaffold/tools/iterate.py next-action \
     [--focus "..."] [--sections "..."] [--iterations N] [--max-exchanges N] [--fast]
 ```
 
-This creates the session, calls the reviewer for the first section, and writes `action.json` with the first instruction. Then loop:
+This creates the session, calls the reviewer for the first section, and writes `action.json` with the first instruction. Then loop **continuously without pausing for user input** — the entire loop runs in one turn:
 
 ```
 loop:
@@ -84,26 +84,20 @@ loop:
   switch action.type:
 
     "adjudicate":
-      call /scaffold-review-adjudicate         ← reads action.json, writes result.json
-      python iterate.py resolve --session <id>  ← reads result.json, writes next action.json
-      # accept → scope_check action next
-      # reject/escalate → next issue or next section
-      # pushback → sends counter to reviewer, new adjudicate action
+      call /scaffold-review-adjudicate          ← follow the sub-skill instructions inline
+      python iterate.py resolve --session <id>
 
     "scope_check":
-      call /scaffold-review-scope-check        ← reads action.json, writes result.json
+      call /scaffold-review-scope-check         ← follow the sub-skill instructions inline
       python iterate.py resolve --session <id>
-      # pass → confirms accept, next issue or next section
-      # fail → converts to reject, next issue or next section
 
     "apply":
-      call /scaffold-review-apply              ← reads action.json, edits files, writes result.json
+      call /scaffold-review-apply               ← follow the sub-skill instructions inline
       python iterate.py resolve --session <id>
-      # advances to next pass level; if changes + under limit → inserts verification pass
 
     "report":
-      call /scaffold-review-report             ← reads action.json, writes review log + result.json
-      python iterate.py resolve --session <id>  ← writes "done" action
+      call /scaffold-review-report              ← follow the sub-skill instructions inline
+      python iterate.py resolve --session <id>
 
     "self_review":
       Review the section yourself using action.section_content and action.questions.
@@ -115,8 +109,8 @@ loop:
       python iterate.py resolve --session <id>
 
     "no_issues":
-      log action.message                            ← e.g., "No issues found in ### Purpose"
-      python iterate.py resolve --session <id>      ← no result.json needed, advances to next section
+      log action.message
+      python iterate.py resolve --session <id>
 
     "done":
       break
@@ -125,7 +119,7 @@ loop:
       report message to user, break
 ```
 
-The dispatcher never reads `result.json` — it just calls the sub-skill (which writes `result.json`) then calls `resolve` (which reads it internally). Three lines per action type: call skill, call resolve, loop.
+**IMPORTANT:** Do NOT pause or wait for user input between loop iterations. Each sub-skill call means "follow that skill's instructions inline" — read action.json, do the work, write result.json, then immediately call resolve and continue the loop. The only time to stop is on "done" or "blocked".
 
 Escalated issues are collected during adjudication and presented in the final report — not surfaced mid-review.
 

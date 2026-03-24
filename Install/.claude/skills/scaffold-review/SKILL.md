@@ -66,7 +66,7 @@ Runs preflight for both fix and iterate. Both must pass.
 python scaffold/tools/review.py next-action --layer <layer> --target <relative-path> [args]
 ```
 
-review.py starts the fix phase by delegating to local-review.py. The dispatcher loop is identical:
+review.py starts the fix phase by delegating to local-review.py. The dispatcher loop is identical. Loop **continuously without pausing for user input** — the entire loop runs in one turn:
 
 ```
 loop:
@@ -74,19 +74,15 @@ loop:
   switch action.type:
 
     "apply":
-      call /scaffold-review-apply
+      call /scaffold-review-apply               ← follow the sub-skill instructions inline
       python review.py resolve --session <id>
 
     "adjudicate":
-      call /scaffold-review-adjudicate
+      call /scaffold-review-adjudicate          ← follow the sub-skill instructions inline
       python review.py resolve --session <id>
 
     "scope_check":
-      call /scaffold-review-scope-check
-      python review.py resolve --session <id>
-
-    "report":
-      call /scaffold-review-report
+      call /scaffold-review-scope-check         ← follow the sub-skill instructions inline
       python review.py resolve --session <id>
 
     "self_review":
@@ -96,6 +92,10 @@ loop:
       Each issue: {"severity": "HIGH|MEDIUM|LOW", "section": "...", "description": "...", "suggestion": "..."}
       Be adversarial — find real problems, don't rubber-stamp.
       If no issues found, write: {"_self_review": true, "issues": []}
+      python review.py resolve --session <id>
+
+    "report":
+      call /scaffold-review-report              ← follow the sub-skill instructions inline
       python review.py resolve --session <id>
 
     "no_issues":
@@ -112,6 +112,8 @@ loop:
     "blocked":
       report message to user, break
 ```
+
+**IMPORTANT:** Do NOT pause or wait for user input between loop iterations. Each sub-skill call means "follow that skill's instructions inline" — read action.json, do the work, write result.json, then immediately call resolve and continue the loop. The only time to stop is on "done" or "blocked".
 
 The dispatcher doesn't know which phase is active — it just routes actions to sub-skills. review.py handles the phase transition internally.
 
