@@ -90,7 +90,7 @@ Not every issue needs full adjudication:
 | **Mechanical** | LOW severity + concrete suggestion, or `category: "mechanical"` | Auto-accept → batch apply (skip adjudication) |
 | **Quality** | MEDIUM/HIGH with suggestion, description has no cross-doc keywords | Adjudicate → apply (scope-check skipped) |
 | **Architecture-affecting** | Description contains: ownership, authority, contract, interface, cross-system, cross-doc, upstream, violat | Adjudicate → scope-check → apply |
-| **Critical** | Severity CRITICAL | Adjudicate → scope-check always → apply |
+| **Critical** | Severity CRITICAL | Adjudicate → scope-check always → apply. Rejected twice → stop iteration, report as blocking 🔧 |
 | **Ambiguous** | No suggestion, unclear fix | Escalate to user |
 
 ### Verification Blast Radius ✅

@@ -378,6 +378,7 @@ def cmd_resolve(args):
             _write_action({
                 "action": "phase_complete",
                 "session_id": session["session_id"],
+                "completed_phase": "iterate",
                 "next_phase": "validate",
                 "message": "Adversarial review complete. Running validation gate...",
             })
