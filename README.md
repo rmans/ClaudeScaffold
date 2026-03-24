@@ -1,36 +1,67 @@
 # ClaudeScaffold
 
-A document-driven pipeline that gives Claude Code long-term memory, strict design authority, and a structured workflow for building games from concept to code.
+A document-driven build system for game development. Python orchestrates, Claude judges, external LLMs review. Design decisions live in versioned markdown with strict authority ranks — not in conversation memory.
 
 ## The Problem
 
-LLMs forget. Over a long project, Claude Code loses track of design decisions, contradicts earlier choices, drifts from the original vision, and makes up answers when it should be reading a spec. The longer the project runs, the worse it gets.
-
-Ad-hoc prompting doesn't scale. You can't keep saying "remember, the inventory uses slots not weight" in every conversation. And CLAUDE.md files help, but they're flat — there's no hierarchy, no conflict resolution, no pipeline.
+LLMs forget. Over a long project, Claude Code loses track of design decisions, contradicts earlier choices, drifts from the original vision, and invents answers when it should be reading a spec. Ad-hoc prompting doesn't scale. CLAUDE.md files help, but they're flat — no hierarchy, no conflict resolution, no pipeline.
 
 ## The Solution
 
-ClaudeScaffold installs a structured document pipeline into your project. Instead of relying on conversation memory, Claude Code reads canonical documents that define **what** the game is, **how** it's built, and **what to do next**.
+ClaudeScaffold installs a structured document pipeline into your project. Every design decision, system behavior, interface contract, and implementation constraint lives in a versioned markdown file with a clear authority rank. When documents conflict, the higher-ranked document wins. Claude never guesses.
 
-Every design decision, visual style rule, system behavior, interface contract, and implementation constraint lives in a versioned markdown file with a clear authority rank. When documents conflict, the higher-ranked document wins — automatically. Claude Code never has to guess.
+### Architecture
 
-**Key properties:**
+The system is a **deterministic/LLM hybrid**:
 
-- **Document authority replaces memory.** Claude reads the design doc, not yesterday's conversation. The source of truth is always a file, never a chat.
-- **11-rank precedence chain.** When a system design says one thing and a task says another, the system design wins. No ambiguity.
-- **Genre-agnostic design, engine-specific implementation.** The design layer works for any game. The engine layer adapts to Godot, Unity, Unreal, or anything else.
-- **ADR feedback loop.** When implementation reality conflicts with the plan, Architecture Decision Records capture why and feed back into upcoming phases, specs, and tasks.
-- **Two-loop stabilization.** Every document type follows the same pattern: create → fix → iterate → validate (initial), then revise → fix → iterate → validate (after implementation feedback). Foundation architecture is gated before planning begins.
-- **Draft → Review → Approved → Complete lifecycle.** Documents start as `Draft`, move through adversarial review via `/scaffold-iterate`, are set to `Approved` by approval gates, and marked `Complete` by `utils.py complete` when implementation is done. Completion ripples up from tasks through specs, slices, and phases.
-- **Token-efficient retrieval.** Index files in every directory let Claude find what it needs without loading entire folders.
-- **Asset requirements in specs.** Specs identify what art and audio the behavior needs, scan for reusable assets, and track production status. Tasks wire the ready assets.
-- **10 skills automate the pipeline.** Create, seed, fix, iterate, revise, approve, implement, file decisions, and edit documents with slash commands — no manual file wrangling.
+- **Python orchestrators** handle control flow, queues, session state, file scanning, dependency graphs, convergence detection, build/test, and completion ripple. Python never forgets steps.
+- **Claude** handles one focused judgment call at a time via sub-skills — propose one candidate, adjudicate one issue, write one code step. Claude never sees the full queue.
+- **External LLM** (OpenAI/Anthropic) performs adversarial review — catches design weaknesses that self-review misses.
+- **YAML configs** define per-layer review questions, mechanical checks, context rules, and coverage criteria. 46 configs across iterate/fix/seed.
+- **Hierarchical context** loads only what each review call needs: section extraction instead of whole files, budget-limited, per-heading context selection.
 
-## How It Works
+```
+Python (orchestration)          Claude (judgment)           External LLM (review)
+├── seed.py                     ├── seed-propose            ├── adversarial-review.py
+├── local-review.py (fix)       ├── review-adjudicate       └── code-review.py
+├── iterate.py                  ├── review-apply
+├── review.py (chains fix→iterate→validate)  ├── review-scope-check
+├── validate.py                 ├── implement-plan
+├── implement.py                ├── implement-code
+├── revise.py                   └── seed-verify
+├── utils.py (complete, build, sync)
+└── context.py (hierarchical context resolution)
+```
 
-### The Pipeline
+### Four Propagation Paths
 
-The scaffold follows a two-loop pipeline from vision to code:
+```
+1. PRODUCTION (user-driven):     seed → review → approve → implement → complete
+2. SIGNAL (feed-forward):        ADR/KI → revise → affected layers → restabilize
+3. RIPPLE (automatic):           task✓ → spec✓ → slice✓ → phase✓ → roadmap
+4. DEPENDENCY (enforcement):     topo sort, preflight blocks, cycle detection
+```
+
+### Document Authority
+
+When documents conflict, the higher-ranked document wins:
+
+| Rank | Document | Controls |
+|------|----------|----------|
+| 1 | Design doc | Core vision, non-negotiables |
+| 2 | Style guide, color system, UI kit, glossary, interaction model, feedback system, audio direction | Visual identity, terminology, interaction, audio |
+| 3 | Input docs | Player actions and bindings |
+| 4 | Architecture, interfaces, authority table | Engineering conventions, contracts, data ownership |
+| 5 | System designs, state machines | Per-system behavior |
+| 6 | Reference tables | Signals, entities, resources, balance |
+| 7 | Roadmap, phase gates | Scope and milestones |
+| 8 | Slice contracts | Vertical integration |
+| 9 | Behavior specs | Atomic testable behaviors |
+| 10 | Engine docs | Engine-specific constraints |
+| 11 | Implementation tasks | How to build each spec |
+| — | Theory docs | Advisory only — no authority |
+
+### Pipeline
 
 ```
 OUTER LOOP (architecture stability)
@@ -45,67 +76,24 @@ OUTER LOOP (architecture stability)
 └─ Foundation Recheck → next phase
 ```
 
-1. **Design** — Define the game: vision, pillars, mechanics, loops, scope
-2. **Systems** — Design each system as player-visible behavior (no engine code)
-3. **References** — Extract data tables: signals, entities, resources, balance params, architecture
-4. **Engine** — Define how to build it in your target engine
-5. **Visual/UX** — Lock in visual identity, interaction model, feedback system, audio direction
-6. **Inputs** — Define player input actions, bindings, navigation, and philosophy
-7. **Foundation Gate** — Verify Steps 1–6 are architecturally stable before planning
-8. **Plan** — Create a roadmap, break it into phases, slice each phase vertically
-9. **Spec** — Write atomic behavior specs for each slice (with asset requirements)
-10. **Build** — Create implementation tasks, write code, run adversarial code review
-11. **Feedback** — ADRs, triage logs, and revision loops update the roadmap and re-scope upcoming work
+Each step: **seed → review (fix → iterate → validate) → approve**. Review uses per-section context with budget limits. Iterate uses three-pass adversarial review (L3 subsections → L2 sections → L1 document). Mechanical issues auto-apply without adjudication.
 
-Each step has skills that automate it. Each document has a clear authority rank. Nothing is ad-hoc.
+### Asset Pipeline
 
-### Document Authority
+Art and audio flow through the same document chain:
 
-When documents conflict, the higher-ranked document wins. Lower documents conform to higher documents. Code never "works around" higher-level intent.
+```
+Design doc (Entity Presentation) → System designs (Asset Needs)
+  → Specs (Asset Requirements) → Task seeding auto-generates art/audio tasks
+    → Implement checks if assets exist → auto-completes when delivered
+```
 
-| Rank | Document | What It Controls |
-|------|----------|-----------------|
-| 1 | Design doc | Core vision, non-negotiables |
-| 2 | Style guide, color system, UI kit, glossary, interaction model, feedback system, audio direction | Visual identity, terminology, interaction, audio |
-| 3 | Input docs | Player actions and bindings |
-| 4 | Architecture, interfaces, authority table | Engineering conventions, contracts, data ownership |
-| 5 | System designs, state machines | Per-system behavior |
-| 6 | Reference tables | Signals, entities, resources, balance |
-| 7 | Roadmap, phase gates | Scope and milestones |
-| 8 | Slice contracts | Vertical integration |
-| 9 | Behavior specs | Atomic testable behaviors |
-| 10 | Engine docs | Engine-specific constraints |
-| 11 | Implementation tasks | How to build each spec |
-| — | Theory docs | Advisory only — no authority |
-
-### Layer Separation
-
-Documents are separated into layers. No document may mix layers.
-
-| Layer | Question It Answers | Directory |
-|-------|-------------------|-----------|
-| Design | What is the game? | `design/` |
-| Inputs | How does the player interact? | `inputs/` |
-| Reference | What are the canonical data shapes? | `reference/` |
-| Decisions | Why did we change the plan? | `decisions/` |
-| Phases | What are we building and when? | `phases/` |
-| Specs | What should this behavior do? | `specs/` |
-| Tasks | How do we implement this spec? | `tasks/` |
-| Slices | What proves this phase works end-to-end? | `slices/` |
-| Engine | How do we build in this engine? | `engine/` |
-| Theory | What do experts recommend? | `theory/` |
-| Assets | What does the game look and sound like? | `assets/` |
-
-### Theory as Advisory Context
-
-The `theory/` directory contains 16 documents covering game design principles, common pitfalls, genre conventions, UX heuristics, color theory, architecture patterns, and more. These carry **no authority**. Skills read them for context when creating and reviewing documents, but they never dictate design decisions. Theory informs; it doesn't override.
+Art/audio tasks include file paths, dimensions, and generation prompts built from the style guide and color system. The user creates assets externally and places them at the listed paths.
 
 ## Installation
 
-Download and run the installer — no need to clone the repo:
-
 ```bash
-# Download claudescaffold.py (once)
+# Download installer (once)
 curl -O https://raw.githubusercontent.com/rmans/ClaudeScaffold/main/claudescaffold.py
 
 # Install into your project
@@ -113,79 +101,56 @@ python claudescaffold.py --install /path/to/your/project
 
 # Upgrade infrastructure (preserves your design work)
 python claudescaffold.py --upgrade /path/to/your/project
-
-# Remove scaffold (creates backup zip first)
-python claudescaffold.py --remove --force /path/to/your/project
 ```
 
-Options:
-- `--install` — first-time installation into a project
-- `--upgrade` — replace infrastructure (skills, templates, theory, tools) while preserving user content
-- `--remove` — remove scaffold from the project (requires `--force`, creates backup zip)
-- `--version` — print version and exit
-- `--branch <name>` — download a specific branch or tag (default: `main`)
-- `--dry-run` — preview what would happen without making changes
-- `--force` — overwrite existing `scaffold/` (install) or confirm removal (remove)
-- `--verbose` — list every file as it's copied
+Options: `--install`, `--upgrade`, `--remove --force`, `--version`, `--branch <name>`, `--dry-run`, `--force`, `--verbose`
 
-**Manual alternative** (requires cloning the repo):
-
-```bash
-git clone https://github.com/rmans/ClaudeScaffold.git
-cp -r ClaudeScaffold/Install/.claude /path/to/your/project/
-cp -r ClaudeScaffold/Install/scaffold /path/to/your/project/
-cp ClaudeScaffold/Install/CLAUDE.md /path/to/your/project/
-```
+Install runs meta-validate automatically — checks that all YAML config heading references match actual template headings. Catches config drift at install time.
 
 This gives your project:
 
 ```
 .claude/skills/       ← 18 Claude Code skills (10 user-facing + 8 sub-skills)
-scaffold/             ← Document pipeline with templates and indexes
+scaffold/             ← Document pipeline with templates, tools, and configs
 CLAUDE.md             ← Instructions that tell Claude Code how to use the scaffold
 ```
 
-See [Install/README.md](Install/README.md) for full installation details.
-
 ## Skills
 
-10 slash commands organized by workflow:
+10 slash commands. Each is a thin dispatcher backed by a Python orchestrator:
 
-| Category | Skills |
-|----------|--------|
-| **Seed (1)** | `seed` — dependency-aware document generation for all layers (including design doc). Processes one requirement at a time, discovers dependencies, verifies coverage. Orchestrated by `seed.py` with per-layer YAML configs. |
-| **Fix (1)** | `fix` — mechanical cleanup. Orchestrated by `local-review.py`. |
-| **Iterate (1)** | `iterate` — adversarial review. Orchestrated by `iterate.py`. |
-| **Review (1)** | `review` — fix → iterate → validate chained. |
-| **Revise (1)** | `revise` — detect drift, classify signals, auto-apply/escalate. |
-| **Validate (1)** | `validate` — structural gate. |
-| **Triage (1)** | `triage` — resolve human-required issues from review passes. |
-| **Implement (1)** | `implement` — step-by-step code generation with file manifest. |
-| **Decisions (1)** | `file-decision` — file ADR/KI/DD with auto-review. |
-| **Playtest (1)** | `playtest` — log sessions and review feedback. |
+| Skill | Orchestrator | What it does |
+|-------|-------------|-------------|
+| `/scaffold-seed` | seed.py | Dependency-aware document generation. Design layer interviews; other layers propose from upstream docs. Heading extraction, not raw content. |
+| `/scaffold-fix` | local-review.py | Mechanical cleanup. Regex/pattern checks in Python, judgment calls routed to Claude. |
+| `/scaffold-iterate` | iterate.py | Adversarial review via external LLM. Three-pass (L3→L2→L1). Per-section context with budget. Mechanical issues auto-accept. |
+| `/scaffold-review` | review.py | Chains fix → iterate → validate automatically. |
+| `/scaffold-revise` | revise.py | Reads ADR/KI/triage signals, classifies one-at-a-time, auto-applies safe changes, escalates dangerous ones. Impact preview before classification. Dispatches scoped restabilization. |
+| `/scaffold-validate` | validate.py | Read-only structural gate. Upstream freshness FAIL enforcement. |
+| `/scaffold-triage` | — | Resolve human-required issues from review passes. Decision checklists. |
+| `/scaffold-implement` | implement.py | One code step at a time. Build/test in Python. Code review via external LLM. Art/audio tasks: check asset delivery, auto-complete. |
+| `/scaffold-file-decision` | — | File ADR/KI/DD with cross-references. |
+| `/scaffold-playtest` | — | Log sessions and review feedback patterns. |
 
-All skill names are prefixed with `/scaffold-` (e.g., `/scaffold-seed design`).
-
-### Recommended Workflow
+### Workflow
 
 ```
-1.  /scaffold-init-design              ← fill out the design doc
-2.  /scaffold-fix design               ← mechanical cleanup
-3.  /scaffold-iterate design            ← adversarial review
-4.  /scaffold-seed systems        ← glossary + system stubs
-5.  Fill in each system design
-6.  /scaffold-seed references     ← populate reference docs
-7.  /scaffold-seed engine         ← select engine, seed engine docs
-8.  /scaffold-seed style          ← seed visual/UX docs
-9.  /scaffold-seed input          ← seed input docs
-10. /scaffold-revise foundation        ← verify architecture stability
-11. /scaffold-new-roadmap              ← create the project roadmap
-12. /scaffold-seed phases         ← seed phases from roadmap
-13. /scaffold-approve phases           ← gate first phase
-14. Per phase: seed slices → approve → seed specs/tasks → approve → implement
+1.  /scaffold-seed design            ← interview: fill out the design doc
+2.  /scaffold-review design          ← fix → iterate → validate
+3.  /scaffold-seed systems           ← glossary + system stubs from design doc
+4.  /scaffold-review systems         ← per-system adversarial review
+5.  /scaffold-seed references        ← architecture, authority, interfaces, etc.
+6.  /scaffold-seed engine            ← engine convention docs
+7.  /scaffold-seed style             ← visual/UX docs
+8.  /scaffold-seed input             ← input docs
+9.  /scaffold-revise foundation      ← verify architecture stability
+10. /scaffold-seed roadmap           ← create project roadmap
+11. /scaffold-seed phases            ← seed phases from roadmap
+12. /scaffold-approve phases PHASE-001
+13. Per phase: seed slices → approve → seed specs/tasks → approve → implement
 ```
 
-See `scaffold/WORKFLOW.md` for the full pipeline recipe. See `scaffold/ART-WORKFLOW.md` and `scaffold/AUDIO-WORKFLOW.md` for art and audio production guidelines.
+See `scaffold/WORKFLOW.md` for the full pipeline. See `scaffold/FULL-WALKTHROUGH.md` for a complete code-level trace of every command.
 
 ## Scaffold Structure
 
@@ -194,62 +159,27 @@ scaffold/
 ├── _index.md                        # Master index + retrieval protocol
 ├── doc-authority.md                 # Precedence rules (ranks 1–11)
 ├── WORKFLOW.md                      # Step-by-step pipeline recipe
-├── ART-WORKFLOW.md                  # Art production pipeline (2D, 3D, UI)
-├── AUDIO-WORKFLOW.md                # Audio production pipeline (SFX, music, ambience, voice)
+├── FULL-WALKTHROUGH.md              # Complete code trace: start to finish
+├── ART-WORKFLOW.md                  # Art production guidelines
+├── AUDIO-WORKFLOW.md                # Audio production guidelines
 │
-├── design/                          # CANON: what the game is
-│   ├── design-doc.md                #   Core vision, pillars, loops, mechanics (rank 1)
-│   ├── style-guide.md               #   Visual art style (rank 2)
-│   ├── color-system.md              #   Color palette and rules (rank 2)
-│   ├── ui-kit.md                    #   UI component definitions (rank 2)
-│   ├── glossary.md                  #   Canonical terminology + NOT column + authority + criticality (rank 2)
-│   ├── interaction-model.md         #   Player interaction patterns (rank 2)
-│   ├── feedback-system.md           #   Game feel and feedback coordination (rank 2)
-│   ├── audio-direction.md           #   Audio philosophy and sound categories (rank 2)
-│   ├── architecture.md              #   Engineering conventions (rank 4)
-│   ├── interfaces.md                #   System interface contracts (rank 4)
-│   ├── authority.md                 #   Data ownership per variable (rank 4)
-│   ├── state-transitions.md         #   All state machines (rank 5)
-│   └── systems/                     #   Individual system designs (rank 5)
-│
-├── inputs/                          # CANON: input control definitions (rank 3)
-│   ├── action-map.md                #   Action IDs with source traceability
-│   ├── input-philosophy.md          #   Input principles and accessibility
-│   ├── default-bindings-kbm.md      #   Keyboard/mouse defaults
-│   ├── default-bindings-gamepad.md  #   Gamepad defaults
-│   └── ui-navigation.md             #   Focus flow and navigation model
-│
+├── design/                          # CANON: what the game is (ranks 1–5)
+├── inputs/                          # CANON: input definitions (rank 3)
 ├── reference/                       # Canonical data tables (rank 6)
-│
-├── decisions/                       # Decision tracking
-│   ├── architecture-decision-record/ #   ADRs (ADR-###)
-│   ├── known-issues/                #   TBDs, gaps, conflicts (KI-###)
-│   ├── design-debt/                 #   Intentional compromises (DD-###)
-│   ├── playtest-feedback/           #   Playtester observations (PF-###)
-│   ├── cross-cutting-finding/       #   Cross-doc integrity issues (XC-###)
-│   ├── code-review/                 #   Adversarial code review logs
-│   ├── revision-log/                #   Drift detection records
-│   ├── triage-log/                  #   Triage decision records
-│   └── review/                      #   Adversarial document review logs
-│
+├── decisions/                       # ADRs, KIs, design debt, reviews, triage
 ├── phases/                          # Scope gates (rank 7)
 ├── slices/                          # Vertical slice contracts (rank 8)
-├── specs/                           # Atomic behavior specs with asset requirements (rank 9)
+├── specs/                           # Atomic behavior specs (rank 9)
 ├── engine/                          # Engine-specific constraints (rank 10)
 ├── tasks/                           # Implementation steps (rank 11)
-├── theory/                          # Advisory only — no authority
-│
+├── theory/                          # Advisory only — 16 reference docs
 ├── assets/                          # All production art and audio
-│   ├── entities/                    #   Per-entity: sprites, models, icons, SFX, voice
-│   ├── ui/                          #   Shared UI: panels, cursors, shared icons
-│   ├── environment/                 #   Biome/location: tilesets, ambience
-│   ├── music/                       #   Scene/mood-level tracks
-│   ├── shared/                      #   Reusable base assets across entities
-│   ├── concept/                     #   Exploration art (not production)
-│   └── promo/                       #   Marketing art
-│
 ├── templates/                       # Document + engine templates
-└── tools/                           # Scripts and utilities
+└── tools/                           # Python orchestrators, configs, utilities
+    ├── seed.py, iterate.py, local-review.py, review.py, validate.py
+    ├── implement.py, revise.py, utils.py, context.py, meta-validate.py
+    ├── adversarial-review.py, code-review.py
+    └── configs/                     # 46 YAML configs (iterate/, fix/, seed/, validate/, revise/)
 ```
 
 ## License
