@@ -754,6 +754,11 @@ def cmd_next_action(args):
         # For task seeding: extract asset requirements from specs
         asset_candidates = _extract_asset_requirements_from_specs(config)
 
+        # Determine initial phase after inventory confirmation
+        # Design layer uses interview (no upstream), other layers use propose
+        interview_sections = config.get("project_context", {}).get("interview_sections", [])
+        has_interview = bool(interview_sections) and not requirements
+
         session = {
             "session_id": session_id,
             "layer": args.layer,
@@ -763,6 +768,9 @@ def cmd_next_action(args):
             "requirements": requirements,
             "existing_analysis": existing_analysis,
             "requirement_index": 0,
+            "interview_sections": interview_sections,
+            "interview_index": 0,
+            "has_interview": has_interview,
             "candidates": list(asset_candidates),  # pre-seed with synthetic asset candidates
             "confirmed_candidates": [],
             "created_docs": [],
@@ -819,6 +827,34 @@ def _advance(session, config):
             "message": f"Found {existing.get('existing_count', 0)} existing docs. Review what exists, what's stale, and what's missing.",
         })
         return
+
+    elif phase == "interview":
+        # Design-layer interview — send one section group at a time
+        idx = session.get("interview_index", 0)
+        sections = session.get("interview_sections", [])
+
+        if idx >= len(sections):
+            # All groups interviewed — move to verify (no confirm needed for interview)
+            session["phase"] = "verify"
+            _save_session(session["session_id"], session)
+            _advance(session, config)
+            return
+
+        group = sections[idx]
+        _write_action({
+            "action": "interview",
+            "session_id": session["session_id"],
+            "layer": session["layer"],
+            "group": group.get("group", f"Group {idx + 1}"),
+            "subsections": group.get("subsections", []),
+            "questions": group.get("questions", []),
+            "group_index": idx,
+            "total_groups": len(sections),
+            "inventory": session["inventory"],
+            "template": config.get("template", ""),
+            "target": config.get("target", ""),
+            "message": f"Interview group {idx + 1}/{len(sections)}: {group.get('group', '')}",
+        })
 
     elif phase == "propose":
         # Send one upstream requirement at a time for candidate proposal
@@ -1182,12 +1218,12 @@ def cmd_resolve(args):
         if additions:
             session["inventory"].setdefault("testing_tools", {}).update(additions)
 
-        # If existing docs found, present delta before proposing
+        # If existing docs found, present delta before proposing/interviewing
         existing = session.get("existing_analysis", {})
         if existing.get("has_existing"):
             session["phase"] = "review_existing"
         else:
-            session["phase"] = "propose"
+            session["phase"] = "interview" if session.get("has_interview") else "propose"
         _save_session(args.session, session)
         _advance(session, config)
 
@@ -1209,7 +1245,15 @@ def cmd_resolve(args):
         # Track which existing files to skip (they're fine as-is)
         session["skip_existing"] = skip_files or session.get("existing_analysis", {}).get("existing_files", [])
 
-        session["phase"] = "propose"
+        session["phase"] = "interview" if session.get("has_interview") else "propose"
+        _save_session(args.session, session)
+        _advance(session, config)
+
+    elif phase == "interview":
+        # Design interview — Claude filled one section group, advance to next
+        filled_group = result.get("group", "")
+        if filled_group:
+            session["interview_index"] = session.get("interview_index", 0) + 1
         _save_session(args.session, session)
         _advance(session, config)
 

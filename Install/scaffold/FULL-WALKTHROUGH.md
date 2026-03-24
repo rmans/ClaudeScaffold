@@ -135,7 +135,9 @@ USER: /scaffold-seed design
 **Preflight:**
 ```
 PYTHON: seed.py preflight --layer design
-  → checks design-doc.md template exists
+  → loads configs/seed/design.yaml
+  → checks required_files from config (empty for design — always passes)
+  → checks check_existing: if design-doc.md already exists, blocks with message
   → status: ready
 ```
 
@@ -148,8 +150,17 @@ PYTHON: seed.py next-action --layer design
     scans: src/, game/, tests/, data/
   → _extract_upstream_requirements() → empty (design has no upstream)
   → _analyze_existing() → checks if design-doc.md already has content
+  → detects has_interview=true (design.yaml has project_context.interview_sections)
   → creates session, phase: confirm_inventory
-  → action.json: { action: "confirm_inventory", detected: {...}, engine_config: {...} }
+  → action.json: {
+      action: "confirm_inventory",
+      session_id: "...", layer: "design",
+      detected: { gut: true, "lint.gdlint": true },
+      not_found: ["pytest", "jest", ...],
+      engine_config: { "godot4.project_file": true, "godot4.gdextension": true, ... },
+      file_system: { src: true, game: true, ... },
+      message: "Review detected project state..."
+    }
 ```
 
 **Dispatch loop:**
@@ -161,36 +172,46 @@ CLAUDE reads action.json → presents inventory to user:
 USER: confirms or corrects
 
 CLAUDE ← result.json: { corrections: {}, additions: {} }
-PYTHON: seed.py resolve → phase: propose (or review_existing if doc exists)
+PYTHON: seed.py resolve → phase: interview (because has_interview=true)
 ```
 
-For design, the propose phase is an **interview** — seed.py sends one section group at a time:
+Design uses an **interview** phase instead of propose — seed.py sends one section group at a time from `design.yaml`'s `project_context.interview_sections`: ✅
 
 ```
-PYTHON → action.json: { action: "propose", section_group: "Identity" }
-  (Core Fantasy, Design Invariants, Elevator Pitch, Core Pillars, Tension, USPs)
+PYTHON → action.json: {
+  action: "interview",
+  group: "Identity",
+  subsections: ["Core Fantasy", "Design Invariants", "Elevator Pitch", "Core Pillars", "Core Design Tension", "Unique Selling Points"],
+  questions: ["What is the one-sentence fantasy?", "What must NEVER be violated?", ...],
+  group_index: 0, total_groups: 8,
+  inventory: {...}, template: "scaffold/templates/design-doc-template.md",
+  target: "design/design-doc.md"
+}
 
 CLAUDE: interviews user for Identity sections, writes answers to design-doc.md
-CLAUDE ← result.json: { candidates: [...sections filled] }
-PYTHON: seed.py resolve → next section group
+CLAUDE ← result.json: { group: "Identity" }
+PYTHON: seed.py resolve → interview_index: 1
 
-PYTHON → action.json: { action: "propose", section_group: "Shape" }
-  (Core Loop, Secondary Loops, Session Shape, Progression, Goals, Decisions)
-
+PYTHON → action.json: { action: "interview", group: "Shape", ... group_index: 1 }
 CLAUDE: interviews user, writes answers
 ... repeats for Control, World, Presentation (incl Entity Presentation), Content,
   System Domains, Philosophy, Scope (Technical Stack pre-filled from scan) ...
+8 groups total
 ```
 
 **Verify + Report:**
 ```
+PYTHON: all 8 groups interviewed → phase: verify
 PYTHON → action.json: { action: "verify" }
 CLAUDE: /scaffold-seed-verify → checks all sections filled, governance populated
-CLAUDE ← result.json: { gaps: [] }   (or gaps found → fill loop)
+CLAUDE ← result.json: { gaps: [] }
+
+If gaps found → review_gaps → user decides fill/defer/dismiss → fill_gaps loop → re-verify
 
 PYTHON → action.json: { action: "report" }
-CLAUDE: /scaffold-review-report → summary of what was created
-PYTHON → action.json: { action: "done" }
+CLAUDE: /scaffold-review-report → summary
+CLAUDE ← result.json: { report_summary: "..." }
+PYTHON: seed.py resolve → action: "done"
 ```
 
 **Result:** `design/design-doc.md` — Status: Draft, all sections filled.
@@ -351,7 +372,9 @@ USER: /scaffold-seed systems
 ```
 
 ```
-PYTHON: seed.py preflight --layer systems → checks design-doc.md exists
+PYTHON: seed.py preflight --layer systems
+  → loads configs/seed/systems.yaml → required_files: [design/design-doc.md]
+  → checks design-doc.md exists on disk
 PYTHON: seed.py next-action --layer systems
   → _build_inventory()
   → _extract_upstream_requirements() → reads design-doc.md
@@ -689,7 +712,23 @@ CLAUDE: reads spec ACs, engine docs, architecture
 
 After each create, Python updates the parent slice's Tasks table.
 
-**Verify → Report → Done**
+**Verify:**
+```
+PYTHON → action.json: { action: "verify", requirements: [...], created_docs: [...], coverage_rules: [...] }
+CLAUDE: /scaffold-seed-verify → checks coverage rules
+CLAUDE ← result.json: { gaps: [...] }
+
+If gaps found:
+  PYTHON → action.json: { action: "review_gaps", gaps: [...] }
+  USER: decides each gap — fill / defer / dismiss
+  CLAUDE ← result.json: { fill: [...], deferred: [...], dismissed: [...] }
+  → fill gaps loop: propose → confirm → create → re-verify
+
+If no gaps:
+  PYTHON → action.json: { action: "report" }
+  CLAUDE: /scaffold-review-report → summary
+  PYTHON → done
+```
 
 ### 12b-12h — Review + Triage + Validate + Reorder + Approve
 

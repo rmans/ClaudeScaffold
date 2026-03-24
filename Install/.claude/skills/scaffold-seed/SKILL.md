@@ -102,6 +102,13 @@ loop:
       python seed.py resolve --session <id>
       # only gaps and reseeded docs go through the proposal phase
 
+    "interview":                        ← design layer only
+      present the section group + questions to the user
+      interview the user for that group's subsections
+      write answers to the design doc
+      python seed.py resolve --session <id>
+      # next interview group, or verify when all groups done
+
     "propose":
       call /scaffold-seed-propose
       python seed.py resolve --session <id>
