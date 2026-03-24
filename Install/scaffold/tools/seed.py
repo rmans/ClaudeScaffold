@@ -730,12 +730,26 @@ def cmd_preflight(args):
     # Check if target doc already exists (for fixed-target layers like design)
     if preflight.get("check_existing"):
         target = config.get("target", "")
-        if target and (SCAFFOLD_DIR / target).exists():
-            _output({
-                "status": "blocked",
-                "message": preflight.get("existing_message", f"{target} already exists."),
-            })
-            return
+        if target:
+            target_path = SCAFFOLD_DIR / target
+            if target_path.exists():
+                # Check if the doc has real content (not just template comments/TODOs)
+                content = target_path.read_text(encoding="utf-8")
+                # Strip comments, blank lines, and header metadata to check for real content
+                stripped = re.sub(r"<!--.*?-->", "", content, flags=re.DOTALL)
+                stripped = re.sub(r"^>.*$", "", stripped, flags=re.MULTILINE)  # blockquote headers
+                stripped = re.sub(r"^#.*$", "", stripped, flags=re.MULTILINE)  # headings
+                stripped = re.sub(r"^---$", "", stripped, flags=re.MULTILINE)  # HR
+                stripped = re.sub(r"\s+", "", stripped)  # whitespace
+                has_real_content = len(stripped) > 50  # more than just leftover template markers
+
+                if has_real_content:
+                    _output({
+                        "status": "blocked",
+                        "message": preflight.get("existing_message", f"{target} already exists."),
+                    })
+                    return
+                # else: file exists but is just the empty template — proceed with interview
 
     _output({"status": "ready", "layer": args.layer})
 
