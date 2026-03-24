@@ -84,7 +84,7 @@ python scaffold/tools/seed.py preflight --layer <layer>
 python scaffold/tools/seed.py next-action --layer <layer> [--target scope]
 ```
 
-seed.py builds the inventory, extracts upstream requirements, writes the first `propose` action. Then loop:
+seed.py builds the inventory, extracts upstream requirements, writes the first `propose` action. Loop **continuously without pausing for user input** — the entire loop runs in one turn:
 
 ```
 loop:
@@ -152,6 +152,8 @@ loop:
     "blocked":
       report message to user, break
 ```
+
+**IMPORTANT:** Do NOT pause or wait for user input between loop iterations. Each sub-skill call means "follow that skill's instructions inline" — read action.json, do the work, write result.json, then immediately call resolve and continue the loop. The only time to stop is on "done" or "blocked".
 
 ### Step 3 — Summary
 

@@ -77,7 +77,7 @@ Checks: task exists, status is Draft/Approved, dependencies are Complete.
 python scaffold/tools/implement.py next-action --task TASK-004 [--max-retries 3] [--cri 10]
 ```
 
-Then loop:
+Loop **continuously without pausing for user input** — the entire loop runs in one turn:
 
 ```
 loop:
@@ -119,6 +119,8 @@ loop:
     "done":
       display results, break
 ```
+
+**IMPORTANT:** Do NOT pause or wait for user input between loop iterations. Each sub-skill call means "follow that skill's instructions inline" — read action.json, do the work, write result.json, then immediately call resolve and continue the loop. The only time to stop is on "done" or "blocked".
 
 ### Step 3 — Summary
 
