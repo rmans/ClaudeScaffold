@@ -12,6 +12,70 @@
 
 ---
 
+## Reference: Propagation Architecture
+
+The walkthrough below is a **linear execution trace** — it shows the sequence of commands. This section shows the **control architecture** — how changes propagate through the system.
+
+### Four Propagation Paths
+
+```
+1. PRODUCTION PATH (linear, user-driven)
+   seed → review (fix → iterate → validate) → approve → implement → complete
+
+2. SIGNAL PATH (feed-forward, targeted)
+   Implementation friction → ADR/KI/triage → revise.py → affected layers only → restabilize
+   ┌─────────────────────────────────────────────────────────────────────────┐
+   │ Signal sources:                                                        │
+   │   ADRs (architecture decisions during implementation)                  │
+   │   KIs (known issues discovered during implementation)                  │
+   │   Triage logs (human decisions from review passes)                     │
+   │   Sync findings (new signals/entities detected in code)                │
+   │   Code review friction (implementation conflicts with design)          │
+   │   Playtest patterns (3+ reports of same observation)                   │
+   │                                                                        │
+   │ Dispatcher: revise.py                                                  │
+   │   Reads signals → classifies one-at-a-time → auto-update or escalate  │
+   │   Dispatches ONLY to layers with matching signals                      │
+   │   Each affected layer: review (fix → iterate → validate)              │
+   │                                                                        │
+   │ NOT a graph traversal. Signal-driven, not artifact-driven.             │
+   └─────────────────────────────────────────────────────────────────────────┘
+
+3. RIPPLE PATH (automatic, deterministic)
+   task Complete → spec Complete → slice Complete → phase Complete → roadmap updated
+   ┌─────────────────────────────────────────────────────────────────────────┐
+   │ Executor: utils.py complete_doc + _ripple_complete                     │
+   │ Trigger: last child completes (requires ≥1 child at each level)       │
+   │ Actions: status update, file rename, index update, parent table update │
+   │ Fully automatic — no user action needed                                │
+   └─────────────────────────────────────────────────────────────────────────┘
+
+4. DEPENDENCY PATH (enforcement, not propagation)
+   ┌─────────────────────────────────────────────────────────────────────────┐
+   │ seed.py: topological sort of candidates by depends_on                  │
+   │ implement.py: preflight blocks on incomplete dependencies              │
+   │ reorder-tasks: builds dep graph, detects cycles, proposes order        │
+   │ approve: checks entry criteria, single-active discipline              │
+   │                                                                        │
+   │ Dependencies BLOCK execution. They do not PROPAGATE changes.           │
+   │ "TASK-008 depends on TASK-005" means 008 waits — it does NOT mean     │
+   │ changes to 005 automatically re-seed or re-review 008.                 │
+   └─────────────────────────────────────────────────────────────────────────┘
+```
+
+### What Is NOT Automated
+
+| Capability | Status | How it works instead |
+|------------|--------|---------------------|
+| Full downstream artifact graph traversal | Not built | Signal-driven revise targets affected layers |
+| Automatic re-review when upstream changes | Not built | Validate freshness checks warn; user triggers review |
+| Automatic re-seed when a doc is revised | Not built | User re-runs seed if new docs needed |
+| Real-time drift detection | Not built | Batch detection via `revise foundation --mode recheck` at phase boundaries |
+
+These are intentional non-goals at game-project scale (10-20 systems, ~50 specs, ~100 tasks). The signal-driven approach covers the same need without the complexity of a generalized propagation graph.
+
+---
+
 ## Reference: Document State Machine
 
 Every scaffold document follows this lifecycle:
