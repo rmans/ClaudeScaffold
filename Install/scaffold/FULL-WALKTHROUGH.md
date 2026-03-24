@@ -88,9 +88,28 @@ Not every issue needs full adjudication:
 | Category | Criteria | Flow |
 |----------|----------|------|
 | **Mechanical** | LOW severity + concrete suggestion, or `category: "mechanical"` | Auto-accept → batch apply (skip adjudication) |
-| **Quality** | MEDIUM/HIGH with suggestion | Adjudicate → scope-check → apply |
-| **Architecture-affecting** | Changes ownership, authority, contracts | Adjudicate → scope-check required |
+| **Quality** | MEDIUM/HIGH with suggestion, no cross-doc impact | Adjudicate → apply (scope-check skipped) |
+| **Architecture-affecting** | Description mentions ownership, authority, contracts, cross-system | Adjudicate → scope-check → apply |
+| **Critical** | Severity CRITICAL | Adjudicate → scope-check always → apply |
 | **Ambiguous** | No suggestion, unclear fix | Escalate to user |
+
+### Verification Blast Radius ✅
+
+When a section changes during iterate, verification re-checks more than just that section:
+
+1. **The changed section** itself (always)
+2. **Sibling sections** under the same `##` parent (always — change in `### Owned State` also re-checks `### Upstream Dependencies`)
+3. **Explicitly linked sections** from the config's `linked_sections` map (e.g., `### Simulation Responsibility` links to `### Purpose`)
+4. **Parent `##` section** (L2 re-review)
+5. **L1 whole document** (always re-runs after verification)
+
+### Root Cause Deduplication ✅
+
+Issues are deduped by root cause to prevent the same problem from cycling:
+
+1. **Preferred:** reviewer provides explicit `root_cause` tag (e.g., `"purpose_is_generic"`, `"ownership_conflict_with_SYS-003"`)
+2. **Fallback:** section name + first 8 words of description (stable, coarse)
+3. Once a root cause is resolved, any reworded variant is filtered out
 
 ---
 
@@ -100,8 +119,8 @@ Not every issue needs full adjudication:
 |------------|------------|---------|
 | **Authoritative content** | Claude via sub-skill | Spec behavior, system design, task steps |
 | **Derived bookkeeping** | Python (utils.py) | Index updates, status changes, file renames, upstream table rows |
-| **Safe generated sync** | Python → user review | Signal registry entries, entity properties (presented as suggestions, not auto-applied) |
-| **Architecture suggestions** | Python → user → ADR | Architecture changes from sync-refs are findings, NOT auto-writes |
+| **Safe generated sync** | Python → user review | Signal registry entries, entity properties (presented as suggestions, not auto-applied). Confidence-filtered: concrete declarations (ADD_SIGNAL, bind_method) always surfaced; vague single-file matches filtered unless ≥2 occurrences. ✅ |
+| **Architecture suggestions** | Python → user → ADR | Architecture changes from sync-refs are findings, NOT auto-writes. File as drift finding or ADR. ✅ |
 
 ---
 
@@ -825,10 +844,21 @@ PYTHON: utils.py build-test
   → runs: regression test suite
   → runs: GUT tests
 
-If FAIL:
-  PYTHON → action.json: { action: "build_failed", errors: ["wall_validator.cpp:42 — undeclared identifier..."] }
+If FAIL (retries remain):
+  PYTHON → action.json: { action: "build_failed", attempt: 1, max: 3, errors: ["wall_validator.cpp:42 — undeclared identifier..."] }
   CLAUDE: /scaffold-implement-code → fixes the error
-  PYTHON: rebuild → retry up to 3 times
+  PYTHON: rebuild → retry
+
+If FAIL (max retries exceeded): ✅
+  PYTHON → action.json: {
+    action: "stuck", phase: "build", attempts: 3,
+    escalation_options: [
+      "1. Fix manually — edit code, then resolve the session",
+      "2. File a Known Issue — /scaffold-file-decision --type ki 'Build failure in TASK-007'",
+      "3. Revise the task — /scaffold-review task TASK-007 to reconsider approach",
+      "4. Skip — mark as blocked, continue with independent tasks"
+    ]
+  }
 
 If PASS:
   PYTHON: resolve → phase: review
@@ -899,25 +929,180 @@ PYTHON → action.json: { action: "done", task: "TASK-007", files_created: [...]
 
 ## Step 14 — The Two-Loop Cycle
 
-### Inner loop (within a phase):
+### Inner loop (within a phase)
 
-After TASK-007 completes:
-1. Continue implementing remaining tasks in the slice
-2. When slice completes → `/scaffold-revise slices` (update remaining Draft slices)
-3. Review + validate + approve next slice
-4. Seed specs + tasks for newly approved slice
-5. Repeat
+After TASK-007 completes, continue with remaining tasks in the slice:
 
-### Outer loop (between phases):
+```
+USER: /scaffold-implement TASK-008
+USER: /scaffold-implement TASK-009
+... until all tasks in SLICE-001 are Complete ...
+```
+
+When the last task completes, `utils.py complete` ripples upward:
+```
+PYTHON: _ripple_complete()
+  TASK-009 → Complete
+  All tasks for SPEC-003 done → SPEC-003 → Complete
+  All specs for SLICE-001 done → SLICE-001 → Complete
+```
+
+**Revise remaining slices:**
+```
+USER: /scaffold-revise slices --source SLICE-001
+```
+
+```
+PYTHON: revise.py preflight --layer slices --source SLICE-001
+PYTHON: revise.py next-action --layer slices --source SLICE-001
+  → _gather_feedback():
+    reads decisions/architecture-decision-record/ADR-*.md (from SLICE-001 implementation)
+    reads decisions/known-issues/KI-*.md
+    reads decisions/triage-log/TRIAGE-SLICE-001.md
+  → builds signal list (e.g., ADR-003 changed ownership model, KI-005 flagged performance concern)
+
+  → action.json: { action: "classify", signal: { type: "ADR", id: "ADR-003", ... } }
+```
+
+For each signal, one at a time:
+```
+CLAUDE: /scaffold-review-adjudicate
+  → classifies: auto-update (safe to apply) | escalate (user must decide) | skip (not relevant to remaining slices)
+CLAUDE ← result.json: { classification: "auto-update", target_doc: "slices/SLICE-002...", change: "Update integration points to reflect new ownership" }
+```
+
+After all signals classified:
+```
+PYTHON → action.json: { action: "apply", auto_updates: [...] }
+CLAUDE: /scaffold-review-apply → edits remaining Draft slices
+```
+
+If escalations exist:
+```
+PYTHON → action.json: { action: "escalate", escalations: [{ signal: "ADR-003", impact: "SLICE-003 goal may need revision", options: [...] }] }
+USER: decides each escalation
+```
+
+Then restabilize the next slice:
+```
+USER: /scaffold-review slice SLICE-002
+USER: /scaffold-validate --scope slices
+USER: /scaffold-approve slices SLICE-002
+```
+
+**Seed specs + tasks for the newly approved slice:**
+```
+USER: /scaffold-seed specs           ← for SLICE-002
+USER: /scaffold-review spec SPEC-00N-SPEC-00M
+USER: /scaffold-triage specs SLICE-002
+USER: /scaffold-validate --scope specs
+USER: /scaffold-approve specs SLICE-002
+USER: /scaffold-seed tasks           ← for SLICE-002 (includes new art/audio tasks)
+USER: /scaffold-review task TASK-00N-TASK-00M
+USER: /scaffold-triage tasks SLICE-002
+USER: /scaffold-validate --scope tasks
+USER: /scaffold-reorder-tasks SLICE-002
+USER: /scaffold-approve tasks SLICE-002
+```
+
+Back to implementing. Repeat until all slices in the phase are Complete.
+
+---
+
+### Outer loop (between phases)
 
 After all slices in PHASE-001 complete:
-1. `/scaffold-revise foundation --mode recheck` → detects drift, dispatches revisions
-2. `/scaffold-revise roadmap` → moves PHASE-001 to Completed
-3. `/scaffold-review roadmap` → restabilize
-4. `/scaffold-revise phases` → adjust remaining phases from feedback
-5. `/scaffold-review phase PHASE-002` → restabilize
-6. `/scaffold-approve phases PHASE-002`
-7. Seed slices → back to inner loop
+
+**Step 14a — Foundation recheck:**
+```
+USER: /scaffold-revise foundation --mode recheck
+```
+
+```
+PYTHON: revise.py → reads all ADRs, KIs, triage logs, code review findings from PHASE-001
+  → identifies which foundation areas drifted:
+    "ADR-003 changed data ownership → Step 3 (authority.md) needs update"
+    "KI-005 flagged performance concern → Step 4 (engine performance-budget.md) needs review"
+    "No Step 1/2/5/6 drift detected"
+
+  → dispatches revision loops ONLY to affected layers:
+    /scaffold-revise references --signals ADR-003
+    /scaffold-revise engine --signals KI-005
+
+  → each dispatched revise follows the same classify → apply → escalate → restabilize pattern
+```
+
+After dispatched revisions:
+```
+USER: /scaffold-validate --scope foundation
+```
+
+If cross-cutting findings:
+```
+USER: /scaffold-fix cross-cutting
+```
+
+**Step 14b — Revise roadmap:**
+```
+USER: /scaffold-revise roadmap --source PHASE-001
+```
+
+```
+PYTHON: revise.py →
+  → moves PHASE-001 to Completed Phases with delivery notes
+  → updates Current Phase to PHASE-002
+  → logs ADR feedback with dedupe
+  → adds Revision History entry
+  → surfaces roadmap-level observations (confidence: Stable/Decreased/Improved)
+```
+
+```
+USER: /scaffold-review roadmap
+USER: /scaffold-validate --scope roadmap
+```
+
+**Step 14c — Revise remaining phases:**
+```
+USER: /scaffold-revise phases --source PHASE-001
+```
+
+```
+PYTHON: revise.py →
+  → reads ADRs, KIs, playtest patterns, triage logs, foundation recheck results from PHASE-001
+  → four-tier classification:
+    - safe refinement → direct-apply (no pause)
+    - scope widening → confirmation required
+    - milestone weakening → confirmation required
+    - scope invalidation → ADR required
+  → Approved phases stay Approved — no status regression
+```
+
+```
+USER: /scaffold-review phase PHASE-002
+USER: /scaffold-validate --scope phases
+USER: /scaffold-approve phases PHASE-002
+```
+
+**Step 14d — Seed slices for the next phase, re-enter inner loop:**
+```
+USER: /scaffold-seed slices           ← for PHASE-002
+USER: /scaffold-review slice SLICE-00N
+USER: /scaffold-validate --scope slices
+USER: /scaffold-approve slices SLICE-00N
+```
+
+→ Back to inner loop: seed specs → seed tasks → implement → complete → revise slices → next slice.
+
+---
+
+### What revision does NOT do
+
+Revise is a **one-shot** pass that reads decisions and updates docs. It does not:
+- Loop or iterate on itself
+- Oscillate between upstream and downstream
+- Re-run automatically
+
+Each revise call reads specific signals (ADRs, KIs, DDs) from a completed phase/slice and applies them to future docs so the next cycle of work accounts for what was learned. It's a **feed-forward** mechanism, not a feedback loop.
 
 ---
 
