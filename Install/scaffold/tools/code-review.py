@@ -90,18 +90,21 @@ def get_api_key(config):
     key = os.environ.get(env_var)
 
     if not key:
-        env_file = Path(__file__).parent.parent / ".env"
-        if env_file.exists():
-            for line in env_file.read_text(encoding="utf-8").splitlines():
-                line = line.strip()
-                if line.startswith("#") or "=" not in line:
-                    continue
-                k, v = line.split("=", 1)
-                k = k.strip()
-                v = v.strip().strip("'").strip('"')
-                if k == env_var:
-                    key = v
-                    break
+        scaffold_dir = Path(__file__).parent.parent
+        for env_file in [scaffold_dir / ".env", scaffold_dir.parent / ".env"]:
+            if env_file.exists():
+                for line in env_file.read_text(encoding="utf-8").splitlines():
+                    line = line.strip()
+                    if line.startswith("#") or "=" not in line:
+                        continue
+                    k, v = line.split("=", 1)
+                    k = k.strip()
+                    v = v.strip().strip("'").strip('"')
+                    if k == env_var:
+                        key = v
+                        break
+            if key:
+                break
 
     if not key:
         print(json.dumps({
@@ -979,17 +982,23 @@ def cmd_check_config(args):
     model = provider_config.get("model", "unknown")
 
     has_key = bool(os.environ.get(env_var))
+    key_source = "environment variable" if has_key else ""
 
-    env_file = Path(__file__).parent.parent / ".env"
-    has_env_file = env_file.exists()
-    if not has_key and has_env_file:
-        for line in env_file.read_text(encoding="utf-8").splitlines():
-            line = line.strip()
-            if line.startswith("#") or "=" not in line:
-                continue
-            k, v = line.split("=", 1)
-            if k.strip() == env_var and v.strip():
-                has_key = True
+    scaffold_dir = Path(__file__).parent.parent
+    has_env_file = (scaffold_dir / ".env").exists() or (scaffold_dir.parent / ".env").exists()
+    if not has_key:
+        for env_file in [scaffold_dir / ".env", scaffold_dir.parent / ".env"]:
+            if env_file.exists():
+                for line in env_file.read_text(encoding="utf-8").splitlines():
+                    line = line.strip()
+                    if line.startswith("#") or "=" not in line:
+                        continue
+                    k, v = line.split("=", 1)
+                    if k.strip() == env_var and v.strip():
+                        has_key = True
+                        key_source = f".env file ({env_file.parent.name}/)"
+                        break
+            if has_key:
                 break
 
     result = {
@@ -1000,10 +1009,7 @@ def cmd_check_config(args):
         "max_tokens": config.get("max_tokens", 16384),
         "api_key_env": env_var,
         "api_key_found": has_key,
-        "api_key_source": (
-            "environment variable" if os.environ.get(env_var)
-            else (".env file" if has_key else "not found")
-        ),
+        "api_key_source": key_source if has_key else "not found",
         "env_file_exists": has_env_file,
         "topics": {k: {"name": v["name"], "description": v["description"]} for k, v in TOPICS.items()},
     }
