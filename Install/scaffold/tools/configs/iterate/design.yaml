@@ -529,14 +529,20 @@ adjudication:
     - design/design-doc.md
   outcomes: [accept_edit, reject, escalate, ambiguous_intent]
   rules:
+    # Bias toward action
+    - "Default to accept unless you have a specific, cited reason to reject"
+    - "If a finding improves clarity, specificity, or completeness — accept it"
+    - "If a finding identifies a gap (missing system, undefined ownership, unclear behavior) — accept it as a documentation improvement"
+    - "Rejecting requires citing the specific rule, section, or invariant that the change would violate"
     - "Prefer fixing the design doc over escalating — most issues are clarity or consistency"
+    # Guardrails for actual design changes
     - "Never half-accept — choose exactly one outcome per issue"
     - "If reviewer and Claude disagree after max-exchanges, escalate to user"
     - "If multiple valid interpretations exist, flag ambiguous_intent for user decision"
     - "Governance weakening always requires user confirmation"
     - "Scope judgments are flagged, not imposed"
-    - "Do not invent missing mechanics — flag the gap"
-    - "Diagnose, don't prescribe"
+    - "Do not invent missing mechanics — flag the gap, add a TODO, or note the absence"
+    - "Diagnose, don't prescribe — name the problem, suggest direction, don't write the solution"
 
 review_lock:
   track_by: root_cause
@@ -572,17 +578,15 @@ rules:
   - "Project documents and authority order win"
   - "The design doc describes WHAT the game is, not HOW to build it"
   - "Only edit the design doc"
-  - "Edits may clarify or tighten wording but must not change what the game is"
-  - "Do not invent missing mechanics — flag the gap"
-  - "Diagnose, don't prescribe"
-  - "Governance edits must preserve intent"
+  - "Edits that improve clarity, fill gaps, or tighten specificity are welcome — the bar for accepting improvements is LOW"
+  - "Edits that change what the game IS (not how it's described) require escalation"
+  - "Identifying missing systems, undefined ownership, or implicit behaviors is a valid finding — document the gap"
+  - "Governance edits must preserve intent — but adding specificity to vague governance is an improvement, not a change"
   - "Never weaken governance without user confirmation"
-  - "Scope judgments are flagged, not imposed"
-  - "Stay at the design layer"
+  - "Stay at the design layer — no implementation detail"
   - "Theory observations are advisory, not authority"
-  - "Never blindly accept"
+  - "Never blindly accept — but never reflexively reject either. Cite your reason."
   - "Pushback is expected and healthy"
   - "Reappearing material issues escalate to user after 2 iterations"
   - "Ambiguous design intent is not a defect — flag for user decision"
-  - "Practicality check: reject changes that increase rigidity without improving usability"
   - "Resolved issues are locked across iterations by root cause"
