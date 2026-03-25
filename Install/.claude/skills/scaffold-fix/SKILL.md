@@ -61,7 +61,7 @@ python scaffold/tools/local-review.py next-action --layer <layer> --target <rela
 
 local-review.py runs all mechanical checks, builds a queue (auto-apply → judgment checks → judgment-apply → convergence → report), and writes the first `action.json`.
 
-Then loop **continuously without pausing for user input** — the entire loop runs in one turn:
+**Use `action.session_id` for all resolve calls.** Then loop **continuously without pausing for user input** — the entire loop runs in one turn:
 
 ```
 loop:
@@ -70,15 +70,15 @@ loop:
 
     "apply":
       call /scaffold-review-apply         ← follow the sub-skill instructions inline
-      python local-review.py resolve --session <id>
+      python local-review.py resolve --session <session_id>
 
     "adjudicate":
       call /scaffold-review-adjudicate    ← follow the sub-skill instructions inline
-      python local-review.py resolve --session <id>
+      python local-review.py resolve --session <session_id>
 
     "report":
       call /scaffold-review-report        ← follow the sub-skill instructions inline
-      python local-review.py resolve --session <id>
+      python local-review.py resolve --session <session_id>
 
     "done":
       break

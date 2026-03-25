@@ -76,7 +76,7 @@ python scaffold/tools/iterate.py next-action \
     [--focus "..."] [--sections "..."] [--iterations N] [--max-exchanges N] [--fast]
 ```
 
-This creates the session, calls the reviewer for the first section, and writes `action.json` with the first instruction. Then loop **continuously without pausing for user input** — the entire loop runs in one turn:
+This creates the session, calls the reviewer for the first section, and writes `action.json` with the first instruction. **Use `action.session_id` for all resolve calls.** Then loop **continuously without pausing for user input** — the entire loop runs in one turn:
 
 ```
 loop:
@@ -85,19 +85,19 @@ loop:
 
     "adjudicate":
       call /scaffold-review-adjudicate          ← follow the sub-skill instructions inline
-      python iterate.py resolve --session <id>
+      python iterate.py resolve --session <session_id>
 
     "scope_check":
       call /scaffold-review-scope-check         ← follow the sub-skill instructions inline
-      python iterate.py resolve --session <id>
+      python iterate.py resolve --session <session_id>
 
     "apply":
       call /scaffold-review-apply               ← follow the sub-skill instructions inline
-      python iterate.py resolve --session <id>
+      python iterate.py resolve --session <session_id>
 
     "report":
       call /scaffold-review-report              ← follow the sub-skill instructions inline
-      python iterate.py resolve --session <id>
+      python iterate.py resolve --session <session_id>
 
     "self_review":
       Review the section yourself using action.section_content and action.questions.
@@ -106,11 +106,11 @@ loop:
       Each issue: {"severity": "HIGH|MEDIUM|LOW", "section": "...", "description": "...", "suggestion": "..."}
       Be adversarial — find real problems, don't rubber-stamp.
       If no issues found, write: {"_self_review": true, "issues": []}
-      python iterate.py resolve --session <id>
+      python iterate.py resolve --session <session_id>
 
     "no_issues":
       log action.message
-      python iterate.py resolve --session <id>
+      python iterate.py resolve --session <session_id>
 
     "done":
       break

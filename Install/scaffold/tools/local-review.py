@@ -662,6 +662,13 @@ def cmd_next_action(args):
     session_id = _session_id(args.layer, target)
     session = _load_session(session_id)
 
+    # Discard exhausted sessions from previous runs
+    if session:
+        queue = session.get("queue", [])
+        idx = session.get("queue_index", 0)
+        if idx >= len(queue):
+            session = None
+
     if not session:
         session = {
             "session_id": session_id,

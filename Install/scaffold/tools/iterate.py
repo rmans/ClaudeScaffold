@@ -497,6 +497,14 @@ def cmd_next_action(args):
     session_id = _session_id(args.layer, target)
     session = _load_session(session_id)
 
+    if session:
+        # Check if session is exhausted (previous run completed)
+        queue = session.get("queue", [])
+        idx = session.get("queue_index", 0)
+        if idx >= len(queue):
+            # Stale session — discard and start fresh
+            session = None
+
     if not session:
         # Create new session
         session = _create_session(args, config, session_id, target)
