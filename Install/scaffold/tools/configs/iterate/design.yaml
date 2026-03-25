@@ -533,8 +533,9 @@ adjudication:
     - "Every finding must be evaluated on merit — neither accept nor reject is the default"
     - "Accepting requires: the finding is accurate AND the suggested change improves the document"
     - "Rejecting requires: cite the specific rule, section, or invariant that makes the finding wrong or the change harmful"
+    - "If you can't confidently do either — escalate to the user with the specific question and options"
     - "If a finding identifies a real gap (missing system, undefined ownership, unclear behavior) — that is a valid finding even if the fix is imperfect"
-    - "Prefer fixing the design doc over escalating — most issues are clarity or consistency"
+    - "Prefer fixing the design doc over escalating — but genuine ambiguity should reach the user, not get silently rejected"
     # Guardrails for actual design changes
     - "Never half-accept — choose exactly one outcome per issue"
     - "If reviewer and Claude disagree after max-exchanges, escalate to user"
