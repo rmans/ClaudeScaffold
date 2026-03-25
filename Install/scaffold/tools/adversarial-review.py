@@ -1094,12 +1094,21 @@ def cmd_review(args):
 
     glossary = load_glossary()
 
+    # Load additional review instructions from file if provided
+    extra_instructions = ""
+    if args.system_prompt_file:
+        prompt_path = Path(args.system_prompt_file)
+        if prompt_path.exists():
+            extra_instructions = prompt_path.read_text(encoding="utf-8")
+
     # Build messages
     system_msg = build_system_prompt()
     user_msg = build_review_prompt(
         doc_content, doc_type, context_str,
         focus=args.focus or "", glossary=glossary
     )
+    if extra_instructions:
+        user_msg += f"\n\n--- Additional Review Instructions ---\n{extra_instructions}"
 
     messages = [
         {"role": "system", "content": system_msg},
@@ -1340,6 +1349,7 @@ def main():
     p_review.add_argument("--iteration", type=int, default=1, help="Outer loop iteration number")
     p_review.add_argument("--context-files", nargs="*", default=[], help="Supporting document paths")
     p_review.add_argument("--focus", default="", help="Review focus area")
+    p_review.add_argument("--system-prompt-file", default="", help="File containing additional review questions/instructions to append to the prompt")
 
     # respond — continue conversation within an iteration
     p_respond = subparsers.add_parser("respond", help="Continue conversation (send Claude's response)")
