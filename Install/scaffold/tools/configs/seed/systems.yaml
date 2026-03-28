@@ -16,12 +16,14 @@ preflight:
 upstream_sources:
   - type: design
     glob: "design/design-doc.md"
-    extract: "System Domains, Major Mechanics, Core Loop, and Simulation Depth Target drive system identification"
+    extract: "Gameplay loops, player verbs, state domains, system domains, and simulation depth drive system identification"
     extract_sections:
       - "## Identity"
+      - "## Shape"
       - "## Control"
       - "## System Domains"
       - "## Content"
+      - "## Philosophy"
 
 dependency_checks: []
 
@@ -30,3 +32,47 @@ coverage_rules:
   - "Every Major Mechanic has an owning system"
   - "No two systems have overlapping Simulation Responsibility"
   - "Core Loop steps are covered by the system set"
+  - "Every Secondary Loop has at least one owning system"
+  - "Every Player Verb has an owning system"
+
+# Layer-specific propose rules — passed to /scaffold-seed-propose via action.json.
+# These tell Claude HOW to derive candidates, not just WHAT to look for.
+propose_rules:
+  derivation_order:
+    - priority: 1
+      source: "Core Loop"
+      rule: "A loop step only generates a system if it represents a persistent gameplay domain with its own state and mechanics. Cognitive phases like 'assess situation' or 'watch outcomes' are NOT systems — they are player activities served BY systems. Extract the underlying domains that make each loop step possible."
+    - priority: 2
+      source: "Secondary Loops"
+      rule: "Each Secondary Loop implies at least one supporting system. If a secondary loop is already covered by a Tier 1 system, do not create a duplicate — note the coverage."
+    - priority: 3
+      source: "State Domains"
+      rule: "Identify major state domains from System Domains, Content Categories, and narrative context. Each distinct state domain that players can observe or that drives gameplay needs a simulation system. These are the simulation backbone."
+    - priority: 4
+      source: "Player Verbs"
+      rule: "Multiple verbs that operate on the same domain must be grouped into a single system. Example: assign, prioritize, queue, cancel all belong to the Task System — not four separate systems. A verb generates a NEW system only if no existing candidate covers its domain."
+    - priority: 5
+      source: "Merge Pass"
+      rule: "If two candidates share the same player-facing purpose, merge them into one. Example: 'Work System' + 'Task Assignment System' + 'Job System' = one system."
+    - priority: 6
+      source: "Validation Pass"
+      rule: "Every surviving candidate must pass this test: 'The player engages with this system when ___, and if ignored ___ happens.' If it fails, reject the candidate."
+  boundary_rules:
+    - "A system must represent a player-facing behavior domain, not a technical concern."
+    - "Reject candidates like 'Pathfinding System', 'Save System', 'UI System', 'Rendering System' unless the design doc explicitly defines them as gameplay systems."
+    - "Systems describe WHAT happens in the game world, not HOW the engine implements it."
+  kill_rules:
+    - "Reject a system if it has no persistent state — if nothing is tracked or remembered, it is not a system."
+    - "Reject a system if it only exists for UI convenience — UI displays systems, it is not a system itself."
+    - "Reject a system if it cannot produce or react to gameplay consequences — a system that neither causes nor responds to state changes is inert."
+  ownership_rules:
+    - "Each candidate must declare: owns (what state it controls), consumes (what it reads from other systems), produces (what signals/events it outputs)."
+    - "No two systems may own the same state. If ownership overlaps, merge the systems or split the contested state to one owner."
+    - "Ownership declarations feed directly into authority.md and interfaces.md during the references seeding step."
+  domain_definition: "A domain is a persistent simulation state space with its own rules and player interaction surface. Every system must belong to exactly one domain. A domain must have 2-5 systems — 1 system means the domain should be merged into a neighbor, 6+ means it should be split."
+  scale_target: "Expect 12-25 systems for a typical game. Fewer than 8 likely means under-coverage. More than 30 likely means over-splitting or including technical concerns."
+  grouping_hint: "Organize systems into domains (e.g., Colonist Domain, Facility Domain, Resource Domain, Risk Domain, Progression Domain, Simulation Core). Domains are NOT systems — they are organizational labels for related systems."
+  weight_heuristic: "A system should represent a cohesive player-facing domain that would reasonably have 2-6 specs. Fewer than 2 specs suggests a micro-system (merge candidate). More than 6 specs suggests a god-system (split candidate)."
+  tier_consequences:
+    core: "Must appear in the first vertical slice. Must have at least 2 specs. Cannot be deferred past Phase 1."
+    support: "Can be deferred to later phases. Can depend on core systems. May start with 1 spec if the domain is narrow."

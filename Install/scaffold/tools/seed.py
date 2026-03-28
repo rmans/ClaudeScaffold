@@ -389,10 +389,15 @@ def _extract_upstream_requirements(config, inventory):
                 # Heading-based extraction if sections specified
                 if extract_sections:
                     parts = []
+                    missing_sections = []
                     for heading in extract_sections:
                         section = _extract_section_content(content, heading)
                         if section:
                             parts.append(f"{heading}\n{section}")
+                        else:
+                            missing_sections.append(heading)
+                    if missing_sections:
+                        _output({"warning": f"Section extraction: {len(missing_sections)} heading(s) not found in {match.name}: {', '.join(missing_sections)}. Check extract_sections in config."})
                     summary = "\n\n".join(parts) if parts else content[:3000]
                 else:
                     summary = content[:3000]
@@ -678,6 +683,33 @@ def _extract_asset_requirements_from_specs(config):
 # Dependency Graph
 # ---------------------------------------------------------------------------
 
+def _summarize_candidates(candidates):
+    """Slim candidate list to essential fields for duplicate detection."""
+    return [
+        {
+            "proposed_id": c.get("proposed_id", ""),
+            "name": c.get("name", ""),
+            "domain": c.get("domain", ""),
+            "source": c.get("source", ""),
+            "type": c.get("type", ""),
+            "owns": c.get("owns", ""),
+        }
+        for c in candidates
+    ]
+
+
+def _summarize_created_docs(created_docs):
+    """Slim created docs list to file paths and IDs for cross-referencing."""
+    return [
+        {
+            "file": d.get("file", ""),
+            "proposed_id": d.get("candidate", {}).get("proposed_id", ""),
+            "name": d.get("candidate", {}).get("name", ""),
+        }
+        for d in created_docs
+    ]
+
+
 def _topological_sort(candidates):
     """Sort candidates by dependencies. Returns ordered list."""
     # Build adjacency
@@ -904,23 +936,42 @@ def _advance(session, config):
         requirements = session.get("requirements", [])
 
         if idx >= len(requirements):
-            # All requirements processed — move to confirm
-            session["phase"] = "confirm"
+            # All requirements processed — normalize if rules exist, else confirm
+            propose_rules = config.get("propose_rules")
+            if propose_rules and session.get("candidates"):
+                session["phase"] = "normalize"
+            else:
+                session["phase"] = "confirm"
             _save_session(session["session_id"], session)
             _advance(session, config)
             return
 
         req = requirements[idx]
-        _write_action({
+        action = {
             "action": "propose",
             "session_id": session["session_id"],
             "layer": session["layer"],
             "requirement": req,
             "inventory": session["inventory"],
-            "existing_candidates": session["candidates"],
+            "existing_candidates": _summarize_candidates(session["candidates"]),
             "template": config.get("template", ""),
             "dependency_checks": config.get("dependency_checks", []),
             "message": f"Propose candidates for requirement {idx + 1}/{len(requirements)}: {req.get('source_file', '')}",
+        }
+        propose_rules = config.get("propose_rules")
+        if propose_rules:
+            action["propose_rules"] = propose_rules
+        _write_action(action)
+
+    elif phase == "normalize":
+        # Global normalization pass — merges, boundary checks, domain rebalance
+        # Inventory deliberately excluded — normalize only needs candidates + rules
+        _write_action({
+            "action": "normalize",
+            "session_id": session["session_id"],
+            "layer": session["layer"],
+            "candidates": session["candidates"],
+            "propose_rules": config.get("propose_rules", {}),
         })
 
     elif phase == "confirm":
@@ -979,7 +1030,7 @@ def _advance(session, config):
             "layer": session["layer"],
             "candidate": candidate,
             "inventory": session["inventory"],
-            "created_so_far": session["created_docs"],
+            "created_so_far": _summarize_created_docs(session["created_docs"]),
             "template": config.get("template", ""),
             "index_file": config.get("index_file", ""),
             "message": f"Create {create_idx + 1}/{len(confirmed)}: {candidate.get('proposed_id', '')} — {candidate.get('name', '')}",
@@ -1037,18 +1088,22 @@ def _advance(session, config):
             return
 
         gap = gaps[gap_idx]
-        _write_action({
+        action = {
             "action": "propose",
             "session_id": session["session_id"],
             "layer": session["layer"],
             "requirement": gap,
             "inventory": session["inventory"],
-            "existing_candidates": session["created_docs"],
+            "existing_candidates": _summarize_created_docs(session["created_docs"]),
             "template": config.get("template", ""),
             "dependency_checks": config.get("dependency_checks", []),
             "is_gap_fill": True,
             "message": f"Fill gap {gap_idx + 1}/{len(gaps)}: {gap.get('description', '')}",
-        })
+        }
+        propose_rules = config.get("propose_rules")
+        if propose_rules:
+            action["propose_rules"] = propose_rules
+        _write_action(action)
 
     elif phase == "report":
         _write_action({
@@ -1323,6 +1378,32 @@ def cmd_resolve(args):
         _save_session(args.session, session)
         _advance(session, config)
 
+    elif phase == "normalize":
+        # Normalization result — replace candidates with normalized set
+        normalized = result.get("normalized_candidates", [])
+        normalization_log = result.get("normalization_log", [])
+        suggested_additions = result.get("suggested_additions", [])
+
+        if normalized:
+            session["candidates"] = normalized
+
+            # Rebuild dependency graph from normalized candidates
+            session["dependency_graph"] = {}
+            for candidate in normalized:
+                cid = candidate.get("proposed_id", "")
+                deps = candidate.get("depends_on", [])
+                session["dependency_graph"][cid] = deps
+
+        # Store normalization metadata for the report
+        session["normalization_log"] = normalization_log
+        session["suggested_additions"] = suggested_additions
+        session["scale_check"] = result.get("scale_check", {})
+        session["domain_summary"] = result.get("domain_summary", {})
+
+        session["phase"] = "confirm"
+        _save_session(args.session, session)
+        _advance(session, config)
+
     elif phase == "confirm":
         # User confirmation result
         confirmed = result.get("confirmed", [])
@@ -1378,8 +1459,12 @@ def cmd_resolve(args):
     elif phase == "verify":
         # Verification result
         gaps = result.get("gaps", [])
-        if gaps:
+        gap_fill_round = session.get("gap_fill_round", 0)
+        max_gap_rounds = 3
+
+        if gaps and gap_fill_round < max_gap_rounds:
             session["coverage_gaps"] = gaps
+            session["gap_fill_round"] = gap_fill_round + 1
             if session.get("auto_fill"):
                 # Auto-fill: skip asking, go straight to proposing gap-fills
                 session["phase"] = "fill_gaps"
@@ -1387,6 +1472,11 @@ def cmd_resolve(args):
             else:
                 # Default: ask user which gaps to fill
                 session["phase"] = "review_gaps"
+        elif gaps:
+            # Max rounds reached — report remaining gaps without looping
+            session["coverage_gaps"] = gaps
+            session["phase"] = "report"
+            _output({"warning": f"Gap-fill limit reached ({max_gap_rounds} rounds). {len(gaps)} gap(s) remain — see report."})
         else:
             session["phase"] = "report"
 

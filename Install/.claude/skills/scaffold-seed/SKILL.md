@@ -17,6 +17,7 @@ The key difference from the old seed skill: Claude only thinks about one thing a
 | Sub-skill | What it does |
 |-----------|-------------|
 | `/scaffold-seed-propose` | Propose candidates from one upstream requirement + project state |
+| `/scaffold-seed-normalize` | Global coherence pass — merges duplicates, enforces boundaries, rebalances domains, classifies core/support (runs for layers with `propose_rules`) |
 | `/scaffold-seed-verify` | Check coverage after all candidates are created |
 | `/scaffold-review-adjudicate` | User confirmation of candidate list |
 | `/scaffold-review-apply` | Create files from templates |
@@ -48,6 +49,14 @@ seed.py orchestrator
 │   │   ├── If dependency missing → propose prerequisite candidate
 │   │   └── seed.py tracks all candidates + dependency graph
 │   └── Topological sort → creation order
+│
+├── Phase 2b: Normalization (layers with propose_rules only)
+│   ├─�� /scaffold-seed-normalize → global coherence pass
+│   ├── Merge synonym/overlapping candidates
+│   ├���─ Enforce system boundaries (player-facing only)
+│   ├── Rebalance domains, enforce scale target
+│   ├── Classify core vs support systems
+│   └── Log all changes for transparency
 │
 ├── Phase 3: User Confirmation
 │   ├── Present full candidate list with dependency graph
@@ -122,6 +131,10 @@ loop:
       call /scaffold-seed-propose
       python seed.py resolve --session <id>
 
+    "normalize":
+      call /scaffold-seed-normalize
+      python seed.py resolve --session <id>
+
     "confirm":
       call /scaffold-review-adjudicate      ← user confirms candidate list
       python seed.py resolve --session <id>
@@ -175,6 +188,17 @@ Display what was created, the dependency graph, and any remaining assumptions.
 - Proposes candidate docs with dependency analysis
 - Creates prerequisite candidates for missing dependencies
 - Flags unverifiable assumptions
+
+### /scaffold-seed-normalize
+- Receives the FULL candidate list + propose_rules after all proposals are collected
+- Merges synonym and overlapping candidates
+- Rejects non-player-facing technical concerns
+- Rebalances domain groupings (2-5 systems per domain)
+- Enforces scale target (12-25 for systems)
+- Classifies each system as core (loop-critical) or support
+- Flags micro-systems (0-1 specs) and god-systems (7+ specs)
+- Logs every change for user transparency
+- Only runs for layers that have `propose_rules` in their config (currently: systems)
 
 ### /scaffold-seed-verify
 - Receives ALL created docs + upstream requirements

@@ -41,6 +41,7 @@ The system is a **deterministic/LLM hybrid** with clear responsibility boundarie
 │   Python (orchestration) │  │   Claude (judgment)    │  │  External LLM        │
 │                         │  │                       │  │  (adversarial review) │
 │  seed.py                │  │  seed-propose         │  │                      │
+│                         │  │  seed-normalize       │  │                      │
 │  local-review.py        │◄─┤  review-adjudicate    │  │  adversarial-        │
 │  iterate.py        ─────┼──┤  review-apply         │  │    review.py         │
 │  review.py              │  │  review-scope-check   │  │  code-review.py      │
@@ -172,7 +173,7 @@ Install runs **meta-validate** automatically — checks that all YAML config hea
 
 ```
 your-project/
-├── .claude/skills/       ← 18 skills (10 user-facing + 8 sub-skills)
+├── .claude/skills/       ← 19 skills (10 user-facing + 9 sub-skills)
 ├── scaffold/             ← Document pipeline + templates + tools + configs
 └── CLAUDE.md             ← Instructions for Claude Code
 ```
