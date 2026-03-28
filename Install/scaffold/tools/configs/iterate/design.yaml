@@ -129,18 +129,24 @@ l3_sections:
     questions:
       - "Is the session length realistic for the decision density described?"
       - "Does the session have a natural arc (opening, middle, wind-down)?"
+      - "What happens when the player needs to quit mid-session? Is there a natural save point, or does the game punish interruption?"
+      - "Does the session arc change as the player progresses? Is a session at hour 1 the same shape as a session at hour 20?"
 
   "### Progression Arc":
     parent: "## Shape"
     questions:
-      - "Does it describe genuine capability growth, or just number inflation?"
-      - "'Unlock new building types' is growth. 'Buildings get +10% efficiency' is inflation."
+      - "Does it describe genuine capability growth, or just number inflation? 'Unlock new building types' is growth. 'Buildings get +10% efficiency' is inflation."
+      - "Does progression introduce new decisions or just amplify existing ones? New decisions = depth. Same decisions with bigger numbers = treadmill."
+      - "What does the player lose access to as they progress? Progression that only adds and never closes doors eventually overwhelms."
+      - "Does the progression arc have a defined end state, or does it trail off? If it trails off, when does the player decide they're done?"
 
   "### Player Goals":
     parent: "## Shape"
     questions:
       - "Do short-term, mid-term, and long-term goals build on each other?"
       - "Are there disconnected goals that produce grind?"
+      - "Are goals discoverable through play, or must the player read documentation to know what to pursue?"
+      - "What happens when the player achieves their long-term goal? Is there a next goal, or does the game end? If neither, the player quits."
 
   "### Decision Types":
     parent: "## Shape"
@@ -168,6 +174,7 @@ l3_sections:
     questions:
       - "Does the philosophy explain WHY the control model is this way?"
       - "Is it consistent with the Core Design Tension?"
+      - "Does the control philosophy produce satisfying feedback for the player's level of agency? High agency with weak feedback = 'did that work?' Low agency with strong feedback = 'why bother?'"
 
   "### Player Verbs":
     parent: "## Control"
@@ -226,18 +233,24 @@ l3_sections:
     questions:
       - "Does the camera perspective match the Player Control Model?"
       - "Top-down suits oversight. Close third-person suits direct control."
+      - "Does the camera support the information density the Player Information Model requires? A close camera with dense UI needs is a conflict."
+      - "Can the player see enough of the world to make the decisions Shape describes?"
 
   "### Aesthetic Pillars":
     parent: "## Presentation"
     questions:
       - "Do aesthetic pillars reinforce the Tone?"
       - "Visual identity should amplify the emotional register, not contradict it."
+      - "Do aesthetic pillars distinguish this game visually from competitors, or do they describe a generic style?"
+      - "Are pillars specific enough to resolve art direction disagreements? 'Clean and readable' is too vague. 'Pixel-readable at 1080p from 3 feet' is actionable."
 
   "### Audio Direction":
     parent: "## Presentation"
     questions:
       - "Does audio direction support the Place & Time?"
       - "Audio that doesn't match the setting breaks immersion."
+      - "Does audio support the feedback loops? If a critical state change has no audio cue, the player may miss it entirely."
+      - "Does audio direction address the information model — what sounds communicate gameplay state vs what sounds are ambient? If everything sounds urgent, nothing does."
 
   "### Entity Presentation":
     parent: "## Presentation"
@@ -347,17 +360,21 @@ l3_sections:
     parent: "## Philosophy"
     questions:
       - "Is the risk/reward balance consistent with the Core Design Tension?"
+      - "Are high-risk actions recoverable? If the player takes a calculated risk and fails, how long does recovery take? If recovery exceeds session length, the risk is actually punitive."
+      - "Does the risk/reward curve change over the progression arc? Early game risk should teach. Late game risk should challenge. If the curve is flat, the game feels the same at hour 1 and hour 20."
 
   "### Simulation Transparency Policy":
     parent: "## Philosophy"
     questions:
       - "Does it match the Player Information Model?"
       - "If transparency promises 'players understand consequences' but the model hides state, they contradict."
+      - "What are the consequences of imperfect information? If the player makes a decision based on hidden state and it goes wrong, does the failure feel fair or arbitrary?"
 
   "### Information Clarity Principle":
     parent: "## Philosophy"
     questions:
       - "Does it enable the Decision Types described?"
+      - "Does the design distinguish between information the player NEEDS (required for core decisions) vs information that's NICE TO HAVE (enriches understanding)? Is there a priority hierarchy?"
 
   "### Decision Anchors":
     parent: "## Philosophy"
@@ -385,6 +402,7 @@ l3_sections:
     questions:
       - "Do boundaries name specific things the game is NOT?"
       - "'Not a first-person shooter' is obvious. 'Not a game where the player directly commands colonists' is useful."
+      - "Do Design Boundaries align with Simulation Boundaries? Game-level 'NOT' and simulation-level 'NOT' should reinforce each other. Flag contradictions."
 
   "### Learning Curve Strategy":
     parent: "## Philosophy"
@@ -452,16 +470,19 @@ l2_sections:
     questions:
       - "Does the world make the player believe in the game, or fight against the mechanics?"
       - "Do tone, narrative, and factions reinforce each other?"
+      - "Does the world section create constraints that Shape and Simulation Requirements must respect? Or is it fully downstream, shaped by the mechanics? If the latter, World is decoration — acknowledge it or commit to it."
 
   "## Presentation":
     questions:
       - "Does camera, aesthetic, audio, and information model form a coherent presentation layer?"
       - "Does the information model enable the decisions Shape describes?"
+      - "Does the presentation layer have enough detail to start asset production, or would an artist need to ask 20 clarifying questions?"
 
   "## Content":
     questions:
       - "Is content scope honest? Does structure support replayability claims?"
       - "Is the procedural/authored boundary clear?"
+      - "Is there a content pipeline implied — who creates content, how is it validated, what's the volume? Content-heavy games fail on pipeline, not on design."
 
   "## Simulation Requirements":
     questions:
@@ -488,6 +509,7 @@ l2_sections:
       - "Does scope honestly reflect what Shape + Simulation Requirements promise?"
       - "Is the MVP real — does it include the Core Loop?"
       - "Are there features that appear small but are structurally central and likely to expand?"
+      - "What gets cut first if scope must shrink? Is there a prioritized cut list, or would a scope reduction require redesigning the core?"
 
 # ---------------------------------------------------------------------------
 # L1 — Document Review (# level)
@@ -526,6 +548,8 @@ stress_test:
     - "Collapse scenario: what happens if the player does nothing for 30 minutes? What happens if they min-max one system exclusively? Can they soft-lock themselves?"
     - "Long-term decay: what changes after 10 hours that wasn't true at hour 1? What prevents repetition? What systems evolve, unlock, or scale?"
     - "Speedrunner abuse: what would a player trying to break the game exploit first? What degenerate loop produces the most reward for the least risk?"
+    - "Content drought: what happens when the player has seen all the content but the progression isn't done? Where does engagement come from when novelty is exhausted?"
+    - "Multiplayer ghost test: if this is singleplayer, what would break if a second player were added? This reveals hidden assumptions about state ownership, timing, and turn structure that may cause problems even in singleplayer (e.g., pause-dependent design)."
 
 identity_check:
   questions:
@@ -601,6 +625,8 @@ report:
       prompt: "What systems would need to be invented during SYS-### generation because the design implies behavior but never assigns ownership? List specific behaviors and the systems they need."
     - name: "Player Reality Gap"
       prompt: "Where is the biggest gap between what the design claims the player experiences and what the mechanics actually produce minute-to-minute?"
+    - name: "Simulation Requirements Readiness"
+      prompt: "Is the Simulation Requirements section specific enough to derive 12-25 systems without inventing requirements? What would the seed skill be forced to guess?"
   rating:
     scale: 5
     descriptions:
