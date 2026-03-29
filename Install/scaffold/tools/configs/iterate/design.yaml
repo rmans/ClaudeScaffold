@@ -262,7 +262,7 @@ l3_sections:
       - "Do animation sets cover the player verbs and state transitions for each entity type?"
       - "Does the sound identity support the game's audio direction?"
       - "Is this specific enough for downstream docs (system designs, specs) to inherit asset needs?"
-      - "Are there content categories listed in Content Categories that have no presentation entry?"
+      - "List every entity in Content Categories and every entity in this table. Do they match? Flag any content category with no presentation entry, and any presentation entry with no content category."
 
   "### Player Information Model":
     parent: "## Presentation"
@@ -344,6 +344,8 @@ l3_sections:
     questions:
       - "Does the depth target match the scope commitment?"
       - "Does the doc acknowledge the depth-vs-breadth tradeoff?"
+      - "List everything the doc says IS simulated vs explicitly NOT simulated — not just from this section, but from Shape, Control, and other Simulation Requirements subsections. Are there contradictions where another section implies simulation that Depth Target excludes?"
+      - "For each thing that IS simulated: is the granularity specified? 'Colonist needs are simulated' is vague. 'Individual colonist hunger/rest/morale tracked per-tick' is specific enough to build from."
 
   "### Simulation Boundaries":
     parent: "## Simulation Requirements"
@@ -461,6 +463,7 @@ l2_sections:
       - "Do Core Fantasy, Invariants, Pillars, Tension, and USPs all describe the same game?"
       - "Could someone reconstruct the game concept from this section alone?"
       - "Is there a shadow identity — does this section describe one game while Shape describes another?"
+      - "Do the simulation requirements actually produce the Core Fantasy? Walk the chain: Fantasy → what loops deliver it → what simulation state enables those loops. Is the chain complete or does it break?"
 
   "## Shape":
     questions:

@@ -32,17 +32,32 @@ checks:
       severity: WARN
 
     - id: design-governance-invariants
-      description: "Design Invariants section has content"
+      description: "Design Invariants has actual invariant entries"
       detection: pattern_present
       target_files: ["design/design-doc.md"]
-      pattern: "###\\s+Design Invariants"
+      pattern: "Invariant:\\s+\\w+"
       severity: WARN
 
     - id: design-governance-anchors
-      description: "Decision Anchors section has content"
+      description: "Decision Anchors has actual anchor entries"
       detection: pattern_present
       target_files: ["design/design-doc.md"]
-      pattern: "###\\s+Decision Anchors"
+      pattern: "\\w+.*\\s+over\\s+.*\\w+"
+      severity: WARN
+
+    - id: design-governance-pressure-tests
+      description: "Design Pressure Tests has actual test entries"
+      detection: pattern_present
+      target_files: ["design/design-doc.md"]
+      pattern: "Pressure Test:\\s+\\w+"
+      severity: WARN
+
+    - id: design-failure-philosophy
+      description: "Failure Philosophy has substantive content"
+      detection: section_min_length
+      target_files: ["design/design-doc.md"]
+      section: "### Failure Philosophy"
+      min_length: 150
       severity: WARN
 
     - id: design-system-index-sync
@@ -97,6 +112,46 @@ checks:
       target_files: ["design/design-doc.md"]
       section: "### Player Information Model"
       min_length: 200
+      severity: WARN
+
+    - id: design-behaviors-content
+      description: "Behaviors That Need Rules has substantive content"
+      detection: section_min_length
+      target_files: ["design/design-doc.md"]
+      section: "### Behaviors That Need Rules"
+      min_length: 100
+      severity: WARN
+
+    - id: design-governed-actions-content
+      description: "Player Actions That Need Governance has substantive content"
+      detection: section_min_length
+      target_files: ["design/design-doc.md"]
+      section: "### Player Actions That Need Governance"
+      min_length: 100
+      severity: WARN
+
+    - id: design-interaction-patterns-content
+      description: "Interaction Patterns has substantive content"
+      detection: section_min_length
+      target_files: ["design/design-doc.md"]
+      section: "### Interaction Patterns"
+      min_length: 100
+      severity: WARN
+
+    - id: design-sim-depth-content
+      description: "Simulation Depth Target has substantive content"
+      detection: section_min_length
+      target_files: ["design/design-doc.md"]
+      section: "### Simulation Depth Target"
+      min_length: 50
+      severity: WARN
+
+    - id: design-sim-boundaries-content
+      description: "Simulation Boundaries has substantive content"
+      detection: section_min_length
+      target_files: ["design/design-doc.md"]
+      section: "### Simulation Boundaries"
+      min_length: 50
       severity: WARN
 
   heuristic:

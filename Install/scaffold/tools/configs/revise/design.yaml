@@ -15,5 +15,5 @@ feedback_sources:
     filter: "Status: Pattern"
   - type: triage
     glob: "decisions/triage-log/TRIAGE-*.md"
-safe_patterns: ["Stale ADR reference", "Terminology drift", "System index sync"]
-escalation_patterns: ["Governance change", "Scope widening", "Core Fantasy drift", "New mechanic from downstream"]
+safe_patterns: ["Stale ADR reference", "Terminology drift", "System index sync", "Table column fill", "Information tier addition", "Structured content completion"]
+escalation_patterns: ["Governance change", "Scope widening", "Core Fantasy drift", "New mechanic from downstream", "Simulation requirement change", "State domain added or removed", "Interaction pattern restructured"]

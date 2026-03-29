@@ -18,7 +18,7 @@ context:
   base:
     - file: design/design-doc.md
       class: canonical
-      sections: ["## Identity", "## Shape", "## Control", "## Simulation Requirements", "## Philosophy", "## Scope", "### Design Invariants", "### Decision Anchors", "### Design Pressure Tests"]
+      sections: ["## Identity", "## Shape", "## Control", "## World", "## Presentation", "## Content", "## Simulation Requirements", "## Philosophy", "## Scope", "### Design Invariants", "### Decision Anchors", "### Design Pressure Tests"]
       priority: 1
     - file: design/glossary.md
       class: constraint
@@ -85,6 +85,14 @@ mechanical_checks:
       condition: "Derivable unambiguously from test name"
       fix_action: "Add missing fields derived from test name"
 
+    - id: malformed_anchor
+      description: "Decision Anchor not in 'X over Y' format"
+      detection: governance_format_check
+      section: "### Decision Anchors"
+      expected_pattern: ".+\\s+over\\s+.+"
+      auto_fix: false
+      fix_action: "Flag malformed anchor for user to rewrite in 'X over Y' format"
+
   structured_content:
     - id: verb_table_incomplete
       description: "Player Verbs table row missing Input, Target, or Outcome"
@@ -142,6 +150,15 @@ mechanical_checks:
       detection: glossary_not_column
       auto_fix: true
       fix_action: "Replace with canonical term"
+
+  layer_leak:
+    - id: system_naming_in_sim_req
+      description: "Simulation Requirements names specific systems instead of describing requirements"
+      detection: pattern_match_in_section
+      section: "## Simulation Requirements"
+      patterns: ["\\w+ System", "\\w+System"]
+      auto_fix: false
+      fix_action: "Flag system name for user to rewrite as a requirement (what the simulation must do, not which system does it)"
 
   cross_reference:
     - id: system_index_mismatch
