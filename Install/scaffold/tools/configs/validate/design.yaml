@@ -60,6 +60,45 @@ checks:
       review_pattern: "ITERATE-design-*"
       severity: WARN
 
+    - id: design-verb-table
+      description: "Player Verbs has structured table with entries"
+      detection: table_present
+      target_files: ["design/design-doc.md"]
+      section: "### Player Verbs"
+      min_rows: 3
+      severity: WARN
+
+    - id: design-state-table
+      description: "State That Matters has structured table with entries"
+      detection: table_present
+      target_files: ["design/design-doc.md"]
+      section: "### State That Matters"
+      min_rows: 3
+      severity: WARN
+
+    - id: design-entity-table
+      description: "Entity Presentation has structured table with entries"
+      detection: table_present
+      target_files: ["design/design-doc.md"]
+      section: "### Entity Presentation"
+      min_rows: 2
+      severity: WARN
+
+    - id: design-control-tiers
+      description: "Player Control Model defines direct/indirect/no-control tiers"
+      detection: pattern_present
+      target_files: ["design/design-doc.md"]
+      pattern: "([Dd]irect|[Ii]ndirect|[Nn]o control).*([Dd]irect|[Ii]ndirect|[Nn]o control)"
+      severity: WARN
+
+    - id: design-info-hierarchy
+      description: "Player Information Model defines information tiers"
+      detection: section_min_length
+      target_files: ["design/design-doc.md"]
+      section: "### Player Information Model"
+      min_length: 200
+      severity: WARN
+
   heuristic:
     - id: design-glossary-compliance
       description: "NOT-column terms not used"

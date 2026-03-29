@@ -139,6 +139,7 @@ l3_sections:
       - "Does progression introduce new decisions or just amplify existing ones? New decisions = depth. Same decisions with bigger numbers = treadmill."
       - "What does the player lose access to as they progress? Progression that only adds and never closes doors eventually overwhelms."
       - "Does the progression arc have a defined end state, or does it trail off? If it trails off, when does the player decide they're done?"
+      - "Does it describe at least three phases (early/mid/late) with distinct mechanics, decisions, or player concerns at each? Or is it a single vague trajectory?"
 
   "### Player Goals":
     parent: "## Shape"
@@ -168,6 +169,7 @@ l3_sections:
     questions:
       - "Is the control model specific and consistent with Core Fantasy?"
       - "Is it consistent with the Player Verbs and Player Actions That Need Governance sections?"
+      - "Does it define all three tiers (direct control, indirect influence, no control) with concrete examples and WHY each thing is in its category?"
 
   "### Control Philosophy":
     parent: "## Control"
@@ -182,6 +184,7 @@ l3_sections:
       - "Are verbs concrete actions, not abstractions?"
       - "Does every verb appear in Player Actions That Need Governance or is it trivial enough to not need governance?"
       - "Walk through every verb — is the underlying state change and governance requirement described in Simulation Requirements? Flag any verb where the design doc doesn't explain what makes the action non-trivial."
+      - "If a verb table exists: does every row have Input, Target, and Outcome filled? Are outcomes specific enough to distinguish success from failure?"
 
   "### Player Mental Model":
     parent: "## Control"
@@ -269,6 +272,9 @@ l3_sections:
       - "If 5 problems exist simultaneously, how does the player identify the top priority? What happens if they pick wrong?"
       - "What must the player track simultaneously at peak complexity? What can safely be ignored without punishment?"
       - "Imagine the busiest possible screen state — every active simulation element competing for attention. What gets lost? What overlaps? What information hierarchy prevents overload?"
+      - "Does the section define all four information tiers (critical/always-visible, supplementary/on-demand, discoverable/earned, opaque/hidden)? Is every major piece of game state assigned to a tier?"
+      - "Is explanation depth defined — can the player drill from surface indicator to reason to exact numbers? For what state is each depth level available?"
+      - "Is history/log retention addressed — what events are logged, what's ephemeral, what helps the player spot trends?"
 
   # -- Content --
 
@@ -307,6 +313,7 @@ l3_sections:
       - "List ALL simulation state implied by the design. For each: what player behavior depends on it, what breaks without it, whether it is currently defined, underdefined, or missing."
       - "What state typically exists in this genre that is absent here? For each: is it intentionally excluded (cite Design Boundaries or Simulation Boundaries) or accidentally missing?"
       - "Does every entry describe three things: what changes, what the player sees, and what consequences emerge? Flag entries that name state without explaining why it matters to the player."
+      - "If a state table exists: does every row have all four columns filled (State Domain, What Changes, Player Sees, Consequence If Ignored)? Are consequences concrete and player-visible, not abstract?"
       - "Which 3-5 pieces of state are absolutely load-bearing — they define the core experience minute-to-minute? Which state supports those? Which is optional flavor-layer?"
       - "At what point in the game does each piece of state become relevant? What state is irrelevant early but critical late?"
 
@@ -355,6 +362,7 @@ l3_sections:
       - "What does the player DO after failure? How long does recovery take? When does recovery feel pointless vs engaging?"
       - "When something goes wrong, which simulation domain handles it? Could two distinct areas of the simulation both try to resolve the same failure — and is that overlap described in Interaction Patterns?"
       - "Trace every failure scenario in Failure Philosophy and Pressure Tests through the simulation requirements — what state changes, what behaviors fire, what consequences cascade? Are any steps in the chain not covered by Simulation Requirements?"
+      - "Does this section address all five aspects: consequence severity, recovery cost, cascading failure behavior, teaching through failure, and failure signals (early warning before catastrophe)? Flag any that are missing."
 
   "### Risk / Reward Philosophy":
     parent: "## Philosophy"

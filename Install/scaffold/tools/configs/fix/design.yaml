@@ -85,6 +85,57 @@ mechanical_checks:
       condition: "Derivable unambiguously from test name"
       fix_action: "Add missing fields derived from test name"
 
+  structured_content:
+    - id: verb_table_incomplete
+      description: "Player Verbs table row missing Input, Target, or Outcome"
+      detection: table_column_check
+      section: "### Player Verbs"
+      required_columns: ["Verb", "Input", "Target", "Outcome"]
+      auto_fix: false
+      fix_action: "Flag incomplete rows for user to fill"
+
+    - id: state_table_incomplete
+      description: "State That Matters table row missing columns"
+      detection: table_column_check
+      section: "### State That Matters"
+      required_columns: ["State Domain", "What Changes", "Player Sees", "Consequence If Ignored"]
+      auto_fix: false
+      fix_action: "Flag incomplete rows for user to fill"
+
+    - id: entity_presentation_incomplete
+      description: "Entity Presentation table row missing Visual, Animation, or Sound identity"
+      detection: table_column_check
+      section: "### Entity Presentation"
+      required_columns: ["Entity / Category", "Visual Identity", "Animation Set", "Sound Identity"]
+      auto_fix: false
+      fix_action: "Flag incomplete rows for user to fill"
+
+    - id: control_model_missing_tiers
+      description: "Player Control Model doesn't define all three tiers"
+      detection: pattern_present_all
+      section: "### Player Control Model"
+      patterns: ["[Dd]irect", "[Ii]ndirect", "[Nn]o control"]
+      auto_fix: false
+      fix_action: "Flag missing control tier for user to define"
+
+    - id: failure_philosophy_incomplete
+      description: "Failure Philosophy missing key aspects"
+      detection: pattern_present_any
+      section: "### Failure Philosophy"
+      expected_concepts: ["severity", "recovery", "cascad", "teach|learn", "signal|warning"]
+      min_concepts: 3
+      auto_fix: false
+      fix_action: "Flag missing failure aspects for user to address"
+
+    - id: info_model_missing_hierarchy
+      description: "Player Information Model doesn't define information tiers"
+      detection: pattern_present_any
+      section: "### Player Information Model"
+      expected_concepts: ["[Cc]ritical|[Aa]lways visible", "[Ss]upplementary|[Oo]n demand", "[Dd]iscoverable|[Hh]idden|[Ee]arned", "[Oo]paque|[Nn]ever see"]
+      min_concepts: 2
+      auto_fix: false
+      fix_action: "Flag that information hierarchy is undefined"
+
   terminology:
     - id: glossary_compliance
       description: "NOT-column term used as authoritative terminology"
